@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ultron - assistente de IA para engenharia civil (demonstração)</title>
+<style>
+:root{--az:#1f4e79;--az2:#14395a;--esc:#0f2a44;--lar:#f28c28;--lar2:#d9741a;--cz:#5b6b7b;--fundo:#eef2f6;--cartao:#fff;--linha:#d5dde6;--ok:#2e8b57;--al:#c0392b}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#1c2733;font-size:15px}
+.aviso{background:#fff3cd;border-bottom:3px solid var(--lar);padding:8px 16px;font-size:.82rem;text-align:center}
+header{background:var(--esc);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{width:38px;height:38px;border-radius:8px;background:var(--lar);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex:none}
+header h1{margin:0;font-size:1.1rem}
+header small{display:block;opacity:.75;font-size:.76rem}
+.estado{margin-left:auto;font-size:.76rem;background:#ffffff1a;border-radius:14px;padding:5px 10px}
+.estado i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4cd48a;margin-right:6px}
+nav{background:var(--az);display:flex;overflow-x:auto;scrollbar-width:thin}
+nav button{flex:none;background:none;border:0;color:#d6e4f2;padding:12px 15px;font-size:.88rem;cursor:pointer;border-bottom:3px solid transparent}
+nav button.on{color:#fff;border-bottom-color:var(--lar);background:var(--az2)}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.tela{display:none}.tela.on{display:block}
+h2{margin:0 0 12px;font-size:1.15rem;color:var(--az2)}
+h3{margin:14px 0 6px;font-size:.95rem;color:var(--az2)}
+.card{background:var(--cartao);border:1px solid var(--linha);border-radius:10px;padding:14px;margin-bottom:14px;min-width:0}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.grid2{display:grid;gap:14px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.num{background:#fff;border:1px solid var(--linha);border-top:4px solid var(--az);border-radius:8px;padding:10px 12px}
+.num b{font-size:1.5rem;display:block;color:var(--az2)}
+.num span{font-size:.8rem;color:var(--cz)}
+.num.l{border-top-color:var(--lar)}.num.v{border-top-color:var(--ok)}
+button.p{background:var(--lar);color:#fff;border:0;border-radius:6px;padding:8px 13px;font-size:.86rem;cursor:pointer}
+button.p:hover{background:var(--lar2)}
+button.s{background:#e3ebf3;color:var(--az2);border:0;border-radius:6px;padding:7px 11px;font-size:.82rem;cursor:pointer}
+button.s:hover{background:#d3deea}
+input[type=range]{accent-color:#f28c28}
+input,select,textarea{font:inherit;padding:8px;border:1px solid #b9c5d1;border-radius:6px;width:100%;min-width:0;background:#fff}
+label{display:block;font-size:.78rem;color:var(--cz);margin:8px 0 3px}
+.barra{height:9px;background:#dde5ee;border-radius:5px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--az);border-radius:5px;transition:width .4s}
+.barra.l i{background:var(--lar)}
+.tag{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:10px;background:#dde8f3;color:var(--az2);margin-right:4px}
+.tag.ok{background:#d9f0e3;color:#1d6b40}.tag.al{background:#fbe0dc;color:#9a2b1f}.tag.fu{background:#e7e7ee;color:#555}.tag.lr{background:#fde5cc;color:#9a5410}
+ul.lim{list-style:none;padding:0;margin:0}
+ul.lim li{padding:7px 0;border-bottom:1px solid #edf1f5;display:flex;gap:8px;align-items:flex-start;font-size:.9rem}
+ul.lim li:last-child{border:0}
+ul.lim li.feito span{text-decoration:line-through;color:#8a97a5}
+ul.lim input[type=checkbox]{width:auto;margin-top:3px;flex:none}
+.x{margin-left:auto;background:none;border:0;color:#999;cursor:pointer;font-size:1rem;flex:none}
+/* chat */
+.chat{display:flex;flex-direction:column;height:min(620px,calc(100vh - 220px));min-height:420px;padding:0;overflow:hidden}
+#msgs{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f5f8fb}
+.m{max-width:88%;padding:9px 12px;border-radius:10px;font-size:.9rem;line-height:1.42;overflow-wrap:anywhere}
+.m.me{align-self:flex-end;background:var(--az);color:#fff;border-bottom-right-radius:2px}
+.m.bot{align-self:flex-start;background:#fff;border:1px solid var(--linha);border-bottom-left-radius:2px}
+.m table{border-collapse:collapse;margin:6px 0;font-size:.82rem;width:100%}
+.m td,.m th{border:1px solid var(--linha);padding:4px 6px;text-align:left}
+.m th{background:#eaf0f6}
+.m .nota{font-size:.74rem;color:var(--cz);margin-top:6px}
+.m .passo{font-family:Consolas,monospace;font-size:.82rem;background:#f1f5f9;padding:6px 8px;border-radius:6px;margin:5px 0;overflow-wrap:anywhere}
+.sug{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-top:1px solid var(--linha);background:#fff}
+.sug button{background:#fff;border:1px solid var(--az);color:var(--az);border-radius:14px;padding:5px 10px;font-size:.78rem;cursor:pointer}
+.ent{display:flex;gap:8px;padding:8px 10px;border-top:1px solid var(--linha);background:#fff}
+.ent input{flex:1;border-radius:18px}
+.pens{display:flex;gap:4px;align-self:flex-start;padding:10px 12px}
+.pens i{width:7px;height:7px;border-radius:50%;background:#99a;animation:pisca 1s infinite}
+.pens i:nth-child(2){animation-delay:.2s}.pens i:nth-child(3){animation-delay:.4s}
+@keyframes pisca{0%,60%,100%{opacity:.3}30%{opacity:1}}
+/* calc */
+.res{background:#eef5fb;border-left:4px solid var(--az);border-radius:6px;padding:10px 12px;margin-top:10px;font-size:.88rem}
+.res .passo{font-family:Consolas,monospace;font-size:.82rem;margin:3px 0;overflow-wrap:anywhere}
+.res b.g{color:var(--lar2);font-size:1.05rem}
+.campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0 10px}
+/* obras */
+.obra{cursor:pointer}
+.obra.sel{border-color:var(--lar);box-shadow:0 0 0 2px #f28c2833}
+.etapa{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.86rem;flex-wrap:wrap}
+.etapa .nome{flex:1 1 130px}
+/* cerebro */
+.nota-i{border:1px solid var(--linha);border-radius:8px;padding:10px;margin-bottom:8px;background:#fff;cursor:pointer}
+.nota-i:hover{border-color:var(--az)}
+.nota-i h4{margin:0 0 4px;font-size:.92rem;color:var(--az2)}
+.nota-i p{margin:0;font-size:.85rem}
+canvas{width:100%;max-width:100%;background:#f5f8fb;border:1px solid var(--linha);border-radius:8px;display:block}
+.rob{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf1f5;flex-wrap:wrap}
+.rob:last-child{border:0}
+.rob .info{flex:1 1 200px;min-width:0}
+.rob b{font-size:.92rem}.rob small{display:block;color:var(--cz);font-size:.78rem}
+.sw{width:42px;height:22px;border-radius:12px;background:#b6c1cd;position:relative;cursor:pointer;flex:none;border:0;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:var(--ok)}.sw.on::after{left:23px}
+.log{background:#0f2a44;color:#bfe0ff;font-family:Consolas,monospace;font-size:.78rem;border-radius:8px;padding:10px;height:150px;overflow-y:auto;overflow-wrap:anywhere}
+.esteira{display:flex;gap:6px;flex-wrap:wrap}
+.esteira div{flex:1 1 110px;background:#fff;border:1px solid var(--linha);border-radius:8px;padding:8px;font-size:.78rem;position:relative}
+.esteira div b{display:block;font-size:1.1rem;color:var(--az2)}
+.esteira div.at{border-color:var(--lar);background:#fff7ee}
+footer{text-align:center;font-size:.78rem;color:var(--cz);padding:10px 16px 26px}
+@media(max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}main{padding:12px}.estado{margin-left:0}.chat{height:min(560px,calc(100vh - 200px))}}
+</style>
+</head>
+<body>
+<div class="aviso"><b>DEMONSTRAÇÃO</b> - todos os dados são inventados. Resumos de normas são exemplos próprios, não substituem a norma vigente.</div>
+<header>
+  <div class="logo">U</div>
+  <div><h1>Ultron <small>Assistente de IA para engenharia civil</small></h1></div>
+  <div class="estado"><i></i>Online · modelo local · escuta pausada</div>
+</header>
+<nav id="nav">
+  <button data-t="central" class="on">Central</button>
+  <button data-t="conversa">Conversa</button>
+  <button data-t="obras">Obras</button>
+  <button data-t="calc">Calculadoras</button>
+  <button data-t="cerebro">Segundo cérebro</button>
+  <button data-t="robos">Robôs e rotinas</button>
+  <button data-t="treino">Treinamento</button>
+  <button data-t="sistema">Sistema</button>
+</nav>
+<main>
+
+<!-- CENTRAL -->
+<section class="tela on" id="t-central">
+  <h2>Central</h2>
+  <div class="grid" id="numeros"></div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">Em andamento agora</h3><ul class="lim" id="andamento"></ul></div>
+    <div class="card"><h3 style="margin-top:0">Próximos prazos</h3><ul class="lim" id="prazos"></ul></div>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Avisos</h3><ul class="lim" id="avisos"></ul></div>
+</section>
+
+<!-- CONVERSA -->
+<section class="tela" id="t-conversa">
+  <h2>Conversa com o Ultron</h2>
+  <div class="card chat">
+    <div id="msgs"></div>
+    <div class="sug" id="sug"></div>
+    <form class="ent" id="form"><input id="q" autocomplete="off" placeholder="Escreva do seu jeito, por exemplo: calcula a carga de uma laje 4x5 de 12 cm"><button class="p">Enviar</button></form>
+  </div>
+</section>
+
+<!-- OBRAS -->
+<section class="tela" id="t-obras">
+  <h2>Obras e projetos</h2>
+  <div class="grid" id="listaObras"></div>
+  <div id="detObra" style="margin-top:14px"></div>
+</section>
+
+<!-- CALCULADORAS -->
+<section class="tela" id="t-calc">
+  <h2>Calculadoras de engenharia</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Laje maciça: concreto, aço e carga</h3>
+      <div class="campos">
+        <div><label>Comprimento (m)</label><input id="l-c" type="number" step="0.01" value="5"></div>
+        <div><label>Largura (m)</label><input id="l-l" type="number" step="0.01" value="4"></div>
+        <div><label>Espessura (cm)</label><input id="l-e" type="number" step="0.5" value="12"></div>
+        <div><label>Taxa de aço (kg/m³)</label><input id="l-t" type="number" value="80"></div>
+        <div><label>Revestimento (kN/m²)</label><input id="l-r" type="number" step="0.1" value="1"></div>
+        <div><label>Sobrecarga (kN/m²)</label><input id="l-s" type="number" step="0.1" value="1.5"></div>
+      </div>
+      <button class="p" style="margin-top:10px" id="b-laje">Calcular</button>
+      <div class="res" id="r-laje">Preencha e calcule.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Viga: concreto, aço e peso próprio</h3>
+      <div class="campos">
+        <div><label>Base (cm)</label><input id="v-b" type="number" value="20"></div>
+        <div><label>Altura (cm)</label><input id="v-h" type="number" value="50"></div>
+        <div><label>Vão (m)</label><input id="v-l" type="number" step="0.01" value="4.5"></div>
+        <div><label>Quantidade</label><input id="v-n" type="number" value="6"></div>
+        <div><label>Taxa de aço (kg/m³)</label><input id="v-t" type="number" value="110"></div>
+      </div>
+      <button class="p" style="margin-top:10px" id="b-viga">Calcular</button>
+      <div class="res" id="r-viga">Preencha e calcule.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Carga na viga biapoiada</h3>
+      <div class="campos">
+        <div><label>Carga da laje (kN/m²)</label><input id="c-q" type="number" step="0.1" value="5.5"></div>
+        <div><label>Largura de influência (m)</label><input id="c-b" type="number" step="0.1" value="2"></div>
+        <div><label>Peso da parede (kN/m)</label><input id="c-p" type="number" step="0.1" value="0"></div>
+        <div><label>Vão (m)</label><input id="c-l" type="number" step="0.1" value="4.5"></div>
+      </div>
+      <button class="p" style="margin-top:10px" id="b-carga">Calcular</button>
+      <div class="res" id="r-carga">Preencha e calcule.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Pedido de concreto (com perda)</h3>
+      <div class="campos">
+        <div><label>Volume calculado (m³)</label><input id="p-v" type="number" step="0.01" value="2.4"></div>
+        <div><label>Perda (%)</label><input id="p-p" type="number" value="5"></div>
+        <div><label>Caminhão (m³)</label><input id="p-c" type="number" step="0.5" value="8"></div>
+      </div>
+      <button class="p" style="margin-top:10px" id="b-ped">Calcular</button>
+      <div class="res" id="r-ped">Preencha e calcule.</div>
+    </div>
+  </div>
+  <p style="font-size:.8rem;color:var(--cz)">Peso específico do concreto armado usado: 25 kN/m³. Valores de exemplo, para estimativa. Projeto e dimensionamento final são do engenheiro responsável.</p>
+</section>
+
+<!-- CEREBRO -->
+<section class="tela" id="t-cerebro">
+  <h2>Segundo cérebro</h2>
+  <div class="grid" id="cartoesCer"></div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card">
+      <input id="busca" placeholder="Buscar em notas, normas e aulas...">
+      <div style="margin:8px 0" id="filtros"></div>
+      <div id="notas"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Mapa das notas (clique num ponto)</h3>
+      <canvas id="grafo" width="520" height="360"></canvas>
+      <div class="res" id="notaSel">Clique numa nota para abrir.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROBOS -->
+<section class="tela" id="t-robos">
+  <h2>Robôs e rotinas</h2>
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Agentes</h3><div id="agentes"></div></div>
+    <div class="card"><h3 style="margin-top:0">Registro de atividade</h3><div class="log" id="log"></div>
+      <p style="font-size:.8rem;color:var(--cz)">Simulado: os robôs reais abrem Revit, Eberick e AutoCAD no computador do engenheiro.</p></div>
+  </div>
+</section>
+
+<!-- TREINO -->
+<section class="tela" id="t-treino">
+  <h2>Treinamento do modelo local</h2>
+  <div class="card">
+    <div class="esteira" id="esteira"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="p" id="b-treina">Treinar (simulado)</button>
+      <button class="s" id="b-agenda">Agendar estudo da noite</button>
+      <span id="treinoMsg" style="font-size:.85rem;color:var(--cz)"></span>
+    </div>
+    <div class="barra l" style="margin-top:10px"><i id="treinoBarra" style="width:0%"></i></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Modelos testados no computador (exemplo)</h3>
+    <div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:.84rem;width:100%;min-width:420px">
+      <tr style="background:#eaf0f6"><th style="text-align:left;padding:6px">Modelo</th><th>Velocidade</th><th>Português</th><th>Ferramentas</th><th>Qualidade</th></tr>
+      <tr><td style="padding:6px">modelo-A 12B</td><td align="center">38 tok/s</td><td align="center">100%</td><td align="center">100%</td><td align="center"><span class="tag ok">em uso</span></td></tr>
+      <tr><td style="padding:6px">modelo-B 9B</td><td align="center">52 tok/s</td><td align="center">96%</td><td align="center">100%</td><td align="center"><span class="tag">bom</span></td></tr>
+      <tr><td style="padding:6px">modelo-C 8B</td><td align="center">61 tok/s</td><td align="center">88%</td><td align="center">92%</td><td align="center"><span class="tag">reserva</span></td></tr>
+    </table></div>
+    <p style="font-size:.8rem;color:var(--cz)">Dados pessoais saem das conversas antes de virarem exemplo de treino.</p>
+  </div>
+</section>
+
+<!-- SISTEMA -->
+<section class="tela" id="t-sistema">
+  <h2>Sistema</h2>
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Computador</h3><div id="medidores"></div></div>
+    <div class="card"><h3 style="margin-top:0">Conexões</h3><ul class="lim" id="conex"></ul>
+      <button class="s" id="b-sync">Sincronizar agora</button> <span id="syncMsg" style="font-size:.82rem;color:var(--cz)"></span></div>
+  </div>
+</section>
+
+</main>
+<footer>Demonstração com dados fictícios · nada é enviado para fora desta página</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=(n,d=2)=>Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const load=(k,def)=>{try{const v=localStorage.getItem("ultrondemo_"+k);return v?JSON.parse(v):def}catch(e){return def}};
+const save=(k,v)=>{try{localStorage.setItem("ultrondemo_"+k,JSON.stringify(v))}catch(e){}};
+const hoje=new Date();hoje.setHours(0,0,0,0);
+const dia=n=>{const d=new Date(hoje);d.setDate(d.getDate()+n);return d};
+const dstr=d=>d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+
+/* ---------- dados inventados ---------- */
+const OBRAS_PAD=[
+ {id:"a",nome:"Residencial Modelo A",tipo:"Sobrado, 2 pavimentos",prazo:40,
+  etapas:[["Fundação",100],["Pilares do térreo",100],["Laje do térreo",70],["Pilares do superior",20],["Laje de cobertura",0]],
+  pend:[["Conferir fôrmas da laje do térreo",true,3],["Pedir concreto para a laje (volume na calculadora)",false,4],["Receber o detalhamento revisado das vigas",false,6],["Validar posição das esperas elétricas",false,8]]},
+ {id:"b",nome:"Galpão Exemplo B",tipo:"Estrutura metálica, 1 pavimento",prazo:75,
+  etapas:[["Projeto estrutural",100],["Fabricação das peças",55],["Montagem",0],["Cobertura",0]],
+  pend:[["Revisar ligações dos pórticos",false,2],["Conferir lista de materiais",false,5],["Aprovar cor da telha",false,12]]},
+ {id:"c",nome:"Reforma Comercial C",tipo:"Reforço de laje e abertura de vão",prazo:22,
+  etapas:[["Levantamento",100],["Cálculo do reforço",85],["Execução",10],["Entrega",0]],
+  pend:[["Enviar memória de cálculo para conferência",false,1],["Agendar demolição da parede",false,3],["Conferir escoramento antes de abrir o vão",false,3]]}
+];
+let OBRAS=load("obras",null);
+if(!OBRAS){OBRAS=OBRAS_PAD.map(o=>({...o,etapas:o.etapas.map(e=>({n:e[0],p:e[1]})),pend:o.pend.map(p=>({t:p[0],ok:p[1],dias:p[2]}))}))}
+let obraSel=load("obraSel","a");
+const CHECK_CONC_PAD=["Fôrmas travadas e escoradas conforme projeto","Armadura conferida (bitolas, espaçamento, cobrimento com espaçadores)","Instalações embutidas posicionadas","Fôrma limpa e molhada (sem poças)","Volume e resistência do concreto confirmados com a usina","Local de descarga e acesso do caminhão liberados","Equipe e vibrador de reserva disponíveis","Previsão do tempo conferida","Corpos de prova: moldagem e identificação previstas","Plano de cura definido para o dia seguinte"];
+let CHECK_CONC=load("checkconc",CHECK_CONC_PAD.map(t=>({t,ok:false})));
+
+const NOTAS=[
+ {id:1,pasta:"Normas",titulo:"Cobrimento da armadura",tags:["durabilidade","concreto"],txt:"Resumo próprio: o cobrimento é a camada de concreto que protege o aço. Quanto mais agressivo o ambiente, maior o cobrimento exigido, e o valor depende do tipo de peça (laje, viga ou pilar). Em ambiente urbano comum costuma-se usar a classe de agressividade moderada."},
+ {id:2,pasta:"Normas",titulo:"Classes de agressividade",tags:["durabilidade","ambiente"],txt:"Resumo próprio: o ambiente é classificado do mais fraco (rural, interior seco) ao muito forte (orla marítima, indústria química). A classe escolhida orienta cobrimento, qualidade mínima do concreto e relação água/cimento."},
+ {id:3,pasta:"Normas",titulo:"Ações e combinações",tags:["cargas","segurança"],txt:"Resumo próprio: o projeto considera peso próprio, cargas permanentes, sobrecarga de uso e vento. Cada ação é majorada por um coeficiente, e as combinações mais desfavoráveis definem o dimensionamento."},
+ {id:4,pasta:"Normas",titulo:"Deslocamentos limite (flecha)",tags:["serviço","laje","viga"],txt:"Resumo próprio: além de não romper, a peça não pode deformar demais, para evitar fissuras em paredes e desconforto. Os limites dependem do vão e do uso, e devem ser verificados no projeto."},
+ {id:5,pasta:"Aulas",titulo:"Como a carga chega até a fundação",tags:["cargas","estrutura"],txt:"Resumo próprio: laje apoia em vigas, vigas em pilares, pilares na fundação. A carga desce por esse caminho, e cada elemento recebe a parte da laje que está na sua área de influência."},
+ {id:6,pasta:"Aulas",titulo:"Cura do concreto",tags:["obra","concreto"],txt:"Resumo próprio: o concreto precisa ficar úmido nos primeiros dias para ganhar resistência sem fissurar. Molhar a superfície ou cobri-la evita a perda rápida de água, principalmente em tempo quente e com vento."},
+ {id:7,pasta:"Obra",titulo:"Antes de concretar: o que olhar",tags:["obra","checklist"],txt:"Nota de campo: fôrmas, escoras, armadura, espaçadores, instalações embutidas e logística do caminhão. O checklist de concretagem da aba Obras reúne esses pontos."},
+ {id:8,pasta:"Obra",titulo:"Estimando consumo de aço",tags:["aço","orçamento"],txt:"Nota de campo: na fase de orçamento usa-se uma taxa em kg de aço por m³ de concreto, que varia com o tipo de peça. É só estimativa, a lista real vem do detalhamento."},
+ {id:9,pasta:"Programas",titulo:"Fluxo Revit para planilha de quantitativos",tags:["revit","quantitativo"],txt:"Nota de rotina: exportar tabelas de quantitativos do modelo, conferir unidades e comparar com a estimativa da calculadora antes de enviar ao orçamento."},
+ {id:10,pasta:"Programas",titulo:"Conferência de modelo no Eberick",tags:["eberick","conferência"],txt:"Nota de rotina: depois de processar a estrutura, conferir avisos, deslocamentos e a lista de pilares com maior taxa de armadura antes de emitir pranchas."},
+ {id:11,pasta:"Aulas",titulo:"Ação do vento em galpões",tags:["vento","cargas"],txt:"Resumo próprio: em galpões leves o vento pode ser a ação principal, inclusive com sucção na cobertura. Por isso as ligações e os contraventamentos merecem atenção especial."},
+ {id:12,pasta:"Normas",titulo:"Ancoragem e emendas",tags:["armadura","detalhamento"],txt:"Resumo próprio: a barra precisa de comprimento suficiente dentro do concreto para transferir sua força. Esse comprimento depende da bitola, do concreto e da posição da barra, e as emendas seguem a mesma lógica."}
+];
+const NOTAS_COR={Normas:"#1f4e79",Aulas:"#f28c28",Obra:"#2e8b57",Programas:"#7b5ea7"};
+
+const AGENTES=[
+ {n:"Orquestrador",d:"Recebe o pedido e escolhe quem resolve",s:"Pronto",on:true},
+ {n:"Quantitativos",d:"Volume de concreto, aço e fôrma",s:"Pronto",on:true},
+ {n:"Cargas e lajes",d:"Peso próprio, sobrecarga e combinações",s:"Pronto",on:true},
+ {n:"Revit",d:"Lê tabelas e confere o modelo",s:"Pronto",on:true},
+ {n:"Eberick",d:"Confere avisos e lista de pilares",s:"Em desenv.",on:false},
+ {n:"AutoCAD",d:"Organiza camadas e prepara pranchas",s:"Em desenv.",on:false},
+ {n:"Normas",d:"Busca no segundo cérebro e cita a fonte",s:"Pronto",on:true},
+ {n:"Vento e coberturas",d:"Estimativa preliminar de ação do vento",s:"Futuro",on:false}
+];
+const ROTINAS_LOG={Orquestrador:"pedido classificado: cálculo de carga",Quantitativos:"quantitativo da laje 5x4 m gerado",["Cargas e lajes"]:"combinação de cargas conferida",Revit:"tabela de pilares exportada (42 linhas)",Eberick:"relatório de avisos lido: 0 críticos",AutoCAD:"camadas padronizadas em 3 desenhos",Normas:"3 notas relacionadas encontradas",["Vento e coberturas"]:"modo futuro: ainda não disponível"};
+
+/* ---------- navegação ---------- */
+$$("#nav button").forEach(b=>b.onclick=()=>{
+  $$("#nav button").forEach(x=>x.classList.toggle("on",x===b));
+  $$(".tela").forEach(t=>t.classList.toggle("on",t.id==="t-"+b.dataset.t));
+  if(b.dataset.t==="central")central();
+  if(b.dataset.t==="cerebro")desenhaGrafo();
+  if(b.dataset.t==="sistema")medidores();
+});
+
+/* ---------- central ---------- */
+function central(){
+  const pend=OBRAS.flatMap(o=>o.pend.filter(p=>!p.ok).map(p=>({...p,obra:o.nome})));
+  const prog=Math.round(OBRAS.flatMap(o=>o.etapas).reduce((a,e)=>a+e.p,0)/OBRAS.flatMap(o=>o.etapas).length);
+  const ativos=AGENTES.filter(a=>a.on).length;
+  $("#numeros").innerHTML=
+   `<div class="num"><b>${OBRAS.length}</b><span>obras e projetos</span></div>`+
+   `<div class="num l"><b>${pend.length}</b><span>pendências abertas</span></div>`+
+   `<div class="num v"><b>${prog}%</b><span>andamento médio</span></div>`+
+   `<div class="num"><b>${ativos}/${AGENTES.length}</b><span>robôs ligados</span></div>`+
+   `<div class="num"><b>${NOTAS.length}</b><span>notas no segundo cérebro</span></div>`;
+  $("#andamento").innerHTML=OBRAS.map(o=>{const m=Math.round(o.etapas.reduce((a,e)=>a+e.p,0)/o.etapas.length);return `<li style="display:block"><b>${esc(o.nome)}</b> <small style="color:var(--cz)">${esc(o.tipo)}</small><div class="barra" style="margin-top:5px"><i style="width:${m}%"></i></div></li>`}).join("");
+  $("#prazos").innerHTML=pend.sort((a,b)=>a.dias-b.dias).slice(0,6).map(p=>`<li><span><b>${dstr(dia(p.dias))}</b> · ${esc(p.t)}<br><small style="color:var(--cz)">${esc(p.obra)}</small></span></li>`).join("")||"<li>Nenhuma pendência. Tudo em dia.</li>";
+  $("#avisos").innerHTML=[
+   ["lr","Concretagem da laje do Residencial Modelo A está próxima: use o checklist."],
+   ["ok","Sincronização com o cofre de notas concluída hoje às 07:40."],
+   ["fu","Nova versão do modelo local disponível para teste (simulado)."]
+  ].map(a=>`<li><span class="tag ${a[0]}">${a[0]=="lr"?"atenção":a[0]=="ok"?"ok":"info"}</span><span>${a[1]}</span></li>`).join("");
+}
+
+/* ---------- obras ---------- */
+function obras(){
+  $("#listaObras").innerHTML=OBRAS.map(o=>{
+    const m=Math.round(o.etapas.reduce((a,e)=>a+e.p,0)/o.etapas.length), np=o.pend.filter(p=>!p.ok).length;
+    return `<div class="card obra ${o.id===obraSel?"sel":""}" data-id="${o.id}" style="margin:0"><b>${esc(o.nome)}</b><div style="font-size:.8rem;color:var(--cz)">${esc(o.tipo)}</div>
+    <div class="barra" style="margin:8px 0 4px"><i style="width:${m}%"></i></div>
+    <small>${m}% · ${np} pendência${np==1?"":"s"} · entrega em ${dstr(dia(o.prazo))}</small></div>`}).join("");
+  $$(".obra").forEach(c=>c.onclick=()=>{obraSel=c.dataset.id;save("obraSel",obraSel);obras()});
+  const o=OBRAS.find(x=>x.id===obraSel)||OBRAS[0];
+  $("#detObra").innerHTML=`<div class="grid2">
+   <div class="card"><h3 style="margin-top:0">Etapas: ${esc(o.nome)}</h3>${o.etapas.map((e,i)=>`<div class="etapa"><span class="nome">${esc(e.n)}</span><input type="range" min="0" max="100" step="5" value="${e.p}" data-i="${i}" style="width:130px;padding:0"><b style="width:38px;text-align:right">${e.p}%</b></div>`).join("")}</div>
+   <div class="card"><h3 style="margin-top:0">Pendências</h3><ul class="lim" id="pend">${o.pend.map((p,i)=>`<li class="${p.ok?"feito":""}"><input type="checkbox" ${p.ok?"checked":""} data-i="${i}"><span>${esc(p.t)}<br><small style="color:var(--cz)">prazo ${dstr(dia(p.dias))}</small></span><button class="x" data-d="${i}" title="remover">×</button></li>`).join("")||"<li>Sem pendências.</li>"}</ul>
+   <div style="display:flex;gap:6px;margin-top:8px"><input id="novaPend" placeholder="Nova pendência..."><button class="p" id="addPend">Adicionar</button></div></div></div>
+   <div class="card"><h3 style="margin-top:0">Checklist de concretagem <small style="font-weight:400;color:var(--cz)">(salvo nesta página)</small></h3><ul class="lim" id="chkc"></ul><div class="barra l" style="margin-top:8px"><i id="chkb"></i></div> <button class="s" style="margin-top:8px" id="chkReset">Limpar marcações</button></div>`;
+  $$("#detObra input[type=range]").forEach(r=>r.oninput=()=>{o.etapas[r.dataset.i].p=+r.value;r.nextElementSibling.textContent=r.value+"%";save("obras",OBRAS)});
+  $$("#detObra input[type=range]").forEach(r=>r.onchange=()=>obras());
+  $$("#pend input").forEach(c=>c.onchange=()=>{o.pend[c.dataset.i].ok=c.checked;save("obras",OBRAS);obras()});
+  $$("#pend .x").forEach(b=>b.onclick=()=>{o.pend.splice(b.dataset.d,1);save("obras",OBRAS);obras()});
+  const add=()=>{const t=$("#novaPend").value.trim();if(!t)return;o.pend.push({t,ok:false,dias:7});save("obras",OBRAS);obras()};
+  $("#addPend").onclick=add;$("#novaPend").onkeydown=e=>{if(e.key==="Enter")add()};
+  desenhaCheck($("#chkc"),$("#chkb"));
+  $("#chkReset").onclick=()=>{CHECK_CONC.forEach(c=>c.ok=false);save("checkconc",CHECK_CONC);desenhaCheck($("#chkc"),$("#chkb"))};
+}
+function desenhaCheck(ul,barra){
+  ul.innerHTML=CHECK_CONC.map((c,i)=>`<li class="${c.ok?"feito":""}"><input type="checkbox" ${c.ok?"checked":""} data-i="${i}"><span>${esc(c.t)}</span></li>`).join("");
+  const f=()=>{const n=CHECK_CONC.filter(c=>c.ok).length;if(barra)barra.style.width=Math.round(n/CHECK_CONC.length*100)+"%"};f();
+  ul.querySelectorAll("input").forEach(c=>c.onchange=()=>{CHECK_CONC[c.dataset.i].ok=c.checked;save("checkconc",CHECK_CONC);c.closest("li").classList.toggle("feito",c.checked);f()});
+}
+
+/* ---------- calculadoras (funções puras) ---------- */
+const PESO=25; // kN/m3
+function calcLaje(c,l,e,t,rev,sob){
+  const area=c*l, vol=area*e/100, aco=vol*t, pp=PESO*e/100, q=pp+rev+sob, total=q*area, forma=area;
+  return {area,vol,aco,pp,q,total,forma};
+}
+function calcViga(b,h,L,n,t){
+  const volUn=b/100*h/100*L, vol=volUn*n, aco=vol*t, pp=PESO*b/100*h/100;
+  return {volUn,vol,aco,pp};
+}
+function calcCarga(q,bi,pa,L){
+  const w=q*bi+pa, M=w*L*L/8, V=w*L/2;
+  return {w,M,V};
+}
+function calcPed(v,p,cam){
+  const tot=v*(1+p/100), cams=Math.ceil(tot/cam-1e-9);
+  return {tot,cams,sobra:cams*cam-tot};
+}
+const n=id=>parseFloat(String($(id).value).replace(",","."));
+const bad=(...v)=>v.some(x=>!isFinite(x)||x<0);
+function mostraLaje(){
+  const c=n("#l-c"),l=n("#l-l"),e=n("#l-e"),t=n("#l-t"),r=n("#l-r"),s=n("#l-s");
+  if(bad(c,l,e,t,r,s)||c*l*e===0){$("#r-laje").textContent="Confira os números: use valores positivos.";return}
+  const x=calcLaje(c,l,e,t,r,s);
+  $("#r-laje").innerHTML=`<div class="passo">Área = ${fmt(c)} × ${fmt(l)} = ${fmt(x.area)} m²</div>
+  <div class="passo">Volume = ${fmt(x.area)} × ${fmt(e/100)} m = <b>${fmt(x.vol,3)} m³</b></div>
+  <div class="passo">Aço = ${fmt(x.vol,3)} m³ × ${fmt(t,0)} kg/m³ = <b>${fmt(x.aco,1)} kg</b></div>
+  <div class="passo">Peso próprio = 25 × ${fmt(e/100)} = ${fmt(x.pp)} kN/m²</div>
+  <div class="passo">Carga total = ${fmt(x.pp)} + ${fmt(r)} + ${fmt(s)} = <b class="g">${fmt(x.q)} kN/m²</b></div>
+  <div class="passo">Carga na laje inteira = ${fmt(x.q)} × ${fmt(x.area)} = ${fmt(x.total,1)} kN</div>
+  <div class="passo">Área de fôrma (fundo) ≈ ${fmt(x.forma)} m²</div>`;
+}
+function mostraViga(){
+  const b=n("#v-b"),h=n("#v-h"),L=n("#v-l"),q=n("#v-n"),t=n("#v-t");
+  if(bad(b,h,L,q,t)||b*h*L*q===0){$("#r-viga").textContent="Confira os números: use valores positivos.";return}
+  const x=calcViga(b,h,L,q,t);
+  $("#r-viga").innerHTML=`<div class="passo">Volume de 1 viga = ${fmt(b/100)} × ${fmt(h/100)} × ${fmt(L)} = ${fmt(x.volUn,3)} m³</div>
+  <div class="passo">Volume de ${q} viga(s) = <b>${fmt(x.vol,3)} m³</b></div>
+  <div class="passo">Aço = ${fmt(x.vol,3)} × ${fmt(t,0)} = <b>${fmt(x.aco,1)} kg</b></div>
+  <div class="passo">Peso próprio = 25 × ${fmt(b/100)} × ${fmt(h/100)} = <b class="g">${fmt(x.pp,3)} kN/m</b></div>`;
+}
+function mostraCarga(){
+  const q=n("#c-q"),bi=n("#c-b"),pa=n("#c-p"),L=n("#c-l");
+  if(bad(q,bi,pa,L)||L===0){$("#r-carga").textContent="Confira os números: use valores positivos.";return}
+  const x=calcCarga(q,bi,pa,L);
+  $("#r-carga").innerHTML=`<div class="passo">w = ${fmt(q)} × ${fmt(bi)} + ${fmt(pa)} = <b class="g">${fmt(x.w)} kN/m</b></div>
+  <div class="passo">Momento máximo = w·L² / 8 = ${fmt(x.w)} × ${fmt(L)}² / 8 = <b>${fmt(x.M)} kN·m</b></div>
+  <div class="passo">Reação em cada apoio = w·L / 2 = <b>${fmt(x.V)} kN</b></div>
+  <div class="nota" style="font-size:.76rem;color:var(--cz)">Viga simplesmente apoiada com carga uniforme. Não inclui o peso próprio da viga.</div>`;
+}
+function mostraPed(){
+  const v=n("#p-v"),p=n("#p-p"),c=n("#p-c");
+  if(bad(v,p,c)||c===0){$("#r-ped").textContent="Confira os números: use valores positivos.";return}
+  const x=calcPed(v,p,c);
+  $("#r-ped").innerHTML=`<div class="passo">Com perda = ${fmt(v)} × (1 + ${fmt(p,0)}%) = <b>${fmt(x.tot,2)} m³</b></div>
+  <div class="passo">Caminhões de ${fmt(c,1)} m³ = <b class="g">${x.cams}</b> (sobra ${fmt(x.sobra,2)} m³)</div>`;
+}
+$("#b-laje").onclick=mostraLaje;$("#b-viga").onclick=mostraViga;$("#b-carga").onclick=mostraCarga;$("#b-ped").onclick=mostraPed;
+mostraLaje();mostraViga();mostraCarga();mostraPed();
+
+/* ---------- cérebro ---------- */
+let filtro="Todas",pos=[];
+function cerebro(){
+  const pastas=["Normas","Aulas","Obra","Programas"];
+  $("#cartoesCer").innerHTML=pastas.map(p=>`<div class="num" style="border-top-color:${NOTAS_COR[p]}"><b>${NOTAS.filter(x=>x.pasta===p).length}</b><span>${p}</span></div>`).join("");
+  $("#filtros").innerHTML=["Todas",...pastas].map(p=>`<button class="${p===filtro?"p":"s"}" data-p="${p}" style="margin:0 4px 4px 0">${p}</button>`).join("");
+  $$("#filtros button").forEach(b=>b.onclick=()=>{filtro=b.dataset.p;cerebro()});
+  const q=$("#busca").value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const lista=NOTAS.filter(x=>(filtro==="Todas"||x.pasta===filtro)&&((x.titulo+" "+x.txt+" "+x.tags.join(" ")).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q)));
+  $("#notas").innerHTML=lista.map(x=>`<div class="nota-i" data-id="${x.id}"><h4>${esc(x.titulo)}</h4><span class="tag" style="background:${NOTAS_COR[x.pasta]}22">${x.pasta}</span>${x.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>`).join("")||"<p>Nenhuma nota com esse termo.</p>";
+  $$(".nota-i").forEach(c=>c.onclick=()=>abreNota(+c.dataset.id));
+}
+function abreNota(id){
+  const x=NOTAS.find(a=>a.id===id);if(!x)return;
+  const rel=NOTAS.filter(y=>y.id!==id&&y.tags.some(t=>x.tags.includes(t))).map(y=>y.titulo);
+  $("#notaSel").innerHTML=`<b>${esc(x.titulo)}</b><p style="margin:6px 0">${esc(x.txt)}</p><p style="font-size:.76rem;color:var(--cz);margin:4px 0">${x.pasta==="Normas"||x.pasta==="Aulas"?"Resumo de exemplo — consulte a norma vigente.":"Nota de exemplo."}</p>${rel.length?`<small>Relacionadas: ${rel.map(esc).join(" · ")}</small>`:""}`;
+  selNo=id;desenhaGrafo();
+}
+let selNo=null;
+function desenhaGrafo(){
+  const cv=$("#grafo");if(!cv||!cv.offsetWidth)return;
+  const W=cv.width,H=cv.height,ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,W,H);
+  pos=NOTAS.map((x,i)=>{const a=i/NOTAS.length*Math.PI*2-Math.PI/2;return {id:x.id,x:W/2+Math.cos(a)*W*0.27,y:H/2+Math.sin(a)*H*0.36,p:x.pasta,t:x.titulo}});
+  ctx.strokeStyle="#b9c5d1";ctx.lineWidth=1;
+  NOTAS.forEach((a,i)=>NOTAS.forEach((b,j)=>{if(j>i&&a.tags.some(t=>b.tags.includes(t))){ctx.beginPath();ctx.moveTo(pos[i].x,pos[i].y);ctx.lineTo(pos[j].x,pos[j].y);ctx.stroke()}}));
+  pos.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.id===selNo?11:8,0,7);ctx.fillStyle=NOTAS_COR[p.p];ctx.fill();if(p.id===selNo){ctx.lineWidth=3;ctx.strokeStyle="#f28c28";ctx.stroke()}
+    ctx.fillStyle="#1c2733";ctx.font="11px system-ui";ctx.textAlign=p.x>W/2?"left":"right";const lx=p.x+(p.x>W/2?13:-13);ctx.fillText(p.t.length>17?p.t.slice(0,16)+"…":p.t,lx,p.y+4)});
+}
+$("#grafo").onclick=e=>{const r=e.target.getBoundingClientRect(),sx=e.target.width/r.width,sy=e.target.height/r.height,x=(e.clientX-r.left)*sx,y=(e.clientY-r.top)*sy;
+  let best=null,d=1e9;pos.forEach(p=>{const k=Math.hypot(p.x-x,p.y-y);if(k<d){d=k;best=p}});if(best&&d<26)abreNota(best.id)};
+$("#busca").oninput=cerebro;
+
+/* ---------- robôs ---------- */
+function robos(){
+  $("#agentes").innerHTML=AGENTES.map((a,i)=>`<div class="rob"><div class="info"><b>${a.n}</b> <span class="tag ${a.s==="Pronto"?"ok":a.s==="Futuro"?"fu":"lr"}">${a.s}</span><small>${a.d}</small></div><button class="s" data-r="${i}">Rodar</button><button class="sw ${a.on?"on":""}" data-s="${i}" aria-label="ligar ou desligar ${a.n}"></button></div>`).join("");
+  $$("#agentes [data-s]").forEach(b=>b.onclick=()=>{const a=AGENTES[b.dataset.s];a.on=!a.on;log(`${a.n}: ${a.on?"ligado":"desligado"}`);robos()});
+  $$("#agentes [data-r]").forEach(b=>b.onclick=()=>{const a=AGENTES[b.dataset.r];if(!a.on){log(`${a.n}: está desligado, ligue primeiro`);return}log(`${a.n}: iniciando...`);setTimeout(()=>log(`${a.n}: ${ROTINAS_LOG[a.n]}`),700)});
+}
+const hora=()=>new Date().toLocaleTimeString("pt-BR");
+function log(t){const l=$("#log");l.innerHTML+=`<div>[${hora()}] ${esc(t)}</div>`;l.scrollTop=l.scrollHeight}
+
+/* ---------- treino ---------- */
+let treinoEtapa=4,treinando=false;
+function esteira(){
+  const e=[["Conversas gravadas","233"],["Vira memória","189"],["Arquivo de treino","711"],["Treino do modelo","LoRA"],["Prova antes × depois","10 provas"],["Modelo em uso","modelo-A 12B"]];
+  $("#esteira").innerHTML=e.map((x,i)=>`<div class="${i===treinoEtapa?"at":""}"><b>${x[1]}</b>${x[0]}</div>`).join("");
+}
+$("#b-treina").onclick=()=>{
+  if(treinando)return;treinando=true;let p=0;const b=$("#treinoBarra"),m=$("#treinoMsg");treinoEtapa=3;esteira();
+  const iv=setInterval(()=>{p+=5;b.style.width=p+"%";m.textContent=`Treinando... ${p}%`;
+    if(p>=100){clearInterval(iv);treinoEtapa=4;esteira();m.textContent="Pronto (simulado): prova antes × depois aprovada em 9 de 10.";treinando=false}},180);
+};
+$("#b-agenda").onclick=()=>{$("#treinoMsg").textContent="Estudo agendado para hoje às 23:30 (simulado).";log("Treinamento: estudo da noite agendado")};
+
+/* ---------- sistema ---------- */
+function medidores(){
+  const v=(r,a)=>Math.round(r+Math.random()*a);
+  const itens=[["Processador",v(12,25)],["Memória",v(48,20)],["Placa de vídeo",v(20,30)],["Disco",v(41,3)]];
+  $("#medidores").innerHTML=itens.map(i=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.84rem"><span>${i[0]}</span><b>${i[1]}%</b></div><div class="barra ${i[1]>80?"l":""}"><i style="width:${i[1]}%"></i></div></div>`).join("")+`<small style="color:var(--cz)">Valores simulados, mudam a cada visita.</small>`;
+}
+let conex=[["Modelo de IA local","Online · modelo-A 12B",true],["Cofre de notas (somente leitura)","Online · 12 notas",true],["Revit","Conector pronto",true],["Eberick","Em desenvolvimento",false],["Microfone","Escuta pausada",false],["Sincronização com o outro computador","Última: hoje 07:40",true]];
+function conexoes(){$("#conex").innerHTML=conex.map(c=>`<li><span class="tag ${c[2]?"ok":"fu"}">${c[2]?"ok":"parado"}</span><span><b>${c[0]}</b><br><small style="color:var(--cz)">${c[1]}</small></span></li>`).join("")}
+$("#b-sync").onclick=()=>{$("#syncMsg").textContent="Sincronizando...";setTimeout(()=>{conex[5][1]="Última: agora ("+hora().slice(0,5)+")";conexoes();$("#syncMsg").textContent="Concluído.";log("Sincronização concluída")},900)};
+
+/* ---------- conversa ---------- */
+const SUG=["Qual o cobrimento mínimo para viga em ambiente urbano?","Calcula a carga de uma laje 4x5 de 12 cm","Lista os pendentes da obra Residencial Modelo A","Gera o checklist de concretagem","Quanto de concreto e aço numa laje 6x4 de 10 cm?"];
+function addMsg(html,cls){const d=document.createElement("div");d.className="m "+cls;d.innerHTML=html;$("#msgs").appendChild(d);$("#msgs").scrollTop=$("#msgs").scrollHeight;return d}
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const num=s=>parseFloat(s.replace(",","."));
+function acha(t){
+  let m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m\s*)?(?:x|por)\s*(\d+(?:[.,]\d+)?)/);
+  const dims=m?[num(m[1]),num(m[2])]:null;
+  let e=t.match(/(\d+(?:[.,]\d+)?)\s*cm/);
+  return {dims,esp:e?num(e[1]):null};
+}
+const COB={"I":[20,25,25],"II":[25,30,30],"III":[35,40,40],"IV":[45,50,50]};
+function resp(texto){
+  const t=norm(texto);
+  if(/cobrimento/.test(t)){
+    let cl="II",amb="urbano";
+    if(/marinh|mar\b|praia|orla|litoral/.test(t)){cl="IV";amb="marinho"}else if(/industr|quimic/.test(t)){cl="III";amb="industrial"}else if(/rural|interior|seco/.test(t)){cl="I";amb="rural ou interior seco"}
+    let el=/laje/.test(t)?0:/pilar/.test(t)?2:1;const nome=["laje","viga","pilar"][el];
+    return `Para ${nome} em ambiente ${amb} (classe de agressividade ${cl}), o cobrimento nominal de exemplo é <b>${COB[cl][el]} mm</b> em concreto armado.
+    <table><tr><th>Classe</th><th>Laje</th><th>Viga/Pilar</th></tr>${Object.keys(COB).map(k=>`<tr><td>${k}${k===cl?" ←":""}</td><td>${COB[k][0]} mm</td><td>${COB[k][1]} mm</td></tr>`).join("")}</table>
+    <div class="nota">Fonte no segundo cérebro: "Cobrimento da armadura" e "Classes de agressividade". Resumo de exemplo — consulte a norma vigente.</div>`;
+  }
+  if(/checklist|concretagem/.test(t)){
+    const d=addMsg("","bot");d.innerHTML="Montei o checklist de concretagem. Ele é o mesmo da aba Obras (marcou aqui, marca lá):<div id='cc' style='margin-top:6px'><ul class='lim'></ul></div>";
+    desenhaCheck(d.querySelector("ul"),null);return null;
+  }
+  if(/pendent|pendencia|falta/.test(t)){
+    const o=OBRAS.find(o=>t.includes(norm(o.nome)))||OBRAS.find(o=>t.includes(norm(o.nome.split(" ").pop())) && / [abc]\b/.test(" "+t))||OBRAS.find(o=>norm(o.nome).split(" ").some(w=>w.length>4&&t.includes(w)));
+    const lista=o?[o]:OBRAS;
+    return lista.map(o=>{const p=o.pend.filter(x=>!x.ok);return `<b>${esc(o.nome)}</b>: ${p.length?"":"nada pendente."}<ul style="margin:4px 0 8px;padding-left:18px">${p.map(x=>`<li>${esc(x.t)} <small>(até ${dstr(dia(x.dias))})</small></li>`).join("")}</ul>`}).join("")+(o?"":`<div class="nota">Não achei o nome da obra, então listei todas.</div>`);
+  }
+  if(/carga|laje|concreto|aco\b|armadura|volume/.test(t)){
+    const {dims,esp}=acha(t);const c=dims?dims[0]:5,l=dims?dims[1]:4,e=esp||12;
+    const x=calcLaje(c,l,e,80,1,1.5);
+    const asm=dims?"":"<div class='nota'>Você não deu as medidas, usei uma laje de exemplo 5 x 4 m e 12 cm. Diga, por exemplo, \"laje 6x4 de 10 cm\".</div>";
+    const quer=/carga/.test(t);
+    return `Laje ${fmt(c)} × ${fmt(l)} m, espessura ${fmt(e,1)} cm:
+    <div class="passo">Área = ${fmt(c)} × ${fmt(l)} = ${fmt(x.area)} m²</div>
+    <div class="passo">Volume = ${fmt(x.area)} × ${fmt(e/100)} = <b>${fmt(x.vol,3)} m³</b> de concreto</div>
+    <div class="passo">Aço (80 kg/m³) = <b>${fmt(x.aco,1)} kg</b></div>
+    <div class="passo">Peso próprio = 25 × ${fmt(e/100)} = ${fmt(x.pp)} kN/m²</div>
+    <div class="passo">Carga total = ${fmt(x.pp)} + 1,00 (revestimento) + 1,50 (sobrecarga) = <b>${fmt(x.q)} kN/m²</b> → ${fmt(x.total,1)} kN na laje</div>${asm}
+    <div class="nota">Estimativa. Para ajustar taxa de aço e cargas, use a aba Calculadoras.</div>`;
+  }
+  if(/viga|momento|reacao/.test(t)){
+    const x=calcCarga(5.5,2,0,4.5);
+    return `Exemplo de viga biapoiada de 4,5 m recebendo uma laje de 5,5 kN/m² com 2 m de largura de influência: w = <b>${fmt(x.w)} kN/m</b>, momento máximo <b>${fmt(x.M)} kN·m</b>, reação <b>${fmt(x.V)} kN</b>. Para outros valores use a calculadora de carga na viga.`;
+  }
+  if(/norma|nbr|vento|flecha|ancoragem|cura/.test(t)){
+    const ach=NOTAS.filter(x=>x.pasta!=="Programas"&&norm(x.titulo+x.txt+x.tags.join(" ")).split(/\W+/).some(w=>w.length>3&&t.includes(w))).slice(0,2);
+    if(ach.length)return ach.map(x=>`<b>${esc(x.titulo)}</b><br>${esc(x.txt)}`).join("<hr>")+`<div class="nota">Resumo de exemplo — consulte a norma vigente.</div>`;
+  }
+  if(/robo|agente|rotina/.test(t))return `Há ${AGENTES.filter(a=>a.on).length} robôs ligados de ${AGENTES.length}: ${AGENTES.filter(a=>a.on).map(a=>a.n).join(", ")}. Veja a aba Robôs e rotinas.`;
+  if(/oi|ola|bom dia|boa tarde|boa noite/.test(t)&&t.length<20)return "Olá! Posso calcular cargas e quantitativos, consultar notas de normas, listar pendências das obras e gerar checklists. O que você precisa?";
+  return "Não tenho certeza do que você quis dizer. Posso ajudar com: cobrimento por ambiente, carga e quantitativo de laje, pendências de uma obra ou checklist de concretagem. Tente um dos atalhos abaixo.";
+}
+function enviar(texto){
+  texto=texto.trim();if(!texto)return;addMsg(esc(texto),"me");
+  const p=document.createElement("div");p.className="pens";p.innerHTML="<i></i><i></i><i></i>";$("#msgs").appendChild(p);$("#msgs").scrollTop=$("#msgs").scrollHeight;
+  setTimeout(()=>{p.remove();let r;try{r=resp(texto)}catch(e){r="Tive um problema ao responder."}if(r!==null)addMsg(r,"bot")},600);
+}
+$("#form").onsubmit=e=>{e.preventDefault();const q=$("#q");enviar(q.value);q.value=""};
+$("#sug").innerHTML=SUG.map(s=>`<button type="button">${esc(s)}</button>`).join("");
+$$("#sug button").forEach(b=>b.onclick=()=>enviar(b.textContent));
+addMsg("Olá! Sou o Ultron, assistente de engenharia civil. Escreva do seu jeito ou use os atalhos abaixo. Tudo aqui é demonstração com dados inventados.","bot");
+
+central();obras();cerebro();robos();esteira();conexoes();medidores();
+log("Ultron iniciado (demonstração)");
+</script>
+</body>
+</html>
