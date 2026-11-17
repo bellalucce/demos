@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hermes completo - demonstração</title>
+<style>
+:root{--vinho:#4a1d36;--vinho2:#6b2a4d;--rosa:#c2477a;--rosa2:#fbe6ee;--ouro:#c9a24a;--ouro2:#fff4d6;--fundo:#fff8f5;--card:#fff;--txt:#3a2230;--mudo:#7d6672;--ok:#2e9e6a;--ok2:#dff5ea;--av:#d99a1b;--av2:#fff1cf;--er:#d6455d;--er2:#fde3e7;--borda:#f0dde5}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:var(--txt);overflow-x:hidden}
+button{font:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+aside{width:210px;flex:none;background:linear-gradient(180deg,var(--vinho),#2f1223);color:#fff;display:flex;flex-direction:column;padding:16px 10px;position:sticky;top:0;height:100vh}
+.marca{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--ouro),#f0d890);color:var(--vinho);display:grid;place-items:center;font-weight:800;font-size:1.2rem}
+.marca b{display:block;font-size:1.05rem}.marca small{opacity:.7;font-size:.72rem}
+nav{display:flex;flex-direction:column;gap:4px}
+nav button{display:flex;align-items:center;gap:10px;background:none;border:0;color:#f3dbe6;padding:10px 12px;border-radius:10px;text-align:left;font-size:.93rem;position:relative}
+nav button .i{font-size:1.1rem;width:22px;text-align:center}
+nav button:hover{background:#ffffff14}
+nav button.on{background:linear-gradient(90deg,#ffffff24,#ffffff0d);color:#fff;box-shadow:inset 3px 0 0 var(--ouro)}
+nav .badge{margin-left:auto;background:var(--rosa);color:#fff;border-radius:10px;font-size:.7rem;padding:1px 7px;min-width:20px;text-align:center}
+nav .badge.zero{display:none}
+.rodape-lado{margin-top:auto;font-size:.75rem;opacity:.9;padding:8px}
+.rodape-lado .sw{margin-top:6px}
+main{flex:1;min-width:0;padding:0 20px 30px}
+.aviso{background:var(--ouro2);border-left:4px solid var(--ouro);padding:9px 14px;margin:14px 0 10px;font-size:.84rem;border-radius:8px}
+.topo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 14px}
+.topo h1{margin:0;font-size:1.4rem;flex:1;min-width:140px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--borda);border-radius:20px;padding:5px 12px;font-size:.82rem;color:var(--mudo)}
+.chip.jogo{background:var(--vinho2);color:#fff;border-color:var(--vinho2)}
+.view{display:none}.view.on{display:block;animation:ent .25s}
+@keyframes ent{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 2px 10px #6b2a4d14;border:1px solid var(--borda);min-width:0}
+.card h2{margin:0 0 10px;font-size:1rem;color:var(--vinho2);display:flex;align-items:center;gap:8px}
+.card h2 .n{margin-left:auto;font-size:.75rem;font-weight:600;color:var(--mudo)}
+.kpi .l{font-size:.78rem;color:var(--mudo);text-transform:uppercase;letter-spacing:.04em}
+.kpi .v{font-size:1.9rem;font-weight:800;color:var(--vinho);margin:4px 0}
+.kpi .s{font-size:.78rem;color:var(--mudo)}
+.kpi.ouro{background:linear-gradient(135deg,#fff,var(--ouro2))}
+.kpi.rosa{background:linear-gradient(135deg,#fff,var(--rosa2))}
+.barra{height:8px;background:var(--rosa2);border-radius:6px;overflow:hidden;margin-top:6px}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--rosa),var(--ouro));transition:width .6s}
+.lista{list-style:none;margin:0;padding:0}
+.lista li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--borda);font-size:.9rem;flex-wrap:wrap}
+.lista li:last-child{border:0}
+.lista .t{flex:1;min-width:120px;overflow-wrap:anywhere}
+.q{color:var(--mudo);font-size:.78rem}
+.vazio{color:var(--mudo);font-size:.88rem;padding:8px 0}
+.btn{background:var(--rosa);color:#fff;border:0;border-radius:9px;padding:7px 13px;font-size:.84rem}
+.btn:hover{filter:brightness(1.08)}
+.btn.sec{background:var(--rosa2);color:var(--vinho2)}
+.btn.ouro{background:var(--ouro);color:#3a2a05}
+.btn.pq{padding:4px 9px;font-size:.78rem}
+.btn[disabled]{opacity:.45;cursor:default}
+.pill{display:inline-block;border-radius:12px;padding:2px 10px;font-size:.74rem;font-weight:600}
+.p-ok{background:var(--ok2);color:#18714a}.p-av{background:var(--av2);color:#8a5d00}.p-er{background:var(--er2);color:#a4243a}.p-cz{background:#eee7ea;color:#6a5a62}.p-rs{background:var(--rosa2);color:var(--vinho2)}
+.at{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;margin-bottom:7px;font-size:.88rem}
+.at.av{background:var(--av2)}.at.er{background:var(--er2)}.at.info{background:var(--rosa2)}.at.ok{background:var(--ok2)}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid #e3c9d5;border-radius:9px;background:#fff;color:var(--txt);min-width:0;max-width:100%}
+label{font-size:.78rem;color:var(--mudo);display:block;margin-bottom:3px}
+.form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.form>div{flex:1;min-width:130px}.form input,.form select{width:100%}
+.chat{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.msgs{flex:1;overflow-y:auto;padding:6px 2px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:82%;padding:10px 14px;border-radius:16px;font-size:.92rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.m.eu{align-self:flex-end;background:var(--vinho2);color:#fff;border-bottom-right-radius:4px}
+.m.ia{align-self:flex-start;background:#fff;border:1px solid var(--borda);border-bottom-left-radius:4px}
+.m.ia .acoes{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.m.ia .post{background:#e9ffd9;border:1px solid #c6e8b4;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:.85rem}
+.dig{align-self:flex-start;color:var(--mudo);font-size:.85rem;padding:4px 10px}
+.sug{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.sug button{background:var(--ouro2);border:1px solid var(--ouro);border-radius:16px;padding:4px 11px;font-size:.78rem;color:#5a4208}
+.env{display:flex;gap:8px}.env input{flex:1}
+.oferta{border:1px solid var(--borda);border-radius:12px;padding:10px 12px;margin-bottom:9px;background:#fff}
+.oferta.sel{border-color:var(--rosa);box-shadow:0 0 0 2px var(--rosa2)}
+.oferta .h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.oferta .h b{flex:1;min-width:140px}
+.preco s{color:var(--mudo)}.preco b{color:var(--ok);font-size:1.05rem}
+.zap{background:#e7ffdb;border:1px solid #c6e8b4;border-radius:12px;padding:12px 14px;white-space:pre-wrap;font-size:.92rem;line-height:1.5;min-height:150px;overflow-wrap:anywhere}
+.aviso-var{background:var(--av2);border:1px solid var(--av);border-radius:10px;padding:9px 12px;font-size:.86rem;margin-top:10px}
+.prod{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.2fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--borda);font-size:.9rem}
+.prod:last-child{border:0}
+.est{height:8px;background:#eee;border-radius:5px;overflow:hidden;margin-top:4px}.est i{display:block;height:100%;background:var(--ok);transition:width .5s}.est.b i{background:var(--er)}
+.prod .bt{display:flex;gap:6px;flex-wrap:wrap}
+.robo{display:flex;flex-direction:column;gap:6px}
+.robo .tp{display:flex;gap:8px;align-items:flex-start}
+.robo .tp b{flex:1;font-size:.9rem}
+.robo small{color:var(--mudo)}
+.robo .rd{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-top:auto}
+.sw{position:relative;width:42px;height:24px;display:inline-block;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#cdbac4;border-radius:24px;transition:.2s;cursor:pointer}
+.sw span:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:var(--ok)}.sw input:checked+span:before{transform:translateX(18px)}
+.sw.sm{width:36px;height:20px;margin-bottom:0}.sw.sm span:before{width:14px;height:14px}.sw.sm input:checked+span:before{transform:translateX(16px)}
+.pulso{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);margin-right:5px;animation:pl 1.4s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 #2e9e6a88}100%{box-shadow:0 0 0 8px #2e9e6a00}}
+.vigia{background:linear-gradient(135deg,#fff,var(--rosa2))}
+.log{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;background:#2f1223;color:#f6d9e6;border-radius:10px;padding:10px;max-height:150px;overflow-y:auto;margin-top:10px}
+.log div{padding:1px 0;overflow-wrap:anywhere}.log .e{color:#ff9aa9}.log .o{color:#9be6bf}
+.con{display:flex;flex-direction:column;gap:8px}
+.con .tp{display:flex;align-items:center;gap:10px}
+.con .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;background:var(--rosa2);flex:none}
+.con .tp b{flex:1}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:6px}
+.dot.v{background:var(--ok)}.dot.a{background:var(--av)}
+footer{text-align:center;font-size:.78rem;color:var(--mudo);padding:18px 8px}
+@media(max-width:1000px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .app{display:block}
+ aside{position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;height:auto;flex-direction:row;padding:4px 2px calc(4px + env(safe-area-inset-bottom));z-index:20;border-top:2px solid var(--ouro)}
+ .marca,.rodape-lado{display:none}
+ nav{flex-direction:row;width:100%;gap:0}
+ nav button{flex:1;min-width:0;flex-direction:column;gap:1px;padding:5px 0;font-size:.58rem;text-align:center;border-radius:8px;justify-content:center;align-items:center}
+ nav button.on{box-shadow:inset 0 3px 0 var(--ouro)}
+ nav button .i{font-size:1.15rem}
+ nav .badge{position:absolute;top:0;right:2px;margin:0;font-size:.58rem;padding:0 5px;min-width:15px}
+ main{padding:0 14px 90px}
+ .g4,.g2,.g3,.g2.loja{grid-template-columns:1fr}
+ .g4.kp{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpi .v{font-size:1.45rem}
+ .chat{height:calc(100vh - 280px)}
+ .m{max-width:92%}
+ .prod{grid-template-columns:1fr 1fr}
+ .prod .bt{grid-column:1/-1}
+ .topo h1{font-size:1.15rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+ <div class="marca"><div class="logo">H</div><div><b>Hermes</b><small>Loja Exemplo</small></div></div>
+ <nav id="nav"></nav>
+ <div class="rodape-lado">
+  <div>Modo jogo</div>
+  <label class="sw sm"><input type="checkbox" id="swJogo"><span></span></label>
+  <div style="margin-top:10px" id="relogio"></div>
+ </div>
+</aside>
+<main>
+ <div class="aviso"><b>DEMONSTRAÇÃO.</b> Loja, produtos, preços, clientes, lojas parceiras e cupons são todos inventados. Nada aqui se conecta a WhatsApp, Telegram, loja ou internet: tudo roda só no seu navegador e some ao recarregar. Mexa à vontade.</div>
+ <div class="topo"><h1 id="titulo">Central</h1><span class="chip jogo" id="chipJogo" style="display:none">🎮 Modo jogo ligado</span><span class="chip" id="chipHora"></span></div>
+
+ <section class="view on" id="v-central">
+  <div class="grid g4 kp">
+   <div class="card kpi ouro"><div class="l">Vendas hoje</div><div class="v" id="k-vendas">R$ 0</div><div class="s">Meta R$ 900<div class="barra"><i id="k-meta" style="width:0"></i></div></div></div>
+   <div class="card kpi"><div class="l">Pedidos</div><div class="v" id="k-pedidos">0</div><div class="s" id="k-ticket"></div></div>
+   <div class="card kpi rosa"><div class="l">Posts no grupo</div><div class="v" id="k-posts">0</div><div class="s" id="k-posts-s"></div></div>
+   <div class="card kpi"><div class="l">Para você</div><div class="v" id="k-pend">0</div><div class="s">pendências abertas</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+   <div class="card"><h2>📌 Para você <span class="n" id="n-pend"></span></h2><ul class="lista" id="c-pend"></ul></div>
+   <div class="card"><h2>⚠️ Atenções <span class="n" id="n-aten"></span></h2><div id="c-aten"></div></div>
+   <div class="card"><h2>📈 Vendas por hora</h2><div id="c-graf"></div></div>
+   <div class="card"><h2>🕘 Últimas ações do Hermes</h2><ul class="lista" id="c-log"></ul></div>
+  </div>
+ </section>
+
+ <section class="view" id="v-conversa">
+  <div class="card chat">
+   <div class="msgs" id="msgs"></div>
+   <div class="sug" id="sug"></div>
+   <form class="env" id="fEnv"><input id="inp" autocomplete="off" placeholder="Escreva do seu jeito, com ou sem acento..."><button class="btn" type="submit">Enviar</button></form>
+  </div>
+ </section>
+
+ <section class="view" id="v-grupo">
+  <div class="grid g2">
+   <div class="card"><h2>🛒 Fila de ofertas coletadas <span class="n" id="n-fila"></span></h2>
+    <div style="margin-bottom:10px"><button class="btn sec pq" id="bColetar">Coletar novas ofertas</button></div>
+    <div id="g-fila"></div></div>
+   <div>
+    <div class="card"><h2>✍️ Montar post</h2>
+     <div class="form" style="margin-bottom:10px"><div><label>Tom da frase</label><select id="tom"><option value="0">Animado</option><option value="1">Direto</option><option value="2">Urgência</option></select></div><div><button class="btn sec" id="bOutra" style="width:100%">Outra frase</button></div></div>
+     <div class="zap" id="g-post">Escolha uma oferta na fila e clique em “Montar post”.</div>
+     <div class="form" style="margin-top:10px"><button class="btn" id="bPostar" disabled>Postar agora</button>
+      <div style="flex:none"><select id="agMin"><option value="15">em 15 min</option><option value="30">em 30 min</option><option value="60">em 1 hora</option><option value="120">em 2 horas</option></select></div>
+      <button class="btn ouro" id="bAgendar" disabled>Agendar</button></div>
+     <div id="g-var"></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h2>🎲 Regra de variedade <label class="sw sm" style="margin-left:auto"><input type="checkbox" id="swVar" checked><span></span></label></h2>
+     <div style="font-size:.88rem" id="g-regra"></div></div>
+   </div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>📅 Histórico do dia <span class="n" id="n-hist"></span></h2><ul class="lista" id="g-hist"></ul></div>
+ </section>
+
+ <section class="view" id="v-loja">
+  <div id="l-alerta"></div>
+  <div class="grid g2 loja" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)">
+   <div class="card"><h2>📦 Produtos e estoque</h2><div id="l-prod"></div>
+    <div class="form" style="margin-top:12px"><div><label>Nova venda: produto</label><select id="vProd"></select></div><div style="flex:0 0 80px;min-width:80px"><label>Qtd</label><input id="vQtd" type="number" min="1" value="1"></div><button class="btn" id="bVenda">Registrar venda</button></div>
+    <div id="l-msg" style="font-size:.84rem;margin-top:8px;color:var(--mudo)"></div></div>
+   <div class="card"><h2>🧾 Pedidos de hoje <span class="n" id="n-ped"></span></h2><ul class="lista" id="l-ped"></ul></div>
+  </div>
+ </section>
+
+ <section class="view" id="v-agenda">
+  <div class="card" style="margin-bottom:14px"><h2>➕ Novo lembrete</h2>
+   <div class="form"><div style="flex:2;min-width:180px"><label>O quê</label><input id="aTxt" placeholder="Ex.: Ligar para o fornecedor"></div>
+    <div><label>Quando</label><input id="aQuando" type="datetime-local"></div>
+    <div><label>Repetir</label><select id="aRep"><option value="">Não repete</option><option value="dia">Todo dia</option><option value="semana">Toda semana</option><option value="mes">Todo mês</option></select></div>
+    <button class="btn" id="bAddAg">Adicionar</button></div></div>
+  <div class="grid g2">
+   <div class="card"><h2>⏰ Pendentes <span class="n" id="n-ag"></span></h2><ul class="lista" id="a-pend"></ul></div>
+   <div class="card"><h2>✅ Feitos <span class="n" id="n-agf"></span></h2><ul class="lista" id="a-feito"></ul></div>
+  </div>
+ </section>
+
+ <section class="view" id="v-robos">
+  <div class="card vigia" style="margin-bottom:14px"><h2>🛡️ Vigia <span class="n" id="vg-estado"></span></h2>
+   <div style="font-size:.88rem;color:var(--mudo)">O vigia olha as rotinas o tempo todo. Se uma quebra, ele tenta consertar sozinho e só chama você se não conseguir.</div>
+   <div style="margin-top:10px"><button class="btn" id="bErro">Simular um erro</button></div>
+   <div class="log" id="vg-log"></div></div>
+  <div class="grid g3" id="r-lista"></div>
+ </section>
+
+ <section class="view" id="v-conexoes">
+  <div class="grid g3" id="x-lista"></div>
+ </section>
+ <footer>Hermes - demonstração com dados fictícios. A versão real conversa por voz e usa uma IA que roda no próprio computador.</footer>
+</main>
+</div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const R=n=>"R$ "+n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const R0=n=>"R$ "+Math.round(n).toLocaleString("pt-BR");
+const pad=n=>String(n).padStart(2,"0");
+const DIAS=["dom","seg","ter","qua","qui","sex","sáb"];
+const sod=(d=new Date())=>{const x=new Date(d);x.setHours(0,0,0,0);return x.getTime()};
+const hm=ms=>{const d=new Date(ms);return pad(d.getHours())+":"+pad(d.getMinutes())};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function quando(ms){const d=new Date(ms),dd=Math.round((sod(d)-sod())/864e5);
+ const p=dd===0?"hoje":dd===1?"amanhã":dd===-1?"ontem":DIAS[d.getDay()]+" "+pad(d.getDate())+"/"+pad(d.getMonth()+1);
+ return p+" "+hm(ms)}
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=[...Array(n+1).keys()];
+ for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+
+/* ================= ESTADO ================= */
+const agora=Date.now();
+const S={
+ jogo:false,varOn:true,foco:null,sel:null,idPed:1040,idAg:0,idOf:0,
+ prods:[
+  {id:1,nome:"Batom Matte Rosé Aurora",preco:24.90,est:14,min:5,ch:["batom","batons","labial"]},
+  {id:2,nome:"Perfume Floral Jardim 50 ml",preco:89.90,est:8,min:4,ch:["perfume","perfumes","colonia"]},
+  {id:3,nome:"Base Líquida Seda",preco:49.90,est:3,min:5,ch:["base","bases"]},
+  {id:4,nome:"Máscara de Cílios Volume",preco:34.90,est:22,min:6,ch:["rimel","mascara","cilios"]},
+  {id:5,nome:"Paleta de Sombras Dourada",preco:59.90,est:11,min:4,ch:["paleta","sombra","sombras"]},
+  {id:6,nome:"Hidratante Corporal Mel",preco:29.90,est:17,min:6,ch:["hidratante","hidratantes","creme"]},
+  {id:7,nome:"Esmalte Cremoso Coral",preco:9.90,est:40,min:10,ch:["esmalte","esmaltes","unha"]},
+  {id:8,nome:"Kit 8 Pincéis de Maquiagem",preco:44.90,est:6,min:4,ch:["pincel","pinceis","kit"]}
+ ],
+ pedidos:[],ofertas:[],hist:[],agenda:[],log:[],robos:[],conex:[],
+ vigiaLog:[],vigiaOcupado:false,chat:[],mem:61
+};
+function log(t){S.log.unshift({ts:Date.now(),t});S.log=S.log.slice(0,40)}
+
+(function(){
+ [[1,2],[7,3],[4,1],[2,1],[6,2],[1,1],[5,1]].forEach(([p,q],i)=>{
+  const pr=S.prods.find(x=>x.id===p);
+  S.pedidos.push({id:1033+i,prod:pr.id,qtd:q,valor:pr.preco*q,ts:Math.max(sod()+6e4,agora-(95-i*12)*6e4),st:"pago"});
+ });
+})();
+const LOJAS=["Mercado Brilho","Super Aurora","Casa do Cheiro","Mega Fofura","Empório da Beleza","Beleza Express"];
+const CATS={perfume:"Perfume",skincare:"Skincare",maquiagem:"Maquiagem",cabelo:"Cabelo",unhas:"Unhas",corpo:"Corpo e banho",eletro:"Eletro"};
+[
+ ["Perfume Floral Lua Cheia 100 ml","perfume",189.90,99.90,"LUA15"],
+ ["Sérum Facial Vitamina C 30 ml","skincare",129.00,69.90,""],
+ ["Batom Líquido Velvet Vinho","maquiagem",39.90,19.90,"BELEZA5"],
+ ["Shampoo Reparador Argan 400 ml","cabelo",42.00,27.90,""],
+ ["Kit 12 Esmaltes Tons Verão","unhas",79.90,44.90,"UNHA10"],
+ ["Perfume Amadeirado Noite 75 ml","perfume",219.00,139.00,""],
+ ["Protetor Solar Facial FPS 60","skincare",59.90,34.90,"SOL5"],
+ ["Secador de Cabelo Compacto 2000 W","eletro",189.00,119.00,""],
+ ["Hidratante Corporal Baunilha 500 ml","corpo",34.90,19.90,""],
+ ["Paleta de Iluminadores Pérola","maquiagem",69.90,39.90,"GLOW"]
+].forEach(novaOferta);
+function novaOferta(d){S.ofertas.push({id:++S.idOf,nome:d[0],cat:d[1],de:d[2],por:d[3],cupom:d[4],loja:pick(LOJAS),st:"fila",post:null,tom:0,fr:0})}
+[["Hidratante Corporal Mel 400 ml","corpo",24.90,"Casa do Cheiro",250],["Esmalte Gel Rosé","unhas",11.90,"Mega Fofura",190],["Perfume Cítrico Brisa 50 ml","perfume",79.90,"Mercado Brilho",130],["Máscara Capilar Hidratação","cabelo",29.90,"Empório da Beleza",70]].forEach(h=>{
+ S.hist.push({ts:Math.max(sod()+6e4,agora-h[4]*6e4),nome:h[0],cat:h[1],por:h[2],loja:h[3],st:"postado"})});
+function addAg(txt,ts,rep){const a={id:++S.idAg,txt,ts,rep:rep||"",feito:false,aviso:false,ftx:null};S.agenda.push(a);return a}
+const diaH=(k,h)=>{const d=new Date();d.setDate(d.getDate()+k);d.setHours(h,0,0,0);return +d};
+addAg("Conferir os pedidos da manhã",agora+40*6e4,"");
+addAg("Revisar os posts do grupo",diaH(diaH(0,18)<agora?1:0,18),"dia");
+addAg("Ligar para o fornecedor de embalagens",diaH(1,10),"");
+addAg("Pagar a mensalidade do site",diaH(3,9),"mes");
+[
+ ["Coleta de ofertas","Procura promoções nas lojas parceiras","",0,"rodando",3,["coleta","coletor","ofertas"]],
+ ["Montador de posts","Monta preço de/por, % OFF, cupom e frase","",0,"rodando",6,["montador","posts"]],
+ ["Grupo do WhatsApp","Posta as ofertas aprovadas no grupo","",0,"rodando",9,["whatsapp","grupo","zap"]],
+ ["Grupo do Telegram","Espelha as ofertas no canal","",0,"esperando",18,["telegram","canal"]],
+ ["Agenda e lembretes","Avisa na hora de cada compromisso","",0,"rodando",1,["agenda","lembrete","lembretes"]],
+ ["Vigia de estoque","Avisa quando um produto está acabando","",0,"rodando",4,["estoque"]],
+ ["Vigia de saúde","Confere memória, disco e as outras rotinas","",0,"rodando",2,["saude","vigia"]],
+ ["Cupons das lojas","Atualiza os cupons válidos","",0,"esperando",35,["cupons","cupom"]],
+ ["Story do preço do dia","Monta o story das 19h","",0,"esperando",1260,["story","stories"]],
+ ["Resumo de vendas da noite","Manda o fechamento do dia","",0,"esperando",1200,["resumo","fechamento"]],
+ ["Backup diário","Guarda uma cópia de tudo","",0,"esperando",900,["backup"]],
+ ["Criativos (artes)","Gera as artes dos posts","",1,"rodando",12,["criativos","artes","arte"]],
+ ["Estudo da IA local","Treina o modelo com os acertos do dia","",1,"desligada",600,["estudo","treino","treinar"]],
+ ["Seguidores e alcance","Mede o crescimento das redes","",0,"rodando",22,["seguidores","alcance","redes"]],
+ ["Monitor do computador","Fica de olho no uso de memória","",0,"rodando",1,["monitor","computador"]]
+].forEach((r,i)=>S.robos.push({id:i+1,nome:r[0],desc:r[1],pesado:!!r[3],estado:r[4],min:r[5],ch:r[6],ligado:r[4]!=="desligada",pausaJogo:false,erro:null}));
+S.conex=[
+ {id:"wa",ic:"💬",nome:"WhatsApp",det:"Grupo “Ofertas Exemplo” · 1.248 membros (fictício)",ok:true,msg:"Conectado"},
+ {id:"tg",ic:"✈️",nome:"Telegram",det:"Canal de ofertas · 612 inscritos (fictício)",ok:true,msg:"Conectado"},
+ {id:"sh",ic:"🛍️",nome:"Shopee",det:"Loja Exemplo · 23 anúncios ativos (fictício)",ok:true,msg:"Conectado"},
+ {id:"ml",ic:"🟡",nome:"Mercado Livre",det:"Login simulado expirou",ok:false,msg:"Aguardando entrar de novo",btn:"Entrar de novo"},
+ {id:"ig",ic:"📸",nome:"Instagram",det:"Permissão de publicação vence em 3 dias (exemplo)",ok:false,msg:"Renovar permissão",btn:"Renovar permissão"},
+ {id:"ia",ic:"🧠",nome:"Modelo de IA local",det:"Exemplo-7B rodando neste computador, sem mandar dados para fora",ok:true,msg:"Rodando"}
+];
+
+/* ================= LÓGICA ================= */
+const hojeSt=()=>S.pedidos.filter(p=>p.ts>=sod());
+const pagos=()=>hojeSt().filter(p=>p.st==="pago");
+const totalVendas=()=>pagos().reduce((a,p)=>a+p.valor,0);
+const prod=id=>S.prods.find(p=>p.id===id);
+const pct=o=>Math.round((1-o.por/o.de)*100);
+const postadosHoje=()=>S.hist.filter(h=>h.st==="postado"&&h.ts>=sod());
+const ultimoCat=()=>{const l=S.hist.filter(h=>h.ts>=sod()).sort((a,b)=>b.ts-a.ts);return l.length?l[0].cat:null};
+const abertos=()=>S.agenda.filter(a=>!a.feito);
+function pendHoje(){const fim=sod()+864e5;return abertos().filter(a=>a.ts<fim).sort((a,b)=>a.ts-b.ts)}
+function venderProd(p,q){
+ if(!(q>=1))return {ok:false,msg:"Quantidade inválida."};
+ if(p.est<q)return {ok:false,msg:"Só tenho "+p.est+" de “"+p.nome+"” em estoque."};
+ p.est-=q;const ped={id:++S.idPed,prod:p.id,qtd:q,valor:p.preco*q,ts:Date.now(),st:"pago"};S.pedidos.push(ped);
+ log("Venda #"+ped.id+": "+q+"x "+p.nome+" ("+R(ped.valor)+")");
+ if(p.est<=p.min)log("Estoque baixo: "+p.nome+" ("+p.est+" un.)");
+ return {ok:true,ped};
+}
+function cancelarPed(ped){
+ if(ped.st!=="pago")return false;ped.st="cancelado";prod(ped.prod).est+=ped.qtd;
+ log("Pedido #"+ped.id+" cancelado: "+ped.qtd+" un. de "+prod(ped.prod).nome+" voltaram ao estoque");return true;
+}
+const FRASES=[
+ ["Olha esse achado! 😍","Corre que tá lindo demais! ✨","Promoção que vale a pena! 💖","Chegou na hora certa! 🌸"],
+ ["Oferta do dia.","Preço baixo confirmado.","Boa oferta para hoje.","Preço bom, estoque limitado."],
+ ["ÚLTIMAS UNIDADES, corre! ⏰","Acaba hoje! 🔥","Preço de queima, não vai durar! 🚨","Vai esgotar rápido! ⚡"]
+];
+function montar(o,nova){
+ if(nova)o.fr=(o.fr+1)%4;o.tom=+$("#tom").value;
+ o.post=FRASES[o.tom][o.fr]+"\n\n🛍️ "+o.nome+"\n❌ De "+R(o.de)+"\n✅ Por "+R(o.por)+" ("+pct(o)+"% OFF)"+(o.cupom?"\n🎟️ Cupom: "+o.cupom:"")+"\n🏬 "+o.loja+"\n\n👉 https://exemplo.com/oferta-"+o.id;
+ if(o.st==="fila")o.st="montado";
+ return o.post;
+}
+const bloqueia=o=>S.varOn&&ultimoCat()===o.cat;
+function postar(o){
+ if(!o.post)montar(o);
+ o.st="postado";S.hist.push({ts:Date.now(),nome:o.nome,cat:o.cat,por:o.por,loja:o.loja,st:"postado"});
+ log("Post no grupo: "+o.nome+" ("+pct(o)+"% OFF)");
+}
+function agendarPost(o,min){
+ if(!o.post)montar(o);o.st="agendado";
+ S.hist.push({ts:Date.now()+min*6e4,nome:o.nome,cat:o.cat,por:o.por,loja:o.loja,st:"agendado",of:o.id});
+ log("Post agendado para "+hm(Date.now()+min*6e4)+": "+o.nome);
+}
+function toggleRobo(r,on){
+ r.ligado=on;
+ if(!on){r.estado="desligada";r.erro=null;r.pausaJogo=false}
+ else{r.estado=(r.pesado&&S.jogo)?"pausada":"rodando";r.pausaJogo=r.pesado&&S.jogo;r.min=0}
+ log("Rotina “"+r.nome+"” "+(on?"ligada":"desligada"));
+}
+function setJogo(on){
+ if(S.jogo===on)return;S.jogo=on;
+ S.robos.forEach(r=>{
+  if(!r.pesado)return;
+  if(on&&r.ligado){r.estado="pausada";r.pausaJogo=true}
+  if(!on&&r.pausaJogo){r.estado="rodando";r.pausaJogo=false;r.min=0}
+ });
+ log(on?"Modo jogo ligado: rotinas pesadas pausadas, computador livre":"Modo jogo desligado: rotinas pesadas voltaram");
+}
+function simularErro(){
+ if(S.vigiaOcupado)return;
+ const c=S.robos.filter(r=>r.ligado&&r.estado==="rodando");if(!c.length)return;
+ const r=pick(c),m=pick(["tempo esgotado ao abrir a página da loja parceira","o arquivo de ofertas veio vazio","o programa parou de responder"]);
+ S.vigiaOcupado=true;r.erro=m;r.estado="erro";
+ const L=(t,c)=>{S.vigiaLog.push({t:hm(Date.now())+" "+t,c});S.vigiaLog=S.vigiaLog.slice(-30);renderAll()};
+ log("Vigia viu um erro em “"+r.nome+"”");L("ERRO em “"+r.nome+"”: "+m,"e");
+ setTimeout(()=>L("Vigia: tentando de novo por outro caminho...",""),1200);
+ setTimeout(()=>L("Vigia: reiniciando a rotina e limpando o que travou...",""),2400);
+ setTimeout(()=>{r.erro=null;r.estado=(r.pesado&&S.jogo)?"pausada":"rodando";r.min=0;S.vigiaOcupado=false;
+  log("Vigia consertou “"+r.nome+"” sozinho");L("CONSERTADO: “"+r.nome+"” voltou a rodar sozinha. Você não precisou fazer nada.","o")},3600);
+}
+function coletar(n){
+ const pool=[["Sabonete Facial Argila Verde","skincare",34.90,19.90,""],["Perfume Gourmand Caramelo 50 ml","perfume",149.00,89.00,"DOCE10"],["Gloss Labial Brilho Cereja","maquiagem",24.90,12.90,""],["Máscara de Hidratação Profunda","cabelo",49.00,29.90,"HIDRA"],["Esfoliante Corporal Café","corpo",39.90,22.90,""],["Chapinha Cerâmica Mini","eletro",159.00,99.00,"LISO"],["Base de Unhas Fortalecedora","unhas",19.90,9.90,""],["Tônico Facial Rosa","skincare",44.90,26.90,""]];
+ let c=0;for(let i=0;i<n;i++){if(S.ofertas.filter(o=>o.st==="fila"||o.st==="montado").length<14){novaOferta(pick(pool));c++}}
+ if(c)log("Coleta: "+c+" oferta"+(c>1?"s":"")+" nova"+(c>1?"s":"")+" na fila");return c;
+}
+function concluir(a){
+ if(a.rep){const d=new Date(a.ts);
+  const passo=()=>{if(a.rep==="dia")d.setDate(d.getDate()+1);else if(a.rep==="semana")d.setDate(d.getDate()+7);else d.setMonth(d.getMonth()+1)};
+  passo();while(d<Date.now())passo();
+  S.agenda.push({id:++S.idAg,txt:a.txt,ts:a.ts,rep:"",feito:true,aviso:true,ftx:Date.now()});
+  a.ts=+d;a.aviso=false;
+ }else{a.feito=true;a.ftx=Date.now()}
+ log("Lembrete feito: "+a.txt);
+}
+
+/* ================= CONVERSA (entende frases livres) ================= */
+const stem=(toks,stems)=>toks.some(t=>stems.some(s=>t.startsWith(s)||(s.length>=4&&(lev(t,s)<=1||lev(t.slice(0,s.length),s)<=1))));
+function acharProd(toks){
+ let best=null,bs=0;
+ S.prods.forEach(p=>p.ch.forEach(c=>toks.forEach(t=>{
+  const sc=t===c?3:(t.length>=4&&c.length>=4&&lev(t,c)<=1?2:(t.length>=4&&c.length>=4&&(t.startsWith(c.slice(0,4))||c.startsWith(t.slice(0,4)))?1:0));
+  if(sc>bs){bs=sc;best=p}})));
+ return best;
+}
+function acharOferta(toks){
+ const cand=S.ofertas.filter(o=>o.st==="fila"||o.st==="montado");
+ const q=toks.filter(t=>t.length>=4&&!/^(oferta|ofertas|posta|postar|poste|uma|algum|alguma|publica|publicar|manda|mandar|agora|promocao)$/.test(t));
+ let best=null,bs=0;
+ cand.forEach(o=>{const hay=norm(o.nome+" "+CATS[o.cat]);let s=0;
+  q.forEach(t=>{if(hay.includes(t)||hay.split(/\W+/).some(w=>w.length>=4&&lev(w,t)<=1))s+=2});
+  if(s>0){s+=pct(o)/100;if(s>bs){bs=s;best=o}}});
+ return {o:best,tinha:q.length>0,fila:cand};
+}
+function parseLembrete(orig){
+ let o=orig,n=norm(orig),m;
+ const cut=re=>{const x=re.exec(n);if(!x)return null;n=n.slice(0,x.index)+" "+n.slice(x.index+x[0].length);o=o.slice(0,x.index)+" "+o.slice(x.index+x[0].length);return x};
+ let rep="",wd=null;
+ if(cut(/\b(todo dia|todos os dias|diariamente)\b/))rep="dia";
+ else if(cut(/\b(todo mes|todos os meses|mensalmente)\b/))rep="mes";
+ else if(cut(/\b(toda semana|semanalmente)\b/))rep="semana";
+ else if(m=cut(/\btod[ao]s? (?:as |os )?(segunda|terca|quarta|quinta|sexta|sabado|domingo)s?(?:-feiras?)?\b/)){rep="semana";wd=m[1]}
+ let rel=null;
+ if(m=cut(/\b(?:daqui(?: a)?|em)\s+(\d+)\s*(min\w*|hora\w*|h)\b/))rel=+m[1]*(m[2][0]==="m"?1:60)*6e4;
+ let dia=null,dn=null;
+ if(cut(/\bdepois de amanha\b/))dia=2;
+ else if(cut(/\bamanha\b/))dia=1;
+ else if(cut(/\bhoje\b/))dia=0;
+ else if(m=cut(/\bdia\s+(\d{1,2})\b/))dn=+m[1];
+ else if(!wd&&(m=cut(/\b(segunda|terca|quarta|quinta|sexta|sabado|domingo)(?:-feira)?\b/)))wd=m[1];
+ let h=null,mi=0;
+ if(m=cut(/\b(?:as|a)\s+(\d{1,2})(?:\s*[:h]\s*(\d{2})?|\s*horas?)?(?![\d:])/)){h=+m[1];mi=+(m[2]||0)}
+ else if(m=cut(/\b(\d{1,2})\s*(?:[:h]\s*(\d{2})?|horas?)(?![a-z0-9])/)){h=+m[1];mi=+(m[2]||0)}
+ if(m=cut(/\b(?:da|de|a|pela|na)\s+(manha|tarde|noite|madrugada)\b/)){if(h!==null&&h<12&&/tarde|noite/.test(m[1]))h+=12}
+ {const mm=/\S+/g;let k,c=0;const SS=["lembr","avis","anot","marc","agend"];
+  while((k=mm.exec(n))&&c++<4){const t=k[0];if(SS.some(x=>t.startsWith(x)||lev(t.slice(0,x.length),x)<=1)){const rest=/^\s+(?:de|que|para|pra|disso|o|a)/.exec(n.slice(mm.lastIndex));const fim=mm.lastIndex+(rest?rest[0].length:0);n=" "+n.slice(fim);o=" "+o.slice(fim);break}}}
+ let txt=o.replace(/\s+/g," ").replace(/^[\s,.:;-]+|[\s,.:;-]+$/g,"").replace(/^(?:de|que|para|pra)\s+/i,"");
+ txt=txt?txt[0].toUpperCase()+txt.slice(1):"Lembrete";
+ const semHora=h===null&&rel===null,now=new Date();let d=new Date();
+ if(rel!==null)d=new Date(Date.now()+rel);
+ else{
+  d.setHours(h===null?9:h,mi,0,0);
+  const NS=["domingo","segunda","terca","quarta","quinta","sexta","sabado"];
+  if(dia!==null)d.setDate(d.getDate()+dia);
+  else if(dn!==null){d.setDate(dn);if(d<now)d.setMonth(d.getMonth()+1)}
+  else if(wd){d.setDate(d.getDate()+(NS.indexOf(wd)-now.getDay()+7)%7);if(d<now)d.setDate(d.getDate()+7)}
+  else if(d<now)d.setDate(d.getDate()+1);
+ }
+ return {txt,ts:+d,rep,semHora};
+}
+const repTxt={dia:"todo dia",semana:"toda semana",mes:"todo mês"};
+const say=(t,extra)=>({t,...extra});
+function entender(orig){
+ const n=norm(orig).replace(/(.)\1{2,}/g,"$1$1").replace(/[?!.,;]+/g," "),toks=n.split(/\s+/).filter(Boolean);
+ const num=(n.match(/\b(\d+)\b/)||[])[1];
+ const has=(...s)=>stem(toks,s);
+ /* modo jogo */
+ if(has("jog","game","gamer")){
+  const off=/\b(desliga|desativa|tira|sai|saia|acabou|terminei|parei|volta|encerr)\w*/.test(n);
+  if(off){const ja=!S.jogo;setJogo(false);return say(ja?"O modo jogo já estava desligado.":"Pronto, desliguei o modo jogo. As rotinas pesadas (artes e estudo da IA) voltaram a rodar.",{ir:[["Ver robôs","robos"]]})}
+  const ja=S.jogo;setJogo(true);
+  return say(ja?"O modo jogo já está ligado. Bom jogo! 🎮":"Modo jogo ligado! Pausei as rotinas pesadas para o computador ficar leve. Bom jogo! 🎮",{ir:[["Ver robôs","robos"]]});
+ }
+ /* adiar */
+ if(has("adi","soneca")&&!has("lembr","post")){
+  let min=15;if(num)min=+num*(/hora|\bh\b/.test(n)?60:1);else if(/meia hora/.test(n))min=30;else if(/uma hora/.test(n))min=60;
+  const a=S.agenda.find(x=>x.id===S.foco&&!x.feito)||pendHoje()[0]||abertos().sort((x,y)=>x.ts-y.ts)[0];
+  if(!a)return say("Não tem nenhum lembrete pendente para adiar.");
+  a.ts=Math.max(a.ts,Date.now())+min*6e4;a.aviso=false;S.foco=a.id;
+  log("Lembrete adiado "+min+" min: "+a.txt);
+  return say("Adiei “"+a.txt+"” em "+min+" minutos. Novo horário: "+quando(a.ts)+".",{ir:[["Ver agenda","agenda"]]});
+ }
+ /* lembrete */
+ if(has("lembr","anot","avis","marc","agendar")){
+  const L=parseLembrete(orig),a=addAg(L.txt,L.ts,L.rep);S.foco=a.id;log("Lembrete criado: "+a.txt+" ("+quando(a.ts)+")");
+  return say("Anotado: “"+a.txt+"” para "+quando(a.ts)+(L.rep?", repetindo "+repTxt[L.rep]:"")+"."+(L.semHora?" Como você não falou a hora, deixei às 9h.":" Te aviso na hora."),{ir:[["Ver agenda","agenda"]]});
+ }
+ /* feito */
+ if(has("feit","pront","conclu","terminei","fiz","resolvi")&&toks.length<=6&&!has("post","estoq","vend")){
+  const a=S.agenda.find(x=>x.id===S.foco&&!x.feito)||pendHoje()[0];
+  if(!a)return say("Nada pendente por aqui. Tudo em dia! ✅");
+  concluir(a);return say("Marquei “"+a.txt+"” como feito."+(a.rep?" Como repete "+repTxt[a.rep]+", o próximo ficou para "+quando(a.ts)+".":""),{ir:[["Ver agenda","agenda"]]});
+ }
+ /* vendas do dia */
+ if((has("quant","qnt","qto","qual","total","quanto")&&has("vend","fatur"))||has("faturamento")){
+  const p=pagos(),canc=hojeSt().length-p.length;
+  return say("Hoje já são "+p.length+" venda"+(p.length!==1?"s":"")+", somando "+R(totalVendas())+(canc?" ("+canc+" cancelada"+(canc>1?"s":"")+")":"")+". Ticket médio de "+R(p.length?totalVendas()/p.length:0)+".",{ir:[["Ver a loja","loja"]]});
+ }
+ /* postar oferta */
+ if(has("post","public","mand")&&has("ofert","promo","achad","post")){
+  const {o,tinha,fila}=acharOferta(toks);
+  if(!o)return say(tinha?"Não achei essa oferta na fila agora. Na fila tenho: "+([...new Set(fila.map(x=>CATS[x.cat]))].join(", ")||"nada")+". Quer que eu poste uma desses?":"A fila está vazia no momento. Vou coletar novas ofertas.",{ir:[["Ver o grupo","grupo"]]});
+  montar(o);
+  if(bloqueia(o)){agendarPost(o,30);return say("A última postagem também foi de "+CATS[o.cat].toLowerCase()+", e a regra de variedade não deixa repetir o mesmo tipo seguido. Então deixei esta agendada para daqui 30 minutos:",{post:o.post,ir:[["Ver o grupo","grupo"]]})}
+  postar(o);return say("Postei no grupo agora:",{post:o.post,ir:[["Ver o grupo","grupo"]]});
+ }
+ /* cancelar */
+ if(has("cancel","devol")){
+  const ped=num&&S.pedidos.find(x=>x.id===+num)||[...pagos()].sort((a,b)=>b.ts-a.ts)[0];
+  if(!ped||ped.st!=="pago")return say("Não achei esse pedido para cancelar.");
+  cancelarPed(ped);return say("Cancelei o pedido #"+ped.id+" e devolvi "+ped.qtd+" un. de “"+prod(ped.prod).nome+"” ao estoque.",{ir:[["Ver a loja","loja"]]});
+ }
+ /* repor */
+ if(has("repor","repo","reabast")){
+  const p=acharProd(toks);if(!p)return say("Qual produto devo repor?");
+  const q=num?+num:10;p.est+=q;log("Estoque reposto: +"+q+" "+p.nome);
+  return say("Repus "+q+" unidades de “"+p.nome+"”. Agora são "+p.est+".",{ir:[["Ver a loja","loja"]]});
+ }
+ /* vender */
+ if(has("vend")){
+  const p=acharProd(toks);if(!p)return say("Vendeu qual produto? Tente, por exemplo: “vendi 2 batons”.");
+  const r=venderProd(p,num?+num:1);if(!r.ok)return say(r.msg);
+  return say("Venda #"+r.ped.id+" registrada: "+r.ped.qtd+"x "+p.nome+" ("+R(r.ped.valor)+"). Estoque agora: "+p.est+"."+(p.est<=p.min?" ⚠️ Ficou baixo!":""),{ir:[["Ver a loja","loja"]]});
+ }
+ /* estoque */
+ if(has("estoq","sobr","quantos","quantas","acab")||/\btem\b/.test(n)){
+  const p=acharProd(toks);
+  if(p)return say(p.nome+": "+p.est+" unidade"+(p.est!==1?"s":"")+" em estoque (mínimo "+p.min+"). "+(p.est<=p.min?"⚠️ Está baixo. Quer que eu reponha 10?":"Tudo certo, estoque saudável."),{ir:[["Ver a loja","loja"]]});
+  const bx=S.prods.filter(x=>x.est<=x.min);
+  return say(bx.length?"Estoque baixo agora: "+bx.map(x=>x.nome+" ("+x.est+")").join(", ")+".":"Todos os produtos estão com estoque saudável.",{ir:[["Ver a loja","loja"]]});
+ }
+ /* ligar / desligar rotina */
+ if(has("lig","deslig","pausa","desativ")){
+  const off=has("deslig","pausa","desativ");
+  const r=S.robos.find(r=>r.ch.some(c=>toks.some(t=>t===c||(t.length>=5&&lev(t,c)<=1))));
+  if(r){toggleRobo(r,!off);return say("Rotina “"+r.nome+"” "+(off?"desligada":"ligada")+".",{ir:[["Ver robôs","robos"]]})}
+ }
+ /* resumo do dia */
+ if(/o que (tenho|tem|ha|falta)|resum|agenda|pendenc|como esta (o )?dia|bom dia|compromiss/.test(n)||has("hoje","hj")){
+  const p=pendHoje();if(p[0])S.foco=p[0].id;
+  let t="Hoje até agora: "+pagos().length+" vendas ("+R(totalVendas())+") e "+postadosHoje().length+" posts no grupo.\n";
+  t+=p.length?"Você tem "+p.length+" coisa"+(p.length>1?"s":"")+" para hoje:\n"+p.map(a=>"• "+hm(a.ts)+" "+a.txt+(a.ts<Date.now()?" (atrasado)":"")).join("\n"):"Nada pendente para hoje. 🎉";
+  const bx=S.prods.filter(x=>x.est<=x.min);if(bx.length)t+="\n⚠️ Estoque baixo: "+bx.map(x=>x.nome).join(", ")+".";
+  return say(t,{ir:[["Ver a Central","central"],["Ver agenda","agenda"]]});
+ }
+ if(has("ajud","oi","ola")&&toks.length<5)return say("Posso cuidar da agenda, das vendas, do estoque, do grupo de ofertas e das rotinas. Experimente um dos exemplos abaixo.");
+ return say("Não entendi essa. Na demonstração eu respondo a frases como as sugestões abaixo. A versão real entende bem mais, inclusive por voz.");
+}
+
+/* ================= TELAS ================= */
+const TABS=[["central","Central","🏠"],["conversa","Conversa","💬"],["grupo","Grupo","📣"],["loja","Loja","🛍️"],["agenda","Agenda","🗓️"],["robos","Robôs","🤖"],["conexoes","Conexões","🔌"]];
+const TITULOS={central:"Central",conversa:"Conversa com o Hermes",grupo:"Grupo de ofertas",loja:"Loja e estoque",agenda:"Agenda",robos:"Robôs (motor)",conexoes:"Conexões"};
+let aba="central";
+function irPara(t){aba=t;document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+t));$("#titulo").textContent=TITULOS[t];renderAll();window.scrollTo(0,0)}
+function badges(){return {grupo:S.ofertas.filter(o=>o.st==="montado").length,loja:S.prods.filter(p=>p.est<=p.min).length,agenda:pendHoje().length,robos:S.robos.filter(r=>r.estado==="erro").length,conexoes:S.conex.filter(c=>!c.ok).length}}
+function renderNav(){const b=badges();$("#nav").innerHTML=TABS.map(t=>'<button data-t="'+t[0]+'" class="'+(aba===t[0]?"on":"")+'"><span class="i">'+t[2]+'</span><span>'+t[1]+'</span><span class="badge '+(b[t[0]]?"":"zero")+'">'+(b[t[0]]||0)+'</span></button>').join("")}
+function tween(el,to,fmt){const from=+el.dataset.v||0;el.dataset.v=to;if(from===to){el.textContent=fmt(to);return}
+ const t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=fmt(from+(to-from)*e);if(k<1)requestAnimationFrame(f);else el.textContent=fmt(to)};requestAnimationFrame(f)}
+function renderCentral(){
+ const tv=totalVendas(),p=pagos(),pend=pendHoje(),pr=S.ofertas.filter(o=>o.st==="montado");
+ tween($("#k-vendas"),tv,R0);tween($("#k-pedidos"),p.length,v=>Math.round(v));tween($("#k-posts"),postadosHoje().length,v=>Math.round(v));
+ const np=pend.length+pr.length;tween($("#k-pend"),np,v=>Math.round(v));
+ $("#k-meta").style.width=Math.min(100,tv/900*100)+"%";
+ $("#k-ticket").textContent="Ticket médio "+R(p.length?tv/p.length:0);
+ const ag=S.hist.filter(h=>h.st==="agendado").length;$("#k-posts-s").textContent=ag?ag+" agendado"+(ag>1?"s":""):"nenhum agendado";
+ $("#n-pend").textContent=np?np+" aberta"+(np>1?"s":""):"";
+ $("#c-pend").innerHTML=(pend.map(a=>'<li><span class="t">'+esc(a.txt)+'<div class="q">'+(a.ts<Date.now()?"⚠️ atrasado · ":"")+quando(a.ts)+(a.rep?" · repete "+repTxt[a.rep]:"")+'</div></span><button class="btn pq" data-feito="'+a.id+'">Feito</button></li>').join("")
+  +pr.map(o=>'<li><span class="t">Aprovar post: '+esc(o.nome)+'<div class="q">montado, esperando você postar</div></span><button class="btn pq sec" data-ir="grupo">Ver</button></li>').join(""))||'<li class="vazio">Nada pendente. 🎉</li>';
+ const at=[];
+ S.robos.filter(r=>r.estado==="erro").forEach(r=>at.push(["er","🔴 “"+r.nome+"” com erro. O vigia está consertando."]));
+ S.prods.filter(x=>x.est<=x.min).forEach(x=>at.push(["av","📦 "+x.nome+": só "+x.est+" un. (mínimo "+x.min+")"]));
+ S.conex.filter(c=>!c.ok).forEach(c=>at.push(["av","🔌 "+c.nome+": "+c.msg.toLowerCase()]));
+ pend.filter(a=>a.ts<Date.now()-6e4).forEach(a=>at.push(["er","⏰ Atrasado: "+a.txt]));
+ if(S.jogo)at.push(["info","🎮 Modo jogo ligado: rotinas pesadas pausadas."]);
+ $("#n-aten").textContent=at.length||"";
+ $("#c-aten").innerHTML=at.map(a=>'<div class="at '+a[0]+'">'+esc(a[1])+'</div>').join("")||'<div class="at ok">✅ Tudo em ordem. Nenhuma atenção agora.</div>';
+ const h=new Date().getHours(),bk=[];for(let i=Math.max(0,h-7);i<=h;i++)bk.push({h:i,v:0});
+ p.forEach(x=>{const b=bk.find(b=>b.h===new Date(x.ts).getHours());if(b)b.v+=x.valor});
+ const mx=Math.max(50,...bk.map(b=>b.v)),W=100/bk.length;
+ $("#c-graf").innerHTML='<svg viewBox="0 0 100 52" style="width:100%;height:auto" role="img" aria-label="Vendas por hora"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c2477a"/><stop offset="1" stop-color="#c9a24a"/></linearGradient></defs>'+bk.map((b,i)=>{const bh=b.v/mx*34;return '<rect x="'+(i*W+W*.15)+'" y="'+(40-bh)+'" width="'+W*.7+'" height="'+bh+'" rx="1.2" fill="url(#gg)"/><text x="'+(i*W+W/2)+'" y="48" font-size="3.4" text-anchor="middle" fill="#7d6672">'+b.h+'h</text>'+(b.v?'<text x="'+(i*W+W/2)+'" y="'+(38-bh)+'" font-size="3" text-anchor="middle" fill="#4a1d36">'+Math.round(b.v)+'</text>':'')}).join("")+'</svg>';
+ $("#c-log").innerHTML=S.log.slice(0,7).map(l=>'<li><span class="q" style="min-width:42px">'+hm(l.ts)+'</span><span class="t">'+esc(l.t)+'</span></li>').join("")||'<li class="vazio">Sem ações ainda.</li>';
+}
+function renderGrupo(){
+ const f=S.ofertas.filter(o=>o.st==="fila"||o.st==="montado");
+ const prox=f.find(o=>!bloqueia(o)&&o.st==="fila");
+ $("#n-fila").textContent=f.length+" na fila";
+ $("#g-fila").innerHTML=f.map(o=>'<div class="oferta '+(S.sel===o.id?"sel":"")+'"><div class="h"><b>'+esc(o.nome)+'</b><span class="pill p-rs">'+CATS[o.cat]+'</span>'+(prox&&prox.id===o.id?'<span class="pill p-ok">sugerida</span>':'')+(o.st==="montado"?'<span class="pill p-av">montada</span>':'')+'</div><div class="q" style="margin:3px 0">'+esc(o.loja)+'</div><div class="h preco"><s>'+R(o.de)+'</s><b>'+R(o.por)+'</b><span class="pill p-ok">'+pct(o)+'% OFF</span>'+(o.cupom?'<span class="pill p-av">cupom '+esc(o.cupom)+'</span>':'')+'<button class="btn pq" style="margin-left:auto" data-montar="'+o.id+'">Montar post</button></div></div>').join("")||'<div class="vazio">Fila vazia. Clique em “Coletar novas ofertas”.</div>';
+ const o=S.ofertas.find(x=>x.id===S.sel);
+ $("#g-post").textContent=o&&o.post?o.post:"Escolha uma oferta na fila e clique em “Montar post”.";
+ const ok=!!(o&&o.post&&(o.st==="montado"||o.st==="fila"));
+ $("#bPostar").disabled=!ok;$("#bAgendar").disabled=!ok;
+ const u=ultimoCat();
+ $("#g-regra").innerHTML="Não repete o mesmo tipo de produto em posts seguidos. "+(S.varOn?'Último tipo postado: <b>'+(u?CATS[u]:"nenhum")+'</b>. A próxima precisa ser de outro tipo.':"<b>Regra desligada.</b> Qualquer tipo pode repetir.");
+ const hs=S.hist.filter(h=>h.ts>=sod()).sort((a,b)=>b.ts-a.ts);
+ $("#n-hist").textContent=postadosHoje().length+" postados";
+ $("#g-hist").innerHTML=hs.map(h=>'<li><span class="q" style="min-width:42px">'+hm(h.ts)+'</span><span class="t">'+esc(h.nome)+'<div class="q">'+esc(h.loja)+' · '+R(h.por)+'</div></span><span class="pill p-rs">'+CATS[h.cat]+'</span><span class="pill '+(h.st==="postado"?"p-ok":"p-av")+'">'+(h.st==="postado"?"postado":"agendado")+'</span></li>').join("")||'<li class="vazio">Nenhum post hoje.</li>';
+}
+function renderLoja(){
+ const bx=S.prods.filter(p=>p.est<=p.min);
+ $("#l-alerta").innerHTML=bx.length?'<div class="at av" style="margin-bottom:14px">⚠️ <span><b>Estoque baixo:</b> '+bx.map(p=>esc(p.nome)+" ("+p.est+")").join(" · ")+'</span></div>':'';
+ $("#l-prod").innerHTML=S.prods.map(p=>{const b=p.est<=p.min;return '<div class="prod"><div><b>'+esc(p.nome)+'</b><div class="q">'+R(p.preco)+'</div></div><div><b>'+p.est+'</b> un.<div class="est '+(b?"b":"")+'"><i style="width:'+Math.min(100,p.est/30*100)+'%"></i></div></div><div><span class="pill '+(b?"p-er":"p-ok")+'">'+(b?"estoque baixo":"ok")+'</span></div><div class="bt"><button class="btn pq" data-vender="'+p.id+'">Vender 1</button><button class="btn pq sec" data-repor="'+p.id+'">+10</button></div></div>'}).join("");
+ const sel=$("#vProd");if(sel.options.length!==S.prods.length)sel.innerHTML=S.prods.map(p=>'<option value="'+p.id+'">'+esc(p.nome)+'</option>').join("");
+ const ps=hojeSt().sort((a,b)=>b.ts-a.ts);$("#n-ped").textContent=pagos().length+" pagos";
+ $("#l-ped").innerHTML=ps.map(x=>'<li><span class="q" style="min-width:42px">'+hm(x.ts)+'</span><span class="t">#'+x.id+' · '+x.qtd+'x '+esc(prod(x.prod).nome)+'<div class="q">'+R(x.valor)+'</div></span>'+(x.st==="pago"?'<button class="btn pq sec" data-cancel="'+x.id+'">Cancelar</button>':'<span class="pill p-er">cancelado</span>')+'</li>').join("")||'<li class="vazio">Sem pedidos hoje.</li>';
+}
+function renderAgenda(){
+ const ab=abertos().sort((a,b)=>a.ts-b.ts),fe=S.agenda.filter(a=>a.feito).sort((a,b)=>b.ftx-a.ftx);
+ $("#n-ag").textContent=ab.length;$("#n-agf").textContent=fe.length;
+ $("#a-pend").innerHTML=ab.map(a=>'<li><span class="t">'+esc(a.txt)+'<div class="q">'+(a.ts<Date.now()?"⚠️ atrasado · ":"")+quando(a.ts)+(a.rep?' · <span class="pill p-rs">🔁 '+repTxt[a.rep]+'</span>':'')+'</div></span><button class="btn pq" data-feito="'+a.id+'">Feito</button><button class="btn pq sec" data-adiar="'+a.id+':15">+15 min</button><button class="btn pq sec" data-adiar="'+a.id+':60">+1 h</button></li>').join("")||'<li class="vazio">Nenhum lembrete pendente.</li>';
+ $("#a-feito").innerHTML=fe.map(a=>'<li><span class="t" style="text-decoration:line-through;color:var(--mudo)">'+esc(a.txt)+'</span><span class="q">'+hm(a.ftx)+'</span></li>').join("")||'<li class="vazio">Nada feito ainda.</li>';
+}
+const ESTADO={rodando:["p-ok","rodando"],esperando:["p-rs","esperando"],desligada:["p-cz","desligada"],pausada:["p-av","pausada (modo jogo)"],erro:["p-er","com erro"]};
+function renderRobos(){
+ $("#r-lista").innerHTML=S.robos.map(r=>{const e=ESTADO[r.estado];return '<div class="card robo"><div class="tp"><b>'+esc(r.nome)+'</b><span class="pill '+e[0]+'">'+(r.estado==="rodando"?'<span class="pulso"></span>':'')+e[1]+'</span></div><small>'+esc(r.desc)+(r.pesado?' · rotina pesada':'')+'</small>'+(r.erro?'<small style="color:var(--er)">Erro: '+esc(r.erro)+'</small>':'')+'<div class="rd"><small>Última vez: '+(r.estado==="desligada"?"—":r.min<1?"agora":r.min<60?"há "+r.min+" min":"há "+Math.round(r.min/60)+" h")+'</small><label class="sw sm"><input type="checkbox" data-robo="'+r.id+'" '+(r.ligado?"checked":"")+'><span></span></label></div></div>'}).join("");
+ $("#vg-estado").innerHTML=S.vigiaOcupado?'<span class="pill p-av">consertando...</span>':'<span class="pill p-ok"><span class="pulso"></span>tudo certo</span>';
+ $("#bErro").disabled=S.vigiaOcupado;
+ const lg=$("#vg-log");lg.innerHTML=S.vigiaLog.map(l=>'<div class="'+(l.c||"")+'">'+esc(l.t)+'</div>').join("")||'<div>'+hm(Date.now())+' Vigia: nenhuma falha. Clique em “Simular um erro” para ver o conserto automático.</div>';lg.scrollTop=lg.scrollHeight;
+}
+function renderConex(){
+ $("#x-lista").innerHTML=S.conex.map(c=>'<div class="card con"><div class="tp"><div class="ic">'+c.ic+'</div><b>'+c.nome+'</b><span class="pill '+(c.ok?"p-ok":"p-av")+'"><span class="dot '+(c.ok?"v":"a")+'"></span>'+(c.ok?"conectado":"atenção")+'</span></div><div style="font-size:.86rem;color:var(--mudo)">'+esc(c.det)+'</div><div>'+(c.ok?'<button class="btn pq sec" data-testar="'+c.id+'">Testar conexão</button>':'<button class="btn pq" data-testar="'+c.id+'">'+c.btn+'</button>')+'</div><div style="font-size:.8rem" id="cx-'+c.id+'">'+esc(c.msg)+'</div></div>').join("");
+}
+function renderChrome(){
+ $("#chipJogo").style.display=S.jogo?"":"none";$("#swJogo").checked=S.jogo;$("#swVar").checked=S.varOn;
+ const d=new Date();$("#chipHora").textContent="🕘 "+DIAS[d.getDay()]+" "+pad(d.getDate())+"/"+pad(d.getMonth()+1)+" · "+hm(Date.now());
+ $("#relogio").textContent="Memória do PC: "+S.mem+"%";
+}
+function renderAll(){
+ renderNav();renderChrome();
+ ({central:renderCentral,grupo:renderGrupo,loja:renderLoja,agenda:renderAgenda,robos:renderRobos,conexoes:renderConex}[aba]||(()=>{}))();
+}
+
+/* ================= CHAT ================= */
+function addMsg(who,t,extra){
+ const d=document.createElement("div");d.className="m "+who;d.textContent=t;
+ if(extra&&extra.post){const p=document.createElement("div");p.className="post";p.textContent=extra.post;d.appendChild(p)}
+ if(extra&&extra.ir){const a=document.createElement("div");a.className="acoes";extra.ir.forEach(([l,tb])=>{const b=document.createElement("button");b.className="btn pq sec";b.textContent=l;b.onclick=()=>irPara(tb);a.appendChild(b)});d.appendChild(a)}
+ $("#msgs").appendChild(d);$("#msgs").scrollTop=1e9}
+function enviar(txt){
+ txt=txt.trim();if(!txt)return;addMsg("eu",txt);$("#inp").value="";
+ const dg=document.createElement("div");dg.className="dig";dg.textContent="Hermes está digitando...";$("#msgs").appendChild(dg);$("#msgs").scrollTop=1e9;
+ setTimeout(()=>{dg.remove();let r;try{r=entender(txt)}catch(e){console.error(e);r=say("Tive um problema ao entender isso. Tente de outro jeito.")}
+  addMsg("ia",r.t,r);renderAll()},450);
+}
+const SUG=["O que tenho hoje?","Me lembra de pagar a luz amanhã às 9","Feito","Adia 15 minutos","Quantas vendas hoje?","Posta uma oferta de perfume","Como está o estoque do batom?","Liga o modo jogo","Vendi 2 batons","Cancela a última venda"];
+
+/* ================= EVENTOS ================= */
+document.addEventListener("click",e=>{
+ const t=e.target.closest("button,input");if(!t)return;
+ if(t.dataset.t)return irPara(t.dataset.t);
+ if(t.dataset.ir)return irPara(t.dataset.ir);
+ if(t.dataset.feito){const a=S.agenda.find(x=>x.id==t.dataset.feito);if(a){concluir(a);renderAll()}return}
+ if(t.dataset.adiar){const[i,m]=t.dataset.adiar.split(":"),a=S.agenda.find(x=>x.id==i);a.ts=Math.max(a.ts,Date.now())+m*6e4;a.aviso=false;log("Lembrete adiado "+m+" min: "+a.txt);return renderAll()}
+ if(t.dataset.montar){const o=S.ofertas.find(x=>x.id==t.dataset.montar);S.sel=o.id;montar(o);$("#g-var").innerHTML="";return renderAll()}
+ if(t.dataset.vender){const p=prod(+t.dataset.vender),r=venderProd(p,1);$("#l-msg").textContent=r.ok?"Venda #"+r.ped.id+" registrada. Estoque de “"+p.nome+"”: "+p.est+".":r.msg;return renderAll()}
+ if(t.dataset.repor){const p=prod(+t.dataset.repor);p.est+=10;log("Estoque reposto: +10 "+p.nome);return renderAll()}
+ if(t.dataset.cancel){const x=S.pedidos.find(p=>p.id==t.dataset.cancel);cancelarPed(x);$("#l-msg").textContent="Pedido #"+x.id+" cancelado: o estoque voltou.";return renderAll()}
+ if(t.dataset.robo){const r=S.robos.find(x=>x.id==t.dataset.robo);toggleRobo(r,t.checked);return renderAll()}
+ if(t.dataset.testar){const c=S.conex.find(x=>x.id===t.dataset.testar);$("#cx-"+c.id).textContent="Testando...";
+  setTimeout(()=>{c.ok=true;c.msg=c.id==="ml"?"Conectado de novo":c.id==="ig"?"Permissão renovada por 60 dias":"Conexão testada: tudo certo";if(c.id==="ml")c.det="Loja Exemplo · 8 anúncios (fictício)";if(c.id==="ig")c.det="Publicação liberada (exemplo)";log("Conexão "+c.nome+": "+c.msg);renderAll()},900)}
+});
+$("#fEnv").addEventListener("submit",e=>{e.preventDefault();enviar($("#inp").value)});
+$("#sug").innerHTML=SUG.map(s=>'<button type="button">'+esc(s)+'</button>').join("");
+$("#sug").addEventListener("click",e=>{if(e.target.tagName==="BUTTON")enviar(e.target.textContent)});
+$("#swJogo").addEventListener("change",e=>{setJogo(e.target.checked);renderAll()});
+$("#swVar").addEventListener("change",e=>{S.varOn=e.target.checked;log("Regra de variedade "+(S.varOn?"ligada":"desligada"));renderAll()});
+$("#bOutra").addEventListener("click",()=>{const o=S.ofertas.find(x=>x.id===S.sel);if(o){montar(o,true);renderAll()}});
+$("#tom").addEventListener("change",()=>{const o=S.ofertas.find(x=>x.id===S.sel);if(o){montar(o);renderAll()}});
+$("#bPostar").addEventListener("click",()=>{
+ const o=S.ofertas.find(x=>x.id===S.sel);if(!o)return;
+ if(bloqueia(o)){
+  $("#g-var").innerHTML='<div class="aviso-var">🎲 A última postagem também foi de <b>'+CATS[o.cat].toLowerCase()+'</b>. Pela regra de variedade, vale esperar. <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pq" id="bMesmo">Postar mesmo assim</button><button class="btn pq ouro" id="bDepois">Agendar para daqui 30 min</button></div></div>';
+  $("#bMesmo").onclick=()=>{postar(o);$("#g-var").innerHTML="";S.sel=null;renderAll()};
+  $("#bDepois").onclick=()=>{agendarPost(o,30);$("#g-var").innerHTML="";S.sel=null;renderAll()};return}
+ postar(o);$("#g-var").innerHTML='<div class="at ok" style="margin-top:10px">✅ Postado no grupo às '+hm(Date.now())+'.</div>';S.sel=null;renderAll();
+});
+$("#bAgendar").addEventListener("click",()=>{const o=S.ofertas.find(x=>x.id===S.sel);if(!o)return;const m=+$("#agMin").value;agendarPost(o,m);$("#g-var").innerHTML='<div class="at ok" style="margin-top:10px">🕒 Agendado para '+hm(Date.now()+m*6e4)+'.</div>';S.sel=null;renderAll()});
+$("#bColetar").addEventListener("click",()=>{const c=coletar(3);$("#g-var").innerHTML='<div class="at ok" style="margin-top:10px">'+(c?"🛒 "+c+" oferta(s) nova(s) coletada(s).":"A fila já está cheia.")+'</div>';renderAll()});
+$("#bVenda").addEventListener("click",()=>{const p=prod(+$("#vProd").value),q=Math.max(1,parseInt($("#vQtd").value)||1),r=venderProd(p,q);$("#l-msg").textContent=r.ok?"Venda #"+r.ped.id+" registrada: "+q+"x "+p.nome+". Estoque: "+p.est+".":r.msg;renderAll()});
+$("#bAddAg").addEventListener("click",()=>{const t=$("#aTxt").value.trim(),q=$("#aQuando").value;if(!t)return $("#aTxt").focus();
+ addAg(t,q?+new Date(q):Date.now()+3600e3,$("#aRep").value);log("Lembrete criado: "+t);$("#aTxt").value="";renderAll()});
+$("#bErro").addEventListener("click",simularErro);
+(function(){const d=new Date(Date.now()+3600e3);d.setMinutes(0,0,0);$("#aQuando").value=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":00"})();
+
+/* ================= TEMPO ================= */
+setInterval(()=>{
+ const now=Date.now();let mudou=false;
+ S.agenda.forEach(a=>{if(!a.feito&&!a.aviso&&a.ts<=now){a.aviso=true;S.foco=a.id;mudou=true;log("Lembrete na hora: "+a.txt);addMsg("ia","🔔 Hora de: “"+a.txt+"”. Diga “feito” ou “adia 15 minutos”.",{ir:[["Ver agenda","agenda"]]})}});
+ S.hist.forEach(h=>{if(h.st==="agendado"&&h.ts<=now){h.st="postado";const o=S.ofertas.find(x=>x.id===h.of);if(o)o.st="postado";log("Post agendado publicado: "+h.nome);mudou=true}});
+ if(mudou)renderAll();else renderChrome();
+},1000);
+setInterval(()=>{
+ const r=Math.random();
+ if(r<.4){const c=S.prods.filter(p=>p.est>p.min+1);if(c.length)venderProd(pick(c),1)}
+ else if(r<.6&&!S.jogo&&S.robos[0].estado==="rodando")coletar(1);
+ S.robos.forEach(x=>{if(x.estado==="rodando"&&Math.random()<.3)x.min=0});
+ S.mem=Math.max(48,Math.min(S.jogo?82:70,S.mem+rnd(-2,2)));
+ renderAll();
+},5000);
+
+addMsg("ia","Oi! Eu sou o Hermes, o assistente da Loja Exemplo. Pode escrever do seu jeito, sem se preocupar com acento ou erro de digitação. Veja as sugestões abaixo ou pergunte o que quiser.");
+irPara("central");
+window.__hermes={S,entender};
+</script>
+</body>
+</html>
