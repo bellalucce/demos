@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chatbot de atendimento - demonstração interativa</title>
+<style>
+:root{--verde:#128c7e;--escuro:#075e54;--fundo:#eef6f4;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--verde);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px 16px;font-size:.88rem;border-radius:6px}
+.barra{max-width:1100px;margin:0 auto 10px;padding:0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem}
+.barra select{width:auto;max-width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:.95rem}
+.abas{display:none;max-width:1100px;margin:0 auto 10px;padding:0 16px;gap:8px}
+.abas button{flex:1;background:#dfeeea;color:#222;border:0;border-radius:8px;padding:10px;font-size:.92rem;cursor:pointer}
+.abas button.on{background:var(--verde);color:#fff}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:16px;padding:0 16px 24px;max-width:1100px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--escuro)}
+h3{margin:16px 0 6px;font-size:.95rem;color:var(--escuro)}
+.zap{display:flex;flex-direction:column;height:min(640px,calc(100vh - 150px));min-height:440px;overflow:hidden}
+.zap-topo{background:var(--escuro);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;border-radius:12px 12px 0 0}
+.avatar{width:36px;height:36px;border-radius:50%;background:#b2dfdb;color:var(--escuro);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.zap-topo b{display:block;font-size:.95rem}
+.zap-topo small{opacity:.85;font-size:.75rem}
+.zap-topo button{margin-left:auto;background:#ffffff26;color:#fff;border:0;border-radius:6px;padding:6px 10px;font-size:.78rem;cursor:pointer}
+#msgs{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;background:#efe7dd;display:flex;flex-direction:column;gap:6px}
+.m{max-width:82%;padding:7px 10px 4px;border-radius:10px;font-size:.92rem;line-height:1.38;box-shadow:0 1px 1px #0002;word-wrap:break-word;overflow-wrap:anywhere}
+.m .t{white-space:pre-wrap}
+.m .h{display:block;text-align:right;font-size:.68rem;color:#667;margin-top:2px}
+.m.bot{background:#fff;align-self:flex-start;border-top-left-radius:2px}
+.m.me{background:#d9fdd3;align-self:flex-end;border-top-right-radius:2px}
+.opcoes{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:92%}
+.opcoes button,.menu button{background:#fff;color:var(--escuro);border:1px solid var(--verde);border-radius:16px;padding:6px 12px;font-size:.82rem;cursor:pointer}
+.opcoes button:hover,.menu button:hover{background:#e0f2ef}
+.typing{display:flex;gap:4px;padding:11px 12px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#999;animation:pisca 1s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes pisca{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.menu{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;background:#f4f4f4;border-top:1px solid #ddd;flex:none}
+.menu button{white-space:nowrap;flex:none}
+.entrada{display:flex;gap:8px;padding:8px 10px;background:#f4f4f4;flex:none}
+.entrada input{flex:1;min-width:0;padding:10px;border:1px solid #ccc;border-radius:20px;font-size:.95rem}
+.entrada button{background:var(--verde);color:#fff;border:0;border-radius:20px;padding:0 16px;font-size:.92rem;cursor:pointer}
+.painel{padding:16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.stat{background:#e8f5f2;border-radius:8px;padding:10px;font-size:.85rem}
+.stat.alerta{background:#fff3cd}
+.kb{border:1px solid #dde;border-radius:10px;padding:10px;margin-bottom:10px}
+label{display:block;font-size:.78rem;color:var(--cinza);margin-top:6px}
+.kb input,.kb textarea{width:100%;padding:7px;border:1px solid #ccc;border-radius:6px;font-size:.88rem;font-family:inherit}
+.kb textarea{min-height:64px;resize:vertical}
+.painel button.p{background:var(--verde);color:#fff;border:0;border-radius:6px;padding:7px 11px;font-size:.82rem;cursor:pointer;margin:4px 6px 0 0}
+.painel button.sec{background:#e8eef6;color:#222}
+.ag{border:1px solid #cfe8e3;background:#f3fbf9;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:.86rem;display:flex;gap:8px;justify-content:space-between;align-items:center}
+.ag button{background:#fff;border:1px solid #ccc;border-radius:6px;padding:3px 8px;font-size:.75rem;cursor:pointer}
+.hint{font-size:.8rem;color:var(--cinza)}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){
+ main{grid-template-columns:minmax(0,1fr)}
+ .abas{display:flex}
+ body.ver-chat .painel-sec{display:none}
+ body.ver-painel .zap-sec{display:none}
+ .zap{height:calc(100vh - 80px);min-height:420px}
+ header h1{font-size:1.1rem}
+}
+</style>
+</head>
+<body class="ver-chat">
+<header>
+  <h1>Chatbot de atendimento - demonstração</h1>
+  <p>Robô de atendimento estilo WhatsApp: responde dúvidas, agenda horários e chama uma pessoa quando precisa.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Negócios, endereços, preços, horários e agendamentos abaixo são inventados, sem ligação com empresas reais. Nada é enviado pela internet.</div>
+<div class="barra"><label for="seletor" style="margin:0">Escolha o negócio de exemplo:</label>
+  <select id="seletor"><option value="clinica">Clínica Sorriso (exemplo)</option><option value="loja">Loja Exemplo Moda (exemplo)</option></select>
+  <span class="hint">Experimente escrever do seu jeito, até com erro de digitação.</span></div>
+<div class="abas"><button id="aba-chat" class="on" type="button">Conversa</button><button id="aba-painel" type="button">Painel do dono</button></div>
+<main>
+<section class="zap-sec zap">
+  <div class="zap-topo"><div class="avatar" id="avatar">S</div><div><b id="nome-neg"></b><small id="status-neg">assistente virtual · online</small></div><button id="nova" type="button">Nova conversa</button></div>
+  <div id="msgs" aria-live="polite"></div>
+  <div class="menu" id="menu"></div>
+  <form class="entrada" id="form" autocomplete="off"><input id="entrada" placeholder="Escreva uma mensagem" aria-label="Mensagem"><button id="enviar" type="submit">Enviar</button></form>
+</section>
+<section class="painel painel-sec">
+  <h2>Painel do dono</h2>
+  <p class="hint" style="margin-top:0">É aqui que o dono configura o robô. Mude uma resposta e teste na conversa: ela já vale.</p>
+  <div class="stats">
+    <div class="stat alerta"><b id="fila">Fila de atendimento: 0</b></div>
+    <div class="stat"><b id="resolvidas">Resolvidas sem humano: 0</b></div>
+  </div>
+  <button class="p sec" id="assumir" type="button">Simular: atendente assumiu a fila</button>
+  <h3>Agendamentos feitos</h3>
+  <div id="agendamentos"></div>
+  <h3>Perguntas e respostas (editável)</h3>
+  <div id="kb"></div>
+  <button class="p" id="add" type="button">Adicionar pergunta</button>
+  <button class="p sec" id="restaurar" type="button">Restaurar respostas originais</button>
+</section>
+</main>
+<footer>Demonstração de portfólio. No projeto real o robô fica no WhatsApp do negócio, ligado à agenda e ao cadastro de verdade. Esta página usa dados inventados.</footer>
+<script>
+const NEG={
+ clinica:{nome:"Clínica Sorriso (exemplo)",ini:"S",
+  servicos:[{n:"Consulta de avaliação",kw:["consulta","avaliacao"]},{n:"Limpeza",kw:["limpeza"]},{n:"Clareamento",kw:["clareamento"]}],
+  slots:{seg:["09:00","10:30","14:00","16:30"],ter:["08:30","11:00","15:00"],qua:["09:00","13:30","17:00"],qui:["10:00","14:30","16:00"],sex:["08:00","11:30"]},
+  kb:[
+   {id:"ola",menu:0,t:"Saudação",kw:"oi, ola, bom dia, boa tarde, boa noite, eai",r:"Olá! Em que posso ajudar? Posso falar de horários, endereço, preços, pagamento e remarcação, ou agendar uma consulta."},
+   {id:"horario",menu:1,t:"Horário de atendimento",kw:"horario, horarios, aberto, abre, fecha, fechado, funcionamento, expediente, horas",r:"Atendemos de segunda a sexta, das 8h às 18h, e aos sábados das 8h às 12h. Domingo e feriados fechado."},
+   {id:"endereco",menu:1,t:"Endereço",kw:"endereco, onde fica, localizacao, chegar, mapa, rua, estacionamento",r:"Ficamos na Rua das Flores, 123 (endereço fictício), Cidade Exemplo. Tem estacionamento em frente."},
+   {id:"preco",menu:1,t:"Preços e tabela",kw:"preco, precos, valor, valores, quanto custa, custa, tabela, orcamento",r:"Consulta de avaliação: R$ 120 · Limpeza: R$ 180 · Clareamento: R$ 650 · Restauração: a partir de R$ 200."},
+   {id:"pagamento",menu:1,t:"Formas de pagamento",kw:"pagamento, pagar, pix, cartao, credito, debito, parcelar, parcela, dinheiro",r:"Aceitamos Pix, cartão de crédito em até 6x sem juros, débito e dinheiro."},
+   {id:"entrega",menu:1,t:"Entrega e frete",kw:"entrega, frete, entregar, envio, enviar",r:"Aqui não há entrega de produtos, mas enviamos receitas e atestados por e-mail na mesma hora."},
+   {id:"troca",menu:1,t:"Remarcar ou cancelar",kw:"troca, trocar, remarcar, remarcacao, cancelar, cancelamento, devolucao",r:"Para remarcar ou cancelar, avise com 24 horas de antecedência, sem custo."}
+  ]},
+ loja:{nome:"Loja Exemplo Moda (exemplo)",ini:"L",
+  servicos:[{n:"Hora marcada no provador",kw:["provador","prova","experimentar"]},{n:"Retirada de pedido",kw:["retirada","retirar","pedido"]},{n:"Ajuste de barra",kw:["ajuste","barra","costureira"]}],
+  slots:{seg:["10:00","15:00","18:00"],ter:["09:30","11:00","16:00","17:30"],qua:["10:30","14:00"],qui:["09:00","13:00","15:30","18:30"],sex:["10:00","12:00","16:30"]},
+  kb:[
+   {id:"ola",menu:0,t:"Saudação",kw:"oi, ola, bom dia, boa tarde, boa noite, eai",r:"Olá! Que bom ter você aqui. Posso falar de horários, endereço, preços, pagamento, entrega e trocas, ou marcar uma hora no provador."},
+   {id:"horario",menu:1,t:"Horário de atendimento",kw:"horario, horarios, aberto, abre, fecha, fechado, funcionamento, expediente, horas",r:"Abrimos de segunda a sábado, das 9h às 19h. Domingo fechado."},
+   {id:"endereco",menu:1,t:"Endereço",kw:"endereco, onde fica, localizacao, chegar, mapa, rua, loja fisica",r:"Estamos na Av. Modelo, 456, Centro (endereço fictício), Cidade Exemplo."},
+   {id:"preco",menu:1,t:"Preços e tabela",kw:"preco, precos, valor, valores, quanto custa, custa, tabela, camiseta, vestido, calca",r:"Camisetas a partir de R$ 59 · Vestidos de R$ 119 a R$ 249 · Calças jeans R$ 149 · Acessórios a partir de R$ 29."},
+   {id:"pagamento",menu:1,t:"Formas de pagamento",kw:"pagamento, pagar, pix, cartao, credito, debito, parcelar, parcela, dinheiro",r:"Pix com 5% de desconto, cartão de crédito em até 10x e débito."},
+   {id:"entrega",menu:1,t:"Entrega e frete",kw:"entrega, frete, entregar, envio, enviar, correios, prazo",r:"Entregamos na cidade em até 2 dias úteis por R$ 12; frete grátis acima de R$ 250. Para outras cidades enviamos pelos Correios, com prazo informado no pedido."},
+   {id:"troca",menu:1,t:"Trocas e devoluções",kw:"troca, trocas, trocar, devolucao, devolver, defeito",r:"Trocas em até 30 dias, com etiqueta e nota. A primeira troca é grátis."}
+  ]}
+};
+const DIAS=[{k:"seg",n:"Segunda-feira",a:["segunda","seg"]},{k:"ter",n:"Terça-feira",a:["terca","ter"]},{k:"qua",n:"Quarta-feira",a:["quarta","qua"]},{k:"qui",n:"Quinta-feira",a:["quinta","qui"]},{k:"sex",n:"Sexta-feira",a:["sexta","sex"]}];
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const DELAY=window.DEMO_DELAY!==undefined?window.DEMO_DELAY:550;
+const S={};
+for(const k in NEG)S[k]={kb:clone(NEG[k].kb),slots:clone(NEG[k].slots),agend:[],resolvidas:0,fila:0};
+let cur="clinica",conv=null,fila=Promise.resolve(),seq=0;
+
+function lev(a,b){const m=a.length,n=b.length;let p=[],i,j;for(j=0;j<=n;j++)p[j]=j;
+ for(i=1;i<=m;i++){let q=[i];for(j=1;j<=n;j++)q[j]=Math.min(p[j]+1,q[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=q}return p[n]}
+function tokEq(t,k,lim){if(t===k)return true;const L=Math.max(t.length,k.length);if(L<=3)return false;if(Math.abs(t.length-k.length)>2)return false;
+ return lev(t,k)<=(lim!==undefined?lim:(L<=7?1:2))}
+function pontos(msg,toks,kws,peso){let s=0;for(const k of kws){if(!k)continue;if(k.includes(" ")){if(k.split(" ").every(w=>toks.some(t=>tokEq(t,w))))s+=peso}else if(toks.some(t=>tokEq(t,k)))s+=peso}return s}
+const KW_ATEND=["atendente","humano","pessoa","gerente","reclamar","reclamacao","falar com alguem","falar com uma pessoa","atendimento humano"];
+const KW_AGENDA=["marcar","agendar","agendamento","agenda","reservar","marcacao","reserva"];
+const KW_OBRIG=["obrigado","obrigada","valeu","brigado","vlw","agradeco"];
+const kwsDe=e=>e.kw.split(",").map(norm).filter(Boolean);
+
+function hora(){const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function addMsg(tipo,texto,chips){
+ const box=$("msgs"),d=document.createElement("div");d.className="m "+tipo;
+ const t=document.createElement("span");t.className="t";t.textContent=texto;
+ const h=document.createElement("span");h.className="h";h.textContent=hora()+(tipo==="me"?" ✓✓":"");
+ d.append(t,h);box.appendChild(d);
+ if(chips&&chips.length){const o=document.createElement("div");o.className="opcoes";
+  chips.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c;b.onclick=()=>enviar(c);o.appendChild(b)});box.appendChild(o)}
+ box.scrollTop=box.scrollHeight;
+}
+function bot(texto,chips){
+ const c=conv;
+ fila=fila.then(()=>new Promise(res=>{
+  if(c!==conv)return res();
+  const box=$("msgs"),ty=document.createElement("div");ty.className="m bot typing";ty.innerHTML="<i></i><i></i><i></i>";ty.setAttribute("aria-label","digitando");box.appendChild(ty);box.scrollTop=box.scrollHeight;
+  setTimeout(()=>{ty.remove();if(c===conv)addMsg("bot",texto,chips);res()},DELAY);
+ }));
+ return fila;
+}
+function limpaChips(){document.querySelectorAll("#msgs .opcoes").forEach(e=>e.remove())}
+
+function novaConversa(){
+ conv={flow:null,humano:false,contada:false,resp:0,falhas:0};
+ $("msgs").innerHTML="";
+ const n=NEG[cur];
+ addMsg("bot","Olá! Eu sou a assistente virtual da "+n.nome.replace(" (exemplo)","")+". Posso falar de horários, endereço, preços, pagamento, entrega e trocas, e também agendar um horário. Escreva do seu jeito ou toque num botão.");
+}
+function contaResolvida(){if(!conv.contada&&!conv.humano){conv.contada=true;S[cur].resolvidas++;renderStats()}}
+
+function enviar(texto,force){
+ texto=(texto||"").trim();if(!texto)return;
+ limpaChips();addMsg("me",texto);
+ try{processa(texto,force)}catch(e){console.error(e);bot("Tive um problema aqui, pode repetir?")}
+}
+function processa(texto,force){
+ const st=S[cur],msg=norm(texto),toks=msg.split(" ").filter(Boolean);
+ if(conv.humano){bot("Anotei! A pessoa da equipe vai ler tudo assim que puder. Se quiser, comece uma nova conversa no botão do topo.");return}
+ let atend=pontos(msg,toks,KW_ATEND,3);
+ if(force==="atend")atend=99;
+ if(atend>0){return passaHumano()}
+ if(conv.flow)return fluxo(texto,msg,toks);
+ const ag=force==="agendar"?99:pontos(msg,toks,KW_AGENDA,3);
+ const ob=pontos(msg,toks,KW_OBRIG,3);
+ let melhor=null,mp=0;
+ for(const e of st.kb){if(!e.r)continue;const p=force===e.id?99:pontos(msg,toks,kwsDe(e),1);if(p>mp){mp=p;melhor=e}}
+ if(ag>0&&ag>=mp&&ag>=ob)return iniciaAgenda();
+ if(ob>0&&ob>=mp){conv.falhas=0;bot(conv.resp?"Por nada! Qualquer coisa é só chamar.":"Por nada! Estou por aqui.");if(conv.resp)contaResolvida();return}
+ if(melhor){conv.falhas=0;conv.resp++;bot(melhor.r,melhor.id==="ola"?menuTextos():["Agendar um horário","Falar com atendente"]);return}
+ conv.falhas++;
+ bot("Não entendi bem. Posso ajudar com "+listaAssuntos()+", ou marcar um horário. Se preferir, chamo uma pessoa.",conv.falhas>=2?["Falar com atendente","Agendar um horário"]:menuTextos().slice(0,4));
+}
+function menuTextos(){return S[cur].kb.filter(e=>e.menu&&e.r).map(e=>e.t).slice(0,5)}
+function listaAssuntos(){return S[cur].kb.filter(e=>e.menu&&e.r).map(e=>e.t.toLowerCase()).join(", ")}
+function passaHumano(){
+ conv.humano=true;S[cur].fila++;conv.flow=null;renderStats();
+ bot("Certo, vou chamar uma pessoa da equipe. Você é o número "+S[cur].fila+" da fila de atendimento. Pode já deixar sua dúvida escrita aqui que ela lê tudo.");
+}
+
+/* ---- agendamento ---- */
+function livres(k){return S[cur].slots[k]||[]}
+function diasLivres(){return DIAS.filter(d=>livres(d.k).length)}
+function achaDia(toks){
+ for(const d of DIAS)if(toks.some(t=>d.a.includes(t)))return d;
+ for(const d of DIAS)if(toks.some(t=>t.length>=5&&d.a.some(a=>tokEq(t,a,1))))return d;
+ return null;
+}
+function achaServ(toks,msg){
+ const sv=NEG[cur].servicos;
+ const num=msg.match(/^[1-9]$/);if(num&&sv[+num[0]-1])return sv[+num[0]-1];
+ for(const s of sv)if(msg===norm(s.n))return s;
+ let best=null,bp=0;for(const s of sv){const p=pontos(msg,toks,s.kw,1);if(p>bp){bp=p;best=s}}
+ return best;
+}
+function iniciaAgenda(){
+ if(!diasLivres().length){bot("No momento não há horários livres. Posso chamar uma pessoa da equipe?",["Falar com atendente"]);return}
+ conv.flow={step:"nome",d:{}};
+ bot("Vamos agendar! Primeiro, qual é o seu nome?");
+}
+function fluxo(texto,msg,toks){
+ const f=conv.flow,n=NEG[cur];
+ if(/\b(cancelar|desisti|deixa pra la|esquece|nao quero mais)\b/.test(msg)&&f.step!=="nome"){conv.flow=null;bot("Tudo bem, cancelei o agendamento. Se mudar de ideia é só pedir.",["Agendar um horário"]);return}
+ if(f.step==="nome"){
+  let nome=texto.replace(/^(meu nome (e|é)|me chamo|eu sou( o| a)?|sou( o| a)?|aqui (e|é)( o| a)?)\s+/i,"").replace(/[^\p{L} '.-]/gu,"").trim().slice(0,40);
+  if(!nome||/\?/.test(texto)){bot("Para agendar preciso só do seu primeiro nome. Qual é?");return}
+  nome=nome.split(" ").map(p=>/^(da|de|do|das|dos|e)$/i.test(p)?p.toLowerCase():(p?p[0].toUpperCase()+p.slice(1):p)).join(" ");
+  f.d.nome=nome;f.step="servico";
+  bot("Prazer, "+nome+"! Qual serviço você quer?",n.servicos.map(s=>s.n));return;
+ }
+ if(f.step==="servico"){
+  const s=achaServ(toks,msg);
+  if(!s){bot("Não peguei o serviço. Escolha uma das opções:",n.servicos.map(s=>s.n));return}
+  f.d.servico=s.n;f.step="dia";
+  bot("Certo, "+s.n+". Para qual dia? Tenho vaga em:",diasLivres().map(d=>d.n));return;
+ }
+ if(f.step==="dia"){
+  const d=achaDia(toks);
+  if(!d){bot("Não entendi o dia. Escolha um dos dias com vaga:",diasLivres().map(d=>d.n));return}
+  if(!livres(d.k).length){bot(d.n+" já está lotada. Escolha outro dia:",diasLivres().map(d=>d.n));return}
+  f.d.dia=d;f.step="hora";
+  bot(d.n+", horários livres:",livres(d.k));return;
+ }
+ if(f.step==="hora"){
+  const l=livres(f.d.dia.k);
+  const m=texto.match(/(\d{1,2})\s*(?:h|hs|horas|:)?\s*(\d{2})?/i);
+  let h=null;if(m){const hh=m[1].padStart(2,"0");h=l.find(s=>m[2]?s===hh+":"+m[2]:s.startsWith(hh+":"))}
+  if(!h){bot("Esse horário não está livre. Escolha um destes:",l);return}
+  f.d.hora=h;f.step="confirma";
+  bot("Confirma? "+f.d.nome+", "+f.d.servico+", "+f.d.dia.n+" às "+h+".",["Confirmar","Cancelar"]);return;
+ }
+ if(f.step==="confirma"){
+  if(/\b(sim|confirmo|confirmar|confirma|ok|pode|isso|fechado|claro)\b/.test(msg)){
+   const st=S[cur],d=f.d;
+   st.slots[d.dia.k]=st.slots[d.dia.k].filter(x=>x!==d.hora);
+   st.agend.push({nome:d.nome,servico:d.servico,dk:d.dia.k,dia:d.dia.n,hora:d.hora});
+   conv.flow=null;contaResolvida();renderAgend();
+   bot("Pronto, "+d.nome+"! Agendado: "+d.servico+", "+d.dia.n+" às "+d.hora+". Você receberá um lembrete na véspera (exemplo). Posso ajudar em mais alguma coisa?");
+  }else if(/\b(nao)\b/.test(msg)){conv.flow=null;bot("Sem problema, não agendei nada. Quer tentar outro horário?",["Agendar um horário"])}
+  else bot("Responda Confirmar ou Cancelar, por favor.",["Confirmar","Cancelar"]);
+ }
+}
+
+/* ---- painel ---- */
+function renderStats(){
+ const st=S[cur];
+ $("fila").textContent="Fila de atendimento: "+st.fila;
+ $("resolvidas").textContent="Resolvidas sem humano: "+st.resolvidas;
+}
+function renderAgend(){
+ const st=S[cur],box=$("agendamentos");box.innerHTML="";
+ if(!st.agend.length){box.innerHTML='<p class="hint">Nenhum ainda. Faça um agendamento na conversa e ele aparece aqui.</p>';return}
+ st.agend.forEach((a,i)=>{
+  const d=document.createElement("div");d.className="ag";
+  const s=document.createElement("span");s.textContent=a.nome+" · "+a.servico+" · "+a.dia+" "+a.hora;
+  const b=document.createElement("button");b.type="button";b.textContent="Cancelar";
+  b.onclick=()=>{st.agend.splice(i,1);st.slots[a.dk]=[...st.slots[a.dk],a.hora].sort();renderAgend()};
+  d.append(s,b);box.appendChild(d);
+ });
+}
+function renderKb(){
+ const st=S[cur],box=$("kb");box.innerHTML="";
+ st.kb.forEach((e,i)=>{
+  const d=document.createElement("div");d.className="kb";d.dataset.id=e.id;
+  d.innerHTML='<label>Pergunta (nome)</label><input class="kb-t"><label>Palavras que o cliente usa (separe por vírgula)</label><input class="kb-kw"><label>Resposta do robô</label><textarea class="kb-r"></textarea>';
+  const t=d.querySelector(".kb-t"),k=d.querySelector(".kb-kw"),r=d.querySelector(".kb-r");
+  t.value=e.t;k.value=e.kw;r.value=e.r;
+  t.oninput=()=>{e.t=t.value;renderMenu()};k.oninput=()=>{e.kw=k.value};r.oninput=()=>{e.r=r.value;renderMenu()};
+  const b=document.createElement("button");b.type="button";b.className="p sec";b.textContent="Remover";
+  b.onclick=()=>{st.kb.splice(i,1);renderKb();renderMenu()};d.appendChild(b);
+  box.appendChild(d);
+ });
+}
+function renderMenu(){
+ const m=$("menu");m.innerHTML="";
+ S[cur].kb.filter(e=>e.menu&&e.r&&e.t).forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e.t;b.onclick=()=>enviar(e.t,e.id);m.appendChild(b)});
+ [["Agendar um horário","agendar"],["Falar com atendente","atend"]].forEach(([t,f])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=()=>enviar(t,f);m.appendChild(b)});
+}
+function trocaNegocio(k){
+ cur=k;const n=NEG[k];
+ $("nome-neg").textContent=n.nome;$("avatar").textContent=n.ini;
+ renderKb();renderMenu();renderAgend();renderStats();novaConversa();
+}
+$("seletor").onchange=e=>trocaNegocio(e.target.value);
+$("form").onsubmit=e=>{e.preventDefault();const v=$("entrada").value;$("entrada").value="";enviar(v)};
+$("nova").onclick=()=>novaConversa();
+$("assumir").onclick=()=>{const st=S[cur];if(st.fila>0)st.fila--;renderStats()};
+$("add").onclick=()=>{S[cur].kb.push({id:"n"+(++seq),menu:1,t:"Nova pergunta",kw:"",r:""});renderKb();renderMenu();const l=document.querySelectorAll("#kb .kb-t");l[l.length-1].focus()};
+$("restaurar").onclick=()=>{S[cur].kb=clone(NEG[cur].kb);renderKb();renderMenu()};
+$("aba-chat").onclick=()=>{document.body.className="ver-chat";$("aba-chat").className="on";$("aba-painel").className=""};
+$("aba-painel").onclick=()=>{document.body.className="ver-painel";$("aba-painel").className="on";$("aba-chat").className=""};
+trocaNegocio("clinica");
+</script>
+</body>
+</html>
