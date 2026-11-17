@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hermes - demonstração interativa</title>
+<style>
+:root{--rosa:#c2185b;--fundo:#fdf3f6;--cinza:#555}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--rosa);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px 16px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 16px 24px;max-width:1100px;margin:auto}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+section{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px #0002}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--rosa)}
+label{display:block;font-size:.82rem;color:var(--cinza);margin-top:8px}
+input,select{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:.95rem}
+button{background:var(--rosa);color:#fff;border:0;border-radius:6px;padding:9px 14px;font-size:.95rem;cursor:pointer;margin-top:10px}
+button.sec{background:#eee;color:#333}
+.exemplos button{margin:4px 4px 0 0;font-size:.8rem;padding:5px 9px}
+.zap{background:#e7ffdb;border-radius:10px;padding:12px 14px;white-space:pre-wrap;font-size:.95rem;line-height:1.45;border:1px solid #c6e8b4;min-height:140px}
+.hint{font-size:.8rem;color:var(--cinza)}
+ul{list-style:none;padding:0;margin:8px 0 0}
+li{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #eee;font-size:.92rem}
+li.disparou{background:#ffe9ec;font-weight:600}
+.row{display:flex;gap:8px}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Hermes - demonstração</h1>
+  <p>Assistente de IA que monta posts de ofertas e cuida da agenda. Versão de teste: tudo roda no seu navegador.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Produtos, preços, lojas e cupons abaixo são inventados. Nenhum dado real, nenhuma loja real e nenhuma conexão com WhatsApp ou internet: você pode mexer à vontade.</div>
+<main>
+<section>
+  <h2>1. Monte um post de oferta</h2>
+  <div class="exemplos">
+    <span class="hint">Exemplos prontos:</span><br>
+    <button class="sec" onclick="ex(0)">Fone sem fio</button>
+    <button class="sec" onclick="ex(1)">Panela de pressão</button>
+    <button class="sec" onclick="ex(2)">Tênis de corrida</button>
+  </div>
+  <label>Produto</label><input id="nome" value="Fone Bluetooth ExemploSom X1">
+  <label>Loja</label><input id="loja" value="Loja Exemplo">
+  <div class="row">
+    <div style="flex:1"><label>Preço de (R$)</label><input id="de" type="number" step="0.01" value="199.90"></div>
+    <div style="flex:1"><label>Preço por (R$)</label><input id="por" type="number" step="0.01" value="119.90"></div>
+  </div>
+  <label>Cupom (opcional)</label><input id="cupom" value="DEMO10">
+  <label>Link (exemplo)</label><input id="link" value="https://exemplo.com/oferta-1">
+  <label>Tom da frase</label>
+  <select id="tom"><option value="0">Animado</option><option value="1">Direto</option><option value="2">Urgência</option></select>
+  <button onclick="gerar()">Gerar post</button>
+  <button class="sec" onclick="gerar(true)">Outra frase</button>
+</section>
+<section>
+  <h2>Post pronto para o grupo</h2>
+  <div class="zap" id="post">Clique em "Gerar post".</div>
+  <button onclick="copiar()">Copiar texto</button>
+  <p class="hint" id="copiado"></p>
+  <p class="hint">No sistema de verdade, o Hermes encontra a oferta sozinho, confere o preço, escolhe a frase e publica no horário certo. Aqui você só vê a montagem.</p>
+</section>
+<section>
+  <h2>2. Agenda com lembrete</h2>
+  <div class="row">
+    <div style="flex:2"><label>Compromisso</label><input id="ag-txt" value="Reunião de exemplo"></div>
+    <div style="flex:1"><label>Daqui a (segundos)</label><input id="ag-seg" type="number" value="10" min="1"></div>
+  </div>
+  <button onclick="addAg()">Agendar lembrete</button>
+  <ul id="lista"></ul>
+  <p class="hint">Para a demonstração o lembrete dispara em segundos. A agenda fica só nesta página.</p>
+</section>
+<section>
+  <h2>3. Conversa por comando (simulada)</h2>
+  <label>Escreva algo como: "oferta fone" ou "agenda"</label>
+  <input id="cmd" placeholder="Digite e aperte Enter" onkeydown="if(event.key==='Enter')conv()">
+  <div class="zap" id="resp" style="min-height:80px;margin-top:10px;background:#f3f3f3;border-color:#ddd">Hermes: Oi! Sou a versão de teste. Peça "oferta" para montar um post ou "agenda" para ver seus lembretes.</div>
+  <p class="hint">Na versão real a conversa é por voz e a IA entende frases livres. Aqui só reconheço algumas palavras.</p>
+</section>
+</main>
+<footer>Demonstração de portfólio. Feita em Python/IA no projeto real; esta página é uma simulação simplificada sem dados reais.</footer>
+<script>
+const EXEMPLOS=[
+ {nome:"Fone Bluetooth ExemploSom X1",loja:"Loja Exemplo",de:199.90,por:119.90,cupom:"DEMO10",link:"https://exemplo.com/oferta-1"},
+ {nome:"Panela de Pressão 4,5L Modelo Demo",loja:"Casa Modelo",de:149.00,por:89.90,cupom:"",link:"https://exemplo.com/oferta-2"},
+ {nome:"Tênis de Corrida VeloDemo",loja:"Esporte Fictício",de:329.90,por:219.90,cupom:"CORRE15",link:"https://exemplo.com/oferta-3"}
+];
+const FRASES=[
+ ["Olha que achado!","Preço de queda, corre!","Esse está valendo muito!","Boa para aproveitar hoje!"],
+ ["Oferta confirmada.","Preço mais baixo da semana.","Desconto real, conferido.","Vale a conta."],
+ ["Pode acabar a qualquer momento!","Estoque limitado, não deixa para depois!","Última chamada neste preço!","Só enquanto durar!"]
+];
+let ultimaFrase=-1;
+const $=id=>document.getElementById(id);
+const brl=v=>"R$ "+Number(v).toFixed(2).replace(".",",");
+function ex(i){const e=EXEMPLOS[i];$("nome").value=e.nome;$("loja").value=e.loja;$("de").value=e.de;$("por").value=e.por;$("cupom").value=e.cupom;$("link").value=e.link;gerar()}
+function montarPost(trocar){
+  const de=parseFloat($("de").value),por=parseFloat($("por").value);
+  const lista=FRASES[parseInt($("tom").value)];let i;
+  do{i=Math.floor(Math.random()*lista.length)}while(trocar&&i===ultimaFrase&&lista.length>1);
+  ultimaFrase=i;
+  let t="🔥 "+lista[i]+"\n\n🛍️ "+$("nome").value+"\n";
+  if(de>0&&por>0&&por<de){const d=Math.round((1-por/de)*100);t+="❌ De "+brl(de)+"\n✅ Por "+brl(por)+" ("+d+"% OFF)\n"}
+  else t+="✅ Por "+brl(por)+"\n";
+  if($("cupom").value.trim())t+="🎟️ Cupom: "+$("cupom").value.trim()+"\n";
+  t+="🏬 "+$("loja").value+"\n\n👉 "+$("link").value+"\n\n(oferta de demonstração)";
+  return t;
+}
+function gerar(t){$("post").textContent=montarPost(t)}
+function copiar(){if(navigator.clipboard)navigator.clipboard.writeText($("post").textContent).then(()=>{$("copiado").textContent="Copiado!"},()=>{$("copiado").textContent="Selecione o texto e copie."})}
+let agenda=[],cont=0;
+function addAg(){
+  const seg=Math.max(1,parseInt($("ag-seg").value)||10);
+  agenda.push({id:++cont,txt:$("ag-txt").value||"Compromisso",fim:Date.now()+seg*1000,disp:false});desenhar();
+}
+function desenhar(){
+  $("lista").innerHTML=agenda.map(a=>{
+    const resta=Math.max(0,Math.ceil((a.fim-Date.now())/1000));
+    return '<li class="'+(a.disp?'disparou':'')+'"><span>'+(a.disp?'🔔 LEMBRETE: ':'⏰ ')+a.txt.replace(/</g,"&lt;")+'</span><span>'+(a.disp?'agora!':resta+'s')+'</span></li>'}).join("")||"<li>Nenhum lembrete.</li>";
+}
+setInterval(()=>{agenda.forEach(a=>{if(!a.disp&&Date.now()>=a.fim)a.disp=true});desenhar()},500);
+desenhar();gerar();
+function conv(){
+  const c=$("cmd").value.toLowerCase();let r;
+  if(/ofert|post|fone|panela|t[eê]nis/.test(c)){ex(/panela/.test(c)?1:/t[eê]nis/.test(c)?2:0);r="Hermes: Montei o post de exemplo e deixei no quadro ao lado."}
+  else if(/agenda|lembr|compromiss/.test(c)){r=agenda.length?"Hermes: Você tem "+agenda.length+" lembrete(s): "+agenda.map(a=>a.txt).join(", ")+".":"Hermes: Sua agenda está vazia. Use o quadro 2 para agendar."}
+  else r="Hermes: Na versão de teste entendo \"oferta\" e \"agenda\". A versão real entende frases livres, por voz.";
+  $("resp").textContent=r;$("cmd").value="";
+}
+</script>
+</body>
+</html>

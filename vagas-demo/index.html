@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assistente de vagas - demonstração interativa</title>
+<style>
+:root{--azul:#1565c0;--fundo:#f1f6fc;--cinza:#555}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--azul);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px 16px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:340px 1fr;gap:16px;padding:0 16px 24px;max-width:1100px;margin:auto}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+section{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px #0002}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--azul)}
+label{display:block;font-size:.82rem;color:var(--cinza);margin-top:8px}
+select,input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:.95rem}
+button{background:var(--azul);color:#fff;border:0;border-radius:6px;padding:8px 12px;font-size:.88rem;cursor:pointer;margin:6px 6px 0 0}
+button.sec{background:#e8eef6;color:#222}
+.chat{background:#f6f6f6;border-radius:8px;padding:10px;margin-top:10px;font-size:.9rem;min-height:70px;white-space:pre-wrap}
+.resumo{background:#e3f0ff;border-radius:8px;padding:10px;font-size:.92rem;margin-bottom:12px}
+.vaga{border:1px solid #dde6f2;border-radius:10px;padding:12px;margin-bottom:10px}
+.vaga.cand{background:#e8f5e9;border-color:#a5d6a7}
+.vaga h3{margin:0 0 4px;font-size:1rem}
+.meta{font-size:.82rem;color:var(--cinza)}
+.tag{display:inline-block;background:#e8eef6;border-radius:10px;padding:2px 8px;font-size:.75rem;margin-right:4px}
+.hint{font-size:.8rem;color:var(--cinza)}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Assistente de vagas - demonstração</h1>
+  <p>Robô que procura vagas por você e conversa como alguém de confiança. Versão de teste no navegador.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Todas as vagas, empresas e cidades abaixo são inventadas, sem ligação com empresas reais. Nada é enviado pela internet.</div>
+<main>
+<section>
+  <h2>Seu perfil</h2>
+  <label>Cidade</label><select id="f-cidade"></select>
+  <label>Área</label><select id="f-area"></select>
+  <label>Tipo</label>
+  <select id="f-tipo"><option value="">Qualquer</option><option>Efetivo</option><option>Temporário</option><option>Meio período</option></select>
+  <label>Presencial ou remoto</label>
+  <select id="f-modo"><option value="">Qualquer</option><option>Presencial</option><option>Remoto</option></select>
+  <button onclick="render()">Buscar vagas</button>
+  <button class="sec" onclick="limpar()">Limpar filtros</button>
+  <h2 style="margin-top:18px">Converse com o robô</h2>
+  <input id="msg" placeholder='Ex.: tem vaga temporária em Cidade Alfa?' onkeydown="if(event.key==='Enter')falar()">
+  <div class="chat" id="chat">Robô: Oi! Escreva do seu jeito. Entendo cidade, tipo (temporário, efetivo, meio período), área e "remoto". Também posso esconder uma área: "não quero mais vendas".</div>
+</section>
+<section>
+  <div class="resumo" id="resumo"></div>
+  <div id="lista"></div>
+  <p class="hint">Marque "Me candidatei" ou "Esconder": o robô aprende e as próximas vagas vêm mais certeiras (aqui, só enquanto a página está aberta).</p>
+</section>
+</main>
+<footer>Demonstração de portfólio. No projeto real o robô vasculha vários sites a cada poucos minutos e avisa pelo Telegram. Esta página usa uma lista inventada.</footer>
+<script>
+const VAGAS=[
+ {id:1,t:"Auxiliar administrativo",e:"Empresa Alfa Ltda (exemplo)",c:"Cidade Alfa",a:"Administrativo",tipo:"Efetivo",m:"Presencial",s:"R$ 2.100",d:"Rotinas de escritório, planilhas e atendimento."},
+ {id:2,t:"Atendente de loja",e:"Comércio Beta (exemplo)",c:"Cidade Alfa",a:"Vendas",tipo:"Temporário",m:"Presencial",s:"R$ 1.800",d:"Atendimento ao cliente e organização de vitrine."},
+ {id:3,t:"Recepcionista",e:"Clínica Gama (exemplo)",c:"Cidade Beta",a:"Atendimento",tipo:"Efetivo",m:"Presencial",s:"R$ 1.900",d:"Recepção, agenda e cadastro de clientes."},
+ {id:4,t:"Digitador(a)",e:"Serviços Delta (exemplo)",c:"Cidade Alfa",a:"Administrativo",tipo:"Meio período",m:"Remoto",s:"R$ 1.200",d:"Digitação e organização de dados em planilhas."},
+ {id:5,t:"Operador(a) de caixa",e:"Mercado Épsilon (exemplo)",c:"Cidade Gama",a:"Vendas",tipo:"Efetivo",m:"Presencial",s:"R$ 1.750",d:"Caixa, conferência e reposição."},
+ {id:6,t:"Auxiliar de escritório",e:"Contabilidade Zeta (exemplo)",c:"Cidade Beta",a:"Administrativo",tipo:"Temporário",m:"Presencial",s:"R$ 1.900",d:"Arquivo, protocolo e apoio ao time."},
+ {id:7,t:"Atendente de suporte",e:"Tecnologia Eta (exemplo)",c:"Cidade Alfa",a:"Atendimento",tipo:"Efetivo",m:"Remoto",s:"R$ 2.200",d:"Suporte por chat a clientes, treinamento incluso."},
+ {id:8,t:"Auxiliar de farmácia",e:"Farma Teta (exemplo)",c:"Cidade Gama",a:"Saúde",tipo:"Efetivo",m:"Presencial",s:"R$ 1.850",d:"Atendimento no balcão e estoque."},
+ {id:9,t:"Assistente de vendas",e:"Moda Iota (exemplo)",c:"Cidade Beta",a:"Vendas",tipo:"Temporário",m:"Presencial",s:"R$ 1.700 + comissão",d:"Vendas em loja, campanha de fim de ano."},
+ {id:10,t:"Auxiliar de veterinária",e:"Pet Kappa (exemplo)",c:"Cidade Alfa",a:"Saúde",tipo:"Meio período",m:"Presencial",s:"R$ 1.400",d:"Apoio em banho, tosa e recepção de animais."},
+ {id:11,t:"Suporte técnico júnior",e:"Informática Lambda (exemplo)",c:"Cidade Gama",a:"Tecnologia",tipo:"Efetivo",m:"Presencial",s:"R$ 2.400",d:"Manutenção de computadores e instalação de sistemas."},
+ {id:12,t:"Analista de dados júnior",e:"Dados Mi (exemplo)",c:"Cidade Alfa",a:"Tecnologia",tipo:"Efetivo",m:"Remoto",s:"R$ 3.000",d:"Planilhas, painéis e relatórios."},
+ {id:13,t:"Auxiliar de logística",e:"Transportes Ni (exemplo)",c:"Cidade Beta",a:"Logística",tipo:"Temporário",m:"Presencial",s:"R$ 1.900",d:"Separação e expedição de pedidos."},
+ {id:14,t:"Secretária",e:"Escritório Xi (exemplo)",c:"Cidade Gama",a:"Administrativo",tipo:"Efetivo",m:"Presencial",s:"R$ 2.000",d:"Agenda, telefone e documentos."},
+ {id:15,t:"Atendente de balcão",e:"Padaria Ômicron (exemplo)",c:"Cidade Alfa",a:"Atendimento",tipo:"Meio período",m:"Presencial",s:"R$ 1.300",d:"Atendimento e caixa, período da tarde."},
+ {id:16,t:"Assistente de e-commerce",e:"Loja Online Pi (exemplo)",c:"Cidade Beta",a:"Vendas",tipo:"Efetivo",m:"Remoto",s:"R$ 2.100",d:"Cadastro de produtos e atendimento de pedidos."}
+];
+const $=id=>document.getElementById(id);
+const estado={cand:{},esc:{},areasOcultas:{},ajuste:{}};
+const cidades=[...new Set(VAGAS.map(v=>v.c))].sort();
+const areas=[...new Set(VAGAS.map(v=>v.a))].sort();
+$("f-cidade").innerHTML='<option value="">Qualquer</option>'+cidades.map(c=>'<option>'+c+'</option>').join("");
+$("f-area").innerHTML='<option value="">Qualquer</option>'+areas.map(c=>'<option>'+c+'</option>').join("");
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function filtradas(){
+  const c=$("f-cidade").value,a=$("f-area").value,t=$("f-tipo").value,m=$("f-modo").value;
+  return VAGAS.filter(v=>(!c||v.c===c)&&(!a||v.a===a)&&(!t||v.tipo===t)&&(!m||v.m===m)&&!estado.esc[v.id]&&!estado.areasOcultas[v.a])
+   .map(v=>({v,p:(estado.ajuste[v.a]||0)})).sort((x,y)=>y.p-x.p).map(x=>x.v);
+}
+function render(){
+  const l=filtradas();
+  const cand=Object.keys(estado.cand).length;
+  let r="Encontrei "+l.length+" vaga(s) de exemplo";
+  const fs=[$("f-cidade").value,$("f-area").value,$("f-tipo").value,$("f-modo").value].filter(Boolean);
+  if(fs.length)r+=" para: "+fs.join(" / ");
+  r+=".";
+  if(l.length){const cs={};l.forEach(v=>cs[v.c]=(cs[v.c]||0)+1);r+=" Por cidade: "+Object.entries(cs).map(e=>e[0]+" ("+e[1]+")").join(", ")+"."}
+  if(cand)r+=" Você já se candidatou a "+cand+".";
+  const oc=Object.keys(estado.areasOcultas);if(oc.length)r+=" Áreas escondidas: "+oc.join(", ")+".";
+  $("resumo").textContent=r;
+  $("lista").innerHTML=l.map(v=>'<div class="vaga'+(estado.cand[v.id]?' cand':'')+'"><h3>'+v.t+'</h3><div class="meta">'+v.e+' · '+v.c+' · '+v.s+'</div><div style="margin:6px 0"><span class="tag">'+v.a+'</span><span class="tag">'+v.tipo+'</span><span class="tag">'+v.m+'</span></div><div class="meta">'+v.d+'</div><button onclick="cand('+v.id+')">'+(estado.cand[v.id]?'Candidatura registrada':'Me candidatei')+'</button><button class="sec" onclick="esc('+v.id+')">Esconder</button></div>').join("")||'<div class="hint">Nenhuma vaga com esses filtros.</div>';
+}
+function cand(id){estado.cand[id]=1;const v=VAGAS.find(x=>x.id===id);estado.ajuste[v.a]=(estado.ajuste[v.a]||0)+1;say("Anotei a candidatura em \""+v.t+"\". Vou priorizar vagas de "+v.a+".");render()}
+function esc(id){estado.esc[id]=1;say("Escondi essa vaga.");render()}
+function limpar(){["f-cidade","f-area","f-tipo","f-modo"].forEach(i=>$(i).value="");render()}
+function say(t){$("chat").textContent="Robô: "+t}
+function falar(){
+  const m=norm($("msg").value);$("msg").value="";
+  if(!m)return;
+  let feito=[];
+  const cd=cidades.find(c=>m.includes(norm(c)));
+  if(/nao quero mais|esconde|tira/.test(m)){const ar=areas.find(a=>m.includes(norm(a)));if(ar){estado.areasOcultas[ar]=1;say("Combinado, não mostro mais vagas de "+ar+".");render();return}}
+  if(cd){$("f-cidade").value=cd;feito.push(cd)}
+  const ar=areas.find(a=>m.includes(norm(a)));if(ar){$("f-area").value=ar;feito.push(ar)}
+  if(/temporari/.test(m)){$("f-tipo").value="Temporário";feito.push("temporário")}
+  else if(/efetiv|clt/.test(m)){$("f-tipo").value="Efetivo";feito.push("efetivo")}
+  else if(/meio periodo|meio-periodo|meio turno/.test(m)){$("f-tipo").value="Meio período";feito.push("meio período")}
+  if(/remot|home office/.test(m)){$("f-modo").value="Remoto";feito.push("remoto")}
+  else if(/presencial/.test(m)){$("f-modo").value="Presencial";feito.push("presencial")}
+  if(!feito.length){say("Não entendi. Tente falar uma cidade (ex.: Cidade Alfa), um tipo (temporário) ou uma área (Vendas).");return}
+  render();say("Entendi: "+feito.join(", ")+". Atualizei a lista com "+filtradas().length+" vaga(s).");
+}
+render();
+</script>
+</body>
+</html>
