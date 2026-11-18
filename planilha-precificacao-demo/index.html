@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planilha de precificação Shopee e Mercado Livre - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:900px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:900px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.full{grid-column:1/-1}
+label{display:block;font-size:.85rem;color:var(--cinza);margin:10px 0 3px}
+input,select{width:100%;font-size:1rem;padding:9px 10px;border:1px solid #cfc6e4;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus{outline:2px solid #b39ddb}
+.dois{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preco{font-size:2rem;font-weight:700;color:var(--roxo);margin:4px 0 0}
+.rot{font-size:.82rem;color:var(--cinza)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+td,th{padding:7px 6px;border-bottom:1px solid #eee;text-align:left}
+td.v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.neg{color:#c62828;font-weight:700}.pos{color:#1b5e20;font-weight:600}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border-radius:8px;padding:11px 18px;font-size:1rem;margin-top:8px}
+.btn:hover{background:#4a2791}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.tab{overflow-x:auto}
+.tab img{min-width:760px}
+img{max-width:100%;height:auto;border-radius:8px;border:1px solid #e3d8f7;display:block}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.95rem}
+.selo{display:inline-block;background:#e8f5e9;color:#256029;border-radius:12px;padding:3px 10px;font-size:.8rem;margin-bottom:8px}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Planilha de precificação para Shopee e Mercado Livre</h1>
+  <p>Custo + embalagem + taxa do canal + frete: a planilha calcula o preço que sobra o lucro que você quer.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Os produtos e as taxas são exemplos inventados, não são os valores oficiais de nenhum canal. Confira as taxas atuais no site de cada canal e troque na aba "Regras dos canais".</div>
+<main>
+<section>
+  <h2>1. Teste a calculadora</h2>
+  <span class="selo">Mesma conta da planilha</span>
+  <div class="dois">
+    <div><label for="custo">Custo do produto (R$)</label><input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="20"></div>
+    <div><label for="emb">Embalagem (R$)</label><input id="emb" type="number" inputmode="decimal" step="0.01" min="0" value="3"></div>
+  </div>
+  <div class="dois">
+    <div><label for="canal">Canal de venda</label>
+      <select id="canal"><option>Shopee</option><option>Mercado Livre</option><option>Loja própria</option></select></div>
+    <div><label for="marg">Margem desejada (%)</label><input id="marg" type="number" inputmode="decimal" step="1" value="30"></div>
+  </div>
+</section>
+<section>
+  <h2>2. Resultado</h2>
+  <div class="rot">Preço sugerido</div>
+  <div class="preco" id="preco">-</div>
+  <table>
+    <tr><td>Taxa do canal (<span id="faixa"></span>)</td><td class="v" id="taxa"></td></tr>
+    <tr><td>Frete estimado</td><td class="v" id="frete"></td></tr>
+    <tr><td>Lucro</td><td class="v" id="lucro"></td></tr>
+    <tr><td>Margem real</td><td class="v" id="mreal"></td></tr>
+  </table>
+  <p class="hint">Preço = (custo + embalagem + taxa fixa + frete) ÷ (1 − comissão − margem), arredondado para cima em 10 centavos.</p>
+</section>
+<section class="full">
+  <h2>3. Como a planilha fica</h2>
+  <div class="tab"><img src="_print.png" alt="Aba Produtos da planilha, com 10 produtos de exemplo, preço sugerido e lucro calculados e um lucro negativo destacado em vermelho" width="1180" height="480"></div>
+  <p class="hint">Colunas amarelas você preenche; as lilases são fórmula. Lucro negativo fica em vermelho. Um produto de exemplo (queima) mostra isso.</p>
+  <a class="btn" href="planilha-precificacao.xlsx" download="planilha-precificacao.xlsx">Baixar a planilha (.xlsx)</a>
+  <p class="hint">Abre no Excel, no LibreOffice e no Google Planilhas. Tem 3 abas: Produtos, Regras dos canais (tabela que você edita) e Como usar.</p>
+</section>
+<section class="full">
+  <h2>4. Regras dos canais usadas (exemplo)</h2>
+  <div class="tab"><table id="regras"><tr><th>Canal</th><th>Preço até</th><th>Comissão</th><th>Taxa fixa</th><th>Frete</th></tr></table></div>
+  <p class="hint">Valores de exemplo; confira as taxas atuais no site de cada canal. Na planilha, trocar esses números atualiza todos os preços.</p>
+</section>
+<section class="full">
+  <h2>5. Como usar a planilha</h2>
+  <ol>
+    <li>Confira as taxas de cada canal no site dele e troque na aba "Regras dos canais".</li>
+    <li>Na aba "Produtos", escreva nome, custo e embalagem.</li>
+    <li>Escolha o canal na lista e a margem de lucro que quer.</li>
+    <li>Leia o preço sugerido, o lucro em reais e a margem real.</li>
+    <li>Para mais produtos, copie a última linha para baixo.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Monto a planilha com os seus canais, taxas e produtos, e deixo explicado como usar.</footer>
+<script>
+// Mesmas regras de exemplo da aba "Regras dos canais" da planilha.
+var REGRAS={
+ "Shopee":[[79.99,.20,4,8],[199.99,.14,16,12],[99999,.14,26,15]],
+ "Mercado Livre":[[79.99,.14,6.25,10],[199.99,.16,0,14],[99999,.17,0,18]],
+ "Loja própria":[[79.99,.05,.5,12],[199.99,.05,.5,12],[99999,.05,.5,12]]
+};
+function brl(v){var s=Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(v<0?'-':'')+'R$ '+s}
+function pct(v){return(v*100).toFixed(1).replace('.',',')+'%'}
+function $(i){return document.getElementById(i)}
+function calcular(custo,emb,canal,marg){
+  var rs=REGRAS[canal],ps=rs.map(function(r){return(custo+emb+r[2]+r[3])/(1-r[1]-marg)});
+  var k=ps[0]<=rs[0][0]?0:(ps[1]<=rs[1][0]?1:2);
+  var preco=Math.ceil(Math.round(ps[k]*10*1e6)/1e6)/10;
+  var taxa=preco*rs[k][1]+rs[k][2],frete=rs[k][3],lucro=preco-custo-emb-taxa-frete;
+  return{preco:preco,taxa:taxa,frete:frete,lucro:lucro,margem:preco?lucro/preco:0,k:k,com:rs[k][1]};
+}
+function atualizar(){
+  var custo=parseFloat($('custo').value)||0,emb=parseFloat($('emb').value)||0,marg=(parseFloat($('marg').value)||0)/100,canal=$('canal').value;
+  if(1-marg-0.5<=0.0001&&marg>=0.5){$('preco').textContent='margem alta demais';return}
+  var r=calcular(custo,emb,canal,marg);
+  if(!isFinite(r.preco)||r.preco<0){$('preco').textContent='confira os valores';return}
+  $('preco').textContent=brl(r.preco);
+  $('faixa').textContent=pct(r.com)+' de comissão';
+  $('taxa').textContent=brl(r.taxa);$('frete').textContent=brl(r.frete);
+  $('lucro').textContent=brl(r.lucro);$('lucro').className='v '+(r.lucro<0?'neg':'pos');
+  $('mreal').textContent=pct(r.margem);$('mreal').className='v '+(r.lucro<0?'neg':'pos');
+}
+['custo','emb','canal','marg'].forEach(function(i){$(i).addEventListener('input',atualizar);$(i).addEventListener('change',atualizar)});
+var t=$('regras');
+Object.keys(REGRAS).forEach(function(c){REGRAS[c].forEach(function(r,i){
+  var tr=document.createElement('tr');
+  var ate=r[0]>=99999?'acima':'até '+brl(r[0]);
+  [i===0?c:'',ate,pct(r[1]),brl(r[2]),brl(r[3])].forEach(function(x,j){var td=document.createElement('td');td.textContent=x;if(j===0)td.style.fontWeight='600';tr.appendChild(td)});
+  t.appendChild(tr)})});
+atualizar();
+</script>
+</body>
+</html>
