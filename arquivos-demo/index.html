@@ -97,6 +97,7 @@ function icone(n){const e=n.split('.').pop().toLowerCase();
   return {jpg:'🖼️',jpeg:'🖼️',pdf:'📄',docx:'📝',txt:'📝',xlsx:'📊',csv:'📊',opus:'🎧',mp4:'🎬',pptx:'📽️',zip:'🗜️'}[e]||'📄'}
 function numero(el,alvo){
   const ini=+el.textContent,t0=performance.now();
+  if(document.hidden||!window.requestAnimationFrame){el.textContent=alvo;return}  // aba escondida: sem animação, número certo
   (function p(t){const k=Math.min(1,(t-t0)/600);el.textContent=Math.round(ini+(alvo-ini)*k);if(k<1)requestAnimationFrame(p)})(t0);
 }
 function montarAntes(){
