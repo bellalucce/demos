@@ -96,9 +96,10 @@ function contar(){
 function icone(n){const e=n.split('.').pop().toLowerCase();
   return {jpg:'🖼️',jpeg:'🖼️',pdf:'📄',docx:'📝',txt:'📝',xlsx:'📊',csv:'📊',opus:'🎧',mp4:'🎬',pptx:'📽️',zip:'🗜️'}[e]||'📄'}
 function numero(el,alvo){
-  const ini=+el.textContent,t0=performance.now();
-  if(document.hidden||!window.requestAnimationFrame){el.textContent=alvo;return}  // aba escondida: sem animação, número certo
-  (function p(t){const k=Math.min(1,(t-t0)/600);el.textContent=Math.round(ini+(alvo-ini)*k);if(k<1)requestAnimationFrame(p)})(t0);
+  // 18/11: o número final entra já; a contagem animada é só enfeite (navegador que não anima fica com o número certo)
+  const ini=+el.textContent||0,t0=performance.now(); el.textContent=alvo;
+  if(document.hidden||!window.requestAnimationFrame||ini===alvo)return;
+  requestAnimationFrame(function p(t){const k=Math.min(1,(t-t0)/600);el.textContent=Math.round(ini+(alvo-ini)*k);if(k<1)requestAnimationFrame(p)});
 }
 function montarAntes(){
   const l=[...DADOS].sort((a,b)=>a.a.toLowerCase().localeCompare(b.a.toLowerCase(),'pt'));
@@ -141,7 +142,8 @@ $('bt').onclick=()=>{
   setTimeout(()=>{
     depois=!depois;mostrar();L.scrollTop=0;
     L.classList.remove('saindo');L.classList.add('entrando');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{L.classList.remove('entrando');busy=false;$('bt').disabled=false}));
+    const fim=()=>{L.classList.remove('entrando');busy=false;$('bt').disabled=false};
+    requestAnimationFrame(()=>requestAnimationFrame(fim)); setTimeout(fim,500);  // sem animação, o botão volta mesmo assim
   },380);
 };
 mostrar();
