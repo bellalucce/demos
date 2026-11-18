@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transcrição de áudio e legenda - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:900px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:900px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+video{width:100%;max-height:70vh;border-radius:8px;background:#000;display:block}
+p.corrido{line-height:1.6;margin:0;font-size:1rem}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;gap:10px;padding:8px;border-radius:8px;cursor:pointer;font-size:.93rem;line-height:1.4}
+li:hover,li:focus{background:#efe9fa;outline:none}
+li.on{background:#e3d8f7}
+.tempo{flex:none;color:var(--roxo);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-size:.95rem;margin-top:12px}
+.btn:hover{background:#4a2791}
+.full{grid-column:1/-1}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.selo{display:inline-block;background:#e8f5e9;color:#256029;border-radius:12px;padding:3px 10px;font-size:.8rem;margin-bottom:8px}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Transcrição de áudio e legenda - demonstração</h1>
+  <p>Do vídeo ou áudio ao texto: texto corrido, texto com marcação de tempo e arquivo de legenda pronto para usar.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> O vídeo de exemplo é um anúncio de ofertas feito por mim, em português, com narração gerada por IA (como indica o próprio vídeo). Os preços citados são só do exemplo.</div>
+<main>
+<section>
+  <h2>1. Vídeo original</h2>
+  <video id="v" controls playsinline preload="metadata" src="video.mp4"></video>
+  <p class="hint">Toque em uma linha da transcrição com tempo para ir direto àquele trecho.</p>
+</section>
+<section>
+  <h2>2. Transcrição em texto corrido</h2>
+  <span class="selo">Revisado à mão</span>
+  <p class="corrido" id="corrido">Gente, olha o que eu achei hoje, com desconto de verdade! Carolina Herrera 212 VIP Rosé: de 1.028 por 628 reais. Euphoria, da Calvin Klein: de 789 por 420 reais. O kit Armani My Way: de 1.069 por 648. E a base Shiseido: de 399 por só 120 reais! Todo dia eu separo achadinhos assim no grupo Achadinhos Bella Lucce. O link tá na bio. Te espero lá!</p>
+</section>
+<section class="full">
+  <h2>3. Transcrição com marcação de tempo</h2>
+  <ul id="lista">
+<li data-i="0" data-a="0.0" data-b="4.6" tabindex="0" role="button"><span class="tempo">00:00 - 00:04</span><span class="tx">Gente, olha o que eu achei hoje, com desconto de verdade!</span></li>
+<li data-i="1" data-a="4.6" data-b="11.32" tabindex="0" role="button"><span class="tempo">00:04 - 00:11</span><span class="tx">Carolina Herrera 212 VIP Rosé: de 1.028 por 628 reais.</span></li>
+<li data-i="2" data-a="11.32" data-b="17.52" tabindex="0" role="button"><span class="tempo">00:11 - 00:17</span><span class="tx">Euphoria, da Calvin Klein: de 789 por 420 reais.</span></li>
+<li data-i="3" data-a="17.52" data-b="23.0" tabindex="0" role="button"><span class="tempo">00:17 - 00:23</span><span class="tx">O kit Armani My Way: de 1.069 por 648.</span></li>
+<li data-i="4" data-a="23.0" data-b="28.44" tabindex="0" role="button"><span class="tempo">00:23 - 00:28</span><span class="tx">E a base Shiseido: de 399 por só 120 reais!</span></li>
+<li data-i="5" data-a="28.44" data-b="32.08" tabindex="0" role="button"><span class="tempo">00:28 - 00:32</span><span class="tx">Todo dia eu separo achadinhos assim no grupo Achadinhos Bella Lucce.</span></li>
+<li data-i="6" data-a="32.08" data-b="33.32" tabindex="0" role="button"><span class="tempo">00:32 - 00:33</span><span class="tx">O link tá na bio.</span></li>
+<li data-i="7" data-a="33.32" data-b="34.04" tabindex="0" role="button"><span class="tempo">00:33 - 00:34</span><span class="tx">Te espero lá!</span></li>
+  </ul>
+  <a class="btn" id="baixar" href="legenda.srt" download="legenda.srt">Baixar a legenda (.srt)</a>
+  <p class="hint">O arquivo .srt abre em qualquer editor de vídeo e nas redes sociais, e as falas já vêm sincronizadas.</p>
+</section>
+<section class="full">
+  <p style="margin:0"><b>Feito com reconhecimento de voz rodando no próprio computador (sem enviar o áudio para terceiros), revisado à mão.</b></p>
+</section>
+</main>
+<footer>Demonstração de portfólio. Aceito áudio ou vídeo em português; entrego o texto e a legenda no formato que você precisar.</footer>
+<script>
+var v=document.getElementById('v'),itens=[].slice.call(document.querySelectorAll('#lista li'));
+function ir(li){v.currentTime=parseFloat(li.dataset.a)+0.01;v.play();}
+itens.forEach(function(li){li.addEventListener('click',function(){ir(li)});li.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ir(li)}})});
+v.addEventListener('timeupdate',function(){var t=v.currentTime;itens.forEach(function(li){li.classList.toggle('on',t>=parseFloat(li.dataset.a)&&t<parseFloat(li.dataset.b))})});
+</script>
+</body>
+</html>
