@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Organização automática de arquivos digitais - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:900px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:900px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.topo{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:12px}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border:0;cursor:pointer;border-radius:8px;padding:10px 18px;font-size:.95rem;font-family:inherit}
+.btn:hover{background:#4a2791}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.vz{background:#fff;color:var(--roxo);border:2px solid var(--roxo);padding:8px 16px}
+.estado{font-weight:700;color:var(--roxo)}
+.cont{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.cont div{background:#f0eaf9;border-radius:10px;padding:10px;text-align:center}
+.cont b{display:block;font-size:1.5rem;color:var(--roxo)}
+.cont span{font-size:.8rem;color:var(--cinza)}
+.cont .dup b{color:#b26a00}
+#lista{border:1px solid #e6dff3;border-radius:10px;padding:10px;max-height:470px;overflow-y:auto;background:#fcfbfe;font-size:.88rem}
+.f{display:flex;gap:8px;align-items:baseline;padding:3px 4px;border-radius:5px;overflow-wrap:anywhere;transition:opacity .35s,transform .35s}
+.f i{font-style:normal;flex:none}
+.f small{color:#b26a00;font-size:.75rem}
+.saindo .f,.saindo .pasta{opacity:0;transform:translateX(-14px)}
+.entrando .f,.entrando .pasta{opacity:0;transform:translateX(14px)}
+.f.dp{background:#fff3cd}
+.pasta{margin:2px 0;transition:opacity .35s,transform .35s}
+.pasta>.nome{font-weight:700;color:var(--roxo);padding:3px 4px;overflow-wrap:anywhere}
+.pasta .filhos{margin-left:14px;border-left:2px solid #e3d8f7;padding-left:8px}
+.pasta.dupf>.nome{color:#b26a00}
+.nota{font-size:.82rem;color:var(--cinza);margin-top:8px}
+ol{margin:0;padding-left:20px;line-height:1.6}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:600px){header h1{font-size:1.1rem}.cont b{font-size:1.2rem}.cont span{font-size:.72rem}#lista{font-size:.8rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Organização automática de arquivos digitais - demonstração</h1>
+  <p>De uma pasta bagunçada a pastas por tipo e por mês, com nomes padronizados e nada apagado.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com arquivos fictícios.</b> Todos os nomes de arquivos são inventados. Nenhum arquivo é real e nada é enviado a lugar nenhum.</div>
+<main>
+<section>
+  <h2>1. Antes e depois</h2>
+  <div class="topo">
+    <button class="btn" id="bt" type="button">Organizar</button>
+    <span class="estado" id="est">Antes: pasta bagunçada</span>
+  </div>
+  <div class="cont" aria-live="polite">
+    <div><b id="c1">0</b><span id="r1">arquivos</span></div>
+    <div><b id="c2">0</b><span id="r2">pastas</span></div>
+    <div class="dup"><b id="c3">0</b><span id="r3">duplicados</span></div>
+  </div>
+  <div id="lista"></div>
+  <p class="nota" id="nota"></p>
+</section>
+<section>
+  <h2>2. Relatório de exemplo</h2>
+  <p style="margin:0">Cada arquivo tem uma linha com o nome antigo, o nome novo, a pasta e o motivo. É assim que você confere tudo antes de eu aplicar na pasta real.</p>
+  <p style="margin:12px 0 0"><a class="btn" href="relatorio.csv" download="relatorio.csv">Baixar o relatório (.csv)</a></p>
+  <p class="hint">Abre direto no Excel, com acentos certos.</p>
+</section>
+<section>
+  <h2>3. Como eu trabalho</h2>
+  <ol>
+    <li><b>Você diz como quer as pastas</b> (por tipo, por ano e mês, por assunto).</li>
+    <li><b>Eu rodo um robô</b> que organiza uma <b>cópia</b> da sua pasta.</li>
+    <li><b>Você confere o relatório</b> e a cópia organizada.</li>
+    <li><b>Eu aplico na pasta real.</b> Nada é apagado e os duplicados ficam separados para você decidir.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Organização de arquivos digitais com relatório de conferência.</footer>
+<script>
+const DADOS=/*INI*/[{"a": "IMG_20250312_101500.jpg", "n": "2025-03-12_foto-101500.jpg", "p": "Fotos/2025/03", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20250312_101502.jpg", "n": "2025-03-12_foto-101502.jpg", "p": "Fotos/2025/03", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20250312_101500 (1).jpg", "n": "2025-03-12_foto-101500_copia.jpg", "p": "Duplicados (conferir)", "m": "Igual a IMG_20250312_101500.jpg (mesmo conteúdo)", "d": true}, {"a": "IMG_20250315_164210.jpg", "n": "2025-03-15_foto-164210.jpg", "p": "Fotos/2025/03", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20250406_093011.jpg", "n": "2025-04-06_foto-093011.jpg", "p": "Fotos/2025/04", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20250419_150822.jpg", "n": "2025-04-19_foto-150822.jpg", "p": "Fotos/2025/04", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "WhatsApp Image 2025-04-22 at 18.05.33.jpeg", "n": "2025-04-22_foto-whatsapp-180533.jpeg", "p": "Fotos/2025/04", "m": "Foto do WhatsApp: data lida do nome", "d": false}, {"a": "IMG_20241224_203045.jpg", "n": "2024-12-24_foto-203045.jpg", "p": "Fotos/2024/12", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20241231_235901.jpg", "n": "2024-12-31_foto-235901.jpg", "p": "Fotos/2024/12", "m": "Foto: data lida do nome do arquivo", "d": false}, {"a": "IMG_20241224_203045 - Copia.jpg", "n": "2024-12-24_foto-203045_copia.jpg", "p": "Duplicados (conferir)", "m": "Igual a IMG_20241224_203045.jpg (mesmo conteúdo)", "d": true}, {"a": "scan001.pdf", "n": "2025-02-10_documento-digitalizado-01.pdf", "p": "Documentos/Digitalizados/2025", "m": "Nome genérico de scanner: data e título lidos do conteúdo", "d": false}, {"a": "scan002.pdf", "n": "2025-02-10_documento-digitalizado-02.pdf", "p": "Documentos/Digitalizados/2025", "m": "Nome genérico de scanner: data e título lidos do conteúdo", "d": false}, {"a": "scan003.pdf", "n": "2025-03-05_documento-digitalizado-03.pdf", "p": "Documentos/Digitalizados/2025", "m": "Nome genérico de scanner: data e título lidos do conteúdo", "d": false}, {"a": "Contrato final FINAL (2).docx", "n": "2025-01-20_contrato-prestacao-servicos.docx", "p": "Documentos/Contratos", "m": "Versão mais recente do contrato", "d": false}, {"a": "Contrato final.docx", "n": "2025-01-15_contrato-prestacao-servicos_versao-antiga.docx", "p": "Duplicados (conferir)", "m": "Versão antiga do mesmo contrato (conferir antes de decidir)", "d": true}, {"a": "contrato_assinado.pdf", "n": "2025-01-22_contrato-prestacao-servicos-assinado.pdf", "p": "Documentos/Contratos", "m": "Contrato assinado em PDF", "d": false}, {"a": "nota fiscal março.pdf", "n": "2025-03-10_nota-fiscal.pdf", "p": "Financeiro/Notas fiscais/2025-03", "m": "Nota fiscal: mês e data lidos do conteúdo", "d": false}, {"a": "NF_0457.pdf", "n": "2025-03-18_nota-fiscal-0457.pdf", "p": "Financeiro/Notas fiscais/2025-03", "m": "Nota fiscal: número mantido no nome", "d": false}, {"a": "nota fiscal março (1).pdf", "n": "2025-03-10_nota-fiscal_copia.pdf", "p": "Duplicados (conferir)", "m": "Igual a nota fiscal março.pdf (mesmo conteúdo)", "d": true}, {"a": "nota fiscal abril.pdf", "n": "2025-04-09_nota-fiscal.pdf", "p": "Financeiro/Notas fiscais/2025-04", "m": "Nota fiscal: mês e data lidos do conteúdo", "d": false}, {"a": "comprovante pix.pdf", "n": "2025-03-21_comprovante-pix.pdf", "p": "Financeiro/Comprovantes/2025-03", "m": "Comprovante: data lida do conteúdo", "d": false}, {"a": "comprovante_pagamento_final.pdf", "n": "2025-04-15_comprovante-pagamento.pdf", "p": "Financeiro/Comprovantes/2025-04", "m": "Comprovante: data lida do conteúdo", "d": false}, {"a": "orçamento 2025.xlsx", "n": "2025-01-08_orcamento-anual.xlsx", "p": "Planilhas/2025", "m": "Planilha: data da última edição", "d": false}, {"a": "controle gastos março.xlsx", "n": "2025-03-31_controle-de-gastos.xlsx", "p": "Planilhas/2025", "m": "Planilha: mês lido do nome, data da última edição", "d": false}, {"a": "Planilha1.xlsx", "n": "2025-02-14_planilha-sem-titulo.xlsx", "p": "Planilhas/2025", "m": "Nome genérico: marcada como 'sem título' para você renomear", "d": false}, {"a": "Planilha1 (cópia).xlsx", "n": "2025-02-14_planilha-sem-titulo_copia.xlsx", "p": "Duplicados (conferir)", "m": "Igual a Planilha1.xlsx (mesmo conteúdo)", "d": true}, {"a": "relatório vendas.csv", "n": "2025-04-30_relatorio-de-vendas.csv", "p": "Planilhas/2025", "m": "Exportação de dados: data da última edição", "d": false}, {"a": "WhatsApp Audio 2025-03-14 at 09.12.41.opus", "n": "2025-03-14_audio-whatsapp-091241.opus", "p": "Áudios/2025/03", "m": "Áudio do WhatsApp: data lida do nome", "d": false}, {"a": "WhatsApp Audio 2025-03-14 at 09.15.02.opus", "n": "2025-03-14_audio-whatsapp-091502.opus", "p": "Áudios/2025/03", "m": "Áudio do WhatsApp: data lida do nome", "d": false}, {"a": "WhatsApp Audio 2025-03-14 at 09.15.02 (1).opus", "n": "2025-03-14_audio-whatsapp-091502_copia.opus", "p": "Duplicados (conferir)", "m": "Igual a WhatsApp Audio ... 09.15.02.opus (mesmo conteúdo)", "d": true}, {"a": "PTT-20250402-WA0007.opus", "n": "2025-04-02_audio-whatsapp-0007.opus", "p": "Áudios/2025/04", "m": "Áudio do WhatsApp: data lida do nome", "d": false}, {"a": "VID_20250308_120000.mp4", "n": "2025-03-08_video-120000.mp4", "p": "Vídeos/2025/03", "m": "Vídeo: data lida do nome do arquivo", "d": false}, {"a": "VID_20250511_171200.mp4", "n": "2025-05-11_video-171200.mp4", "p": "Vídeos/2025/05", "m": "Vídeo: data lida do nome do arquivo", "d": false}, {"a": "apresentação nova.pptx", "n": "2025-02-26_apresentacao-nova.pptx", "p": "Apresentações/2025", "m": "Apresentação: data da última edição", "d": false}, {"a": "apresentação nova (2).pptx", "n": "2025-02-26_apresentacao-nova_copia.pptx", "p": "Duplicados (conferir)", "m": "Igual a apresentação nova.pptx (mesmo conteúdo)", "d": true}, {"a": "Novo Documento de Texto.txt", "n": "2025-01-03_anotacoes.txt", "p": "Documentos/Textos", "m": "Texto solto: data da última edição", "d": false}, {"a": "lista compras.txt", "n": "2025-05-02_lista-de-compras.txt", "p": "Documentos/Textos", "m": "Texto solto: data da última edição", "d": false}, {"a": "backup antigo.zip", "n": "2024-11-30_backup-antigo.zip", "p": "Compactados", "m": "Arquivo compactado: data da última edição", "d": false}, {"a": "Thumbs.db", "n": "Thumbs.db", "p": "Para conferir", "m": "Arquivo do sistema: não mexi, só separei para você decidir", "d": false}]/*FIM*/;
+const $=id=>document.getElementById(id);
+let depois=false,busy=false;
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function contar(){
+  const nos=new Set();
+  DADOS.forEach(d=>{const p=d.p.split('/');for(let i=1;i<=p.length;i++)nos.add(p.slice(0,i).join('/'))});
+  return {arq:DADOS.length,pastas:nos.size,dup:DADOS.filter(d=>d.d).length};
+}
+function icone(n){const e=n.split('.').pop().toLowerCase();
+  return {jpg:'🖼️',jpeg:'🖼️',pdf:'📄',docx:'📝',txt:'📝',xlsx:'📊',csv:'📊',opus:'🎧',mp4:'🎬',pptx:'📽️',zip:'🗜️'}[e]||'📄'}
+function numero(el,alvo){
+  const ini=+el.textContent,t0=performance.now();
+  (function p(t){const k=Math.min(1,(t-t0)/600);el.textContent=Math.round(ini+(alvo-ini)*k);if(k<1)requestAnimationFrame(p)})(t0);
+}
+function montarAntes(){
+  const l=[...DADOS].sort((a,b)=>a.a.toLowerCase().localeCompare(b.a.toLowerCase(),'pt'));
+  return '<div class="pasta"><div class="nome">📂 Downloads (tudo solto)</div><div class="filhos">'+
+    l.map(d=>'<div class="f"><i>'+icone(d.a)+'</i><span>'+esc(d.a)+'</span></div>').join('')+'</div></div>';
+}
+function montarDepois(){
+  const raiz={f:[],c:{}};
+  DADOS.forEach(d=>{let n=raiz;d.p.split('/').forEach(x=>{n=n.c[x]=n.c[x]||{f:[],c:{}}});n.f.push(d)});
+  function ord(o){return Object.keys(o).sort((a,b)=>{
+    const ra=/Duplicados|Para conferir/.test(a),rb=/Duplicados|Para conferir/.test(b);
+    return ra-rb||a.localeCompare(b,'pt')})}
+  function nodo(n,nome){
+    let h='<div class="pasta'+(/Duplicados/.test(nome)?' dupf':'')+'"><div class="nome">📂 '+esc(nome)+'</div><div class="filhos">';
+    ord(n.c).forEach(k=>h+=nodo(n.c[k],k));
+    n.f.sort((a,b)=>a.n.localeCompare(b.n)).forEach(d=>{
+      h+='<div class="f'+(d.d?' dp':'')+'"><i>'+icone(d.n)+'</i><span>'+esc(d.n)+(d.d?' <small>duplicado</small>':'')+'</span></div>'});
+    return h+'</div></div>';
+  }
+  return ord(raiz.c).map(k=>nodo(raiz.c[k],k)).join('');
+}
+function mostrar(){
+  const c=contar();
+  $('lista').innerHTML=depois?montarDepois():montarAntes();
+  $('est').textContent=depois?'Depois: organizado':'Antes: pasta bagunçada';
+  $('bt').textContent=depois?'Desfazer (ver o antes)':'Organizar';
+  $('bt').className=depois?'btn vz':'btn';
+  const v=depois?c:{arq:c.arq,pastas:1,dup:c.dup};
+  numero($('c1'),v.arq);numero($('c2'),v.pastas);numero($('c3'),v.dup);
+  $('r1').textContent=v.arq===1?'arquivo':'arquivos';
+  $('r2').textContent=v.pastas===1?'pasta':'pastas';
+  $('r3').textContent=depois?'duplicados separados':'duplicados encontrados';
+  $('nota').textContent=depois?
+   'Nada foi apagado: '+c.dup+' duplicados estão na pasta "Duplicados (conferir)" para você decidir. Os nomes seguem AAAA-MM-DD_descricao.ext.':
+   'Todos os arquivos misturados em uma única pasta, com nomes que não dizem nada e cópias repetidas.';
+}
+$('bt').onclick=()=>{
+  if(busy)return;busy=true;$('bt').disabled=true;
+  const L=$('lista');L.classList.add('saindo');
+  setTimeout(()=>{
+    depois=!depois;mostrar();L.scrollTop=0;
+    L.classList.remove('saindo');L.classList.add('entrando');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{L.classList.remove('entrando');busy=false;$('bt').disabled=false}));
+  },380);
+};
+mostrar();
+</script>
+</body>
+</html>
