@@ -1,0 +1,10 @@
+﻿Data;Nome;Item;Quantidade;Valor unitário (R$);Total (R$)
+05/03/2026;Ana P. Exemplo;Caderno 96 folhas;3;12,50;37,50
+05/03/2026;Ana P. Exemplo;Caneta azul;10;2,30;23,00
+12/03/2026;Bruno Modelo;Mouse sem fio;1;45,90;45,90
+12/03/2026;Bruno Modelo;Teclado simples;1;79,00;79,00
+20/04/2026;Carla M. Teste;Pasta arquivo;5;6,75;33,75
+20/04/2026;Carla M. Teste;Grampeador;2;18,40;36,80
+02/05/2026;Diego Fictício Silva;Resma de papel A4;4;28,90;115,60
+02/05/2026;Diego Fictício Silva;Cartucho de tinta;2;54,00;108,00
+;;;;TOTAL GERAL;479,55
