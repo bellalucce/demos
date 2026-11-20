@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Textos informativos para canais - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555;--verde:#1b7a2c}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1000px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1000px;margin:auto}
+@media(min-width:800px){main{grid-template-columns:minmax(0,300px) minmax(0,1fr)}.largo{grid-column:1/-1}}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.btn{display:inline-block;background:var(--roxo);color:#fff;border:0;cursor:pointer;border-radius:8px;padding:10px 18px;font-size:.95rem;font-family:inherit;margin-top:14px;width:100%}
+.btn:hover{background:#4a2791}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.vz{background:#fff;color:var(--roxo);border:2px solid var(--roxo);padding:8px 16px}
+label.campo{display:block;font-size:.85rem;margin:12px 0 6px;color:var(--cinza)}
+.op{display:flex;flex-wrap:wrap;gap:6px}
+.op button{border:1px solid #cfc3e8;background:#fff;border-radius:20px;padding:6px 12px;font-family:inherit;font-size:.86rem;cursor:pointer;color:#333}
+.op button.sel{background:var(--roxo);border-color:var(--roxo);color:#fff}
+.tela{border:1px solid #e6dff3;border-radius:12px;padding:14px 16px;min-height:260px;background:#fcfbfe;white-space:pre-wrap;line-height:1.55;font-size:.93rem;overflow-wrap:break-word}
+.tela.zap{background:#e7f7e1;border-color:#c9e8bd}
+.tela.insta{background:#fff}
+.tela .tit{font-weight:700;font-size:1.05rem;color:#222}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--roxo);vertical-align:-2px;animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+.vazio{color:var(--cinza);text-align:center;padding-top:90px;white-space:normal}
+.cont{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 0}
+.cont div{background:#f0eaf9;border-radius:10px;padding:8px 6px;text-align:center}
+.cont b{display:block;font-size:1.2rem;color:var(--roxo)}
+.cont span{font-size:.74rem;color:var(--cinza)}
+ul.rev{list-style:none;margin:12px 0 0;padding:0}
+ul.rev li{padding:6px 0 6px 28px;position:relative;font-size:.88rem;border-bottom:1px solid #f0edf5;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+ul.rev li.ver{opacity:1;transform:none}
+ul.rev li::before{content:"✓";position:absolute;left:4px;top:5px;color:var(--verde);font-weight:700}
+.fonte{font-size:.8rem;color:var(--cinza);margin-top:10px}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Textos informativos para os seus canais</h1>
+  <p>Escolha o assunto e o canal: o texto sai no tamanho e no tom de cada lugar, revisado e com a fonte.</p>
+</header>
+<div class="aviso">Demonstração com textos de exemplo, escritos com ajuda de IA e revisados por mim. Não substituem orientação de médico ou de consultor financeiro.</div>
+<main>
+  <section>
+    <h2>1. O que você quer publicar</h2>
+    <label class="campo">Assunto</label>
+    <div class="op" id="temas"></div>
+    <label class="campo">Canal</label>
+    <div class="op" id="canais"></div>
+    <button class="btn" id="escrever">Escrever</button>
+    <p class="hint">Num projeto de verdade, o texto segue o tom da sua marca e o calendário que combinarmos.</p>
+  </section>
+  <section>
+    <h2>2. Texto pronto</h2>
+    <div class="tela" id="tela"><div class="vazio">Escolha o assunto e o canal e clique em <b>Escrever</b>.</div></div>
+    <div class="cont" id="cont" hidden>
+      <div><b id="nPal">0</b><span>palavras</span></div>
+      <div><b id="nLei">0</b><span>min de leitura</span></div>
+      <div><b id="nLim">-</b><span>limite do canal</span></div>
+    </div>
+    <ul class="rev" id="rev"></ul>
+    <p class="fonte" id="fonte"></p>
+  </section>
+  <section class="largo">
+    <h2>Como funciona num projeto</h2>
+    <ol>
+      <li>Você me passa os assuntos, o público e 2 ou 3 textos de que gosta (para eu pegar o tom).</li>
+      <li>Monto um calendário em planilha: data, canal, assunto e situação de cada texto.</li>
+      <li>Escrevo com ajuda de IA, confiro cada dado numa fonte confiável e reviso a ortografia.</li>
+      <li>Você aprova pela planilha; o que pedir para mudar volta em até 1 dia útil.</li>
+    </ol>
+  </section>
+</main>
+<script>
+const TEMAS = {
+  saude: "Saúde", financas: "Finanças", tecnologia: "Tecnologia", estilo: "Estilo de vida"
+};
+const CANAIS = {
+  insta: {nome: "Instagram", limite: 2200, rotulo: "2.200 letras"},
+  blog: {nome: "Blog", limite: 0, rotulo: "texto curto"},
+  zap: {nome: "WhatsApp", limite: 0, rotulo: "curta, em tópicos"}
+};
+const FONTES = {
+  saude: "Fonte: Guia Alimentar para a População Brasileira (Ministério da Saúde).",
+  financas: "Fonte: Caderno de Educação Financeira do Banco Central do Brasil.",
+  tecnologia: "Fonte: Central de Ajuda do WhatsApp (confirmação em duas etapas).",
+  estilo: "Fonte: orientações de higiene do sono da Associação Brasileira do Sono."
+};
+const TEXTOS = {
+  saude: {
+    insta: "💧 Você bebe água só quando sente sede?\n\nA sede já é um sinal de que o corpo está pedindo água. Três hábitos simples ajudam:\n\n• Deixe uma garrafinha sempre por perto.\n• Tome um copo de água em cada refeição.\n• Beba mais em dias quentes e quando fizer exercício.\n\nUma dica prática: urina clara costuma indicar boa hidratação.\n\nQuem tem problema nos rins ou no coração deve seguir a quantidade que o médico indicar.\n\nSalve este post para lembrar amanhã 💜\n\n#saude #hidratacao #habitossaudaveis",
+    blog: "<span class=\"tit\">Água: como lembrar de beber ao longo do dia</span>\n\nMuita gente só bebe água quando sente sede. O problema é que a sede já é um aviso de que o corpo está precisando de líquido. Criar alguns hábitos ajuda a manter a hidratação sem precisar pensar nisso o tempo todo.\n\nHábitos que funcionam\nTer uma garrafinha sempre à vista é o mais simples: o que está perto é lembrado. Outro truque é associar a água a momentos fixos, como tomar um copo em cada refeição e outro ao acordar. Em dias quentes ou de atividade física, a necessidade aumenta.\n\nComo saber se está bebendo o suficiente\nUm sinal prático é a cor da urina: clara costuma indicar boa hidratação; escura, que vale beber mais. Sucos e chás contam, mas a água pura continua sendo a melhor escolha para o dia a dia.\n\nAtenção\nPessoas com doença nos rins ou no coração podem ter limite de líquidos. Nesses casos, a quantidade certa é a que o médico indicar.",
+    zap: "💧 *Dica de saúde do dia*\n\nA sede já é um aviso de que o corpo precisa de água. Para não esquecer:\n\n1. Garrafinha sempre por perto\n2. Um copo em cada refeição\n3. Mais água em dia quente ou de exercício\n\nUrina clara costuma indicar boa hidratação. Quem tem problema nos rins ou no coração segue o que o médico indicar."
+  },
+  financas: {
+    insta: "💰 Reserva de emergência: por onde começar?\n\nÉ o dinheiro guardado para o imprevisto: conserto do carro, remédio, um mês sem renda.\n\n• Meta comum: de 3 a 6 meses do seu custo de vida.\n• Comece pequeno: separe um valor fixo assim que o dinheiro entrar.\n• Guarde onde dá para tirar a qualquer hora e com rendimento, como aplicações com liquidez diária.\n\nO importante é começar, mesmo com pouco.\n\nComente \"QUERO\" que eu mando a planilha para acompanhar 📊\n\n#educacaofinanceira #reservadeemergencia #dinheiro",
+    blog: "<span class=\"tit\">Reserva de emergência: o primeiro passo para organizar o dinheiro</span>\n\nA reserva de emergência é um valor guardado só para imprevistos: o conserto do carro, um remédio caro, um período sem renda. Ter esse dinheiro evita recorrer ao cheque especial ou ao cartão parcelado, que costumam ter os juros mais altos.\n\nQuanto guardar\nUma referência muito usada é juntar de 3 a 6 meses do seu custo de vida. Quem tem renda que varia, como autônomos, pode mirar no valor maior.\n\nComo começar\nO segredo é tratar a reserva como uma conta fixa: separar um valor assim que o salário entra, antes de gastar. Começar com pouco já cria o hábito.\n\nOnde deixar o dinheiro\nA reserva precisa estar disponível a qualquer hora e sem risco de perder valor de repente. Aplicações com liquidez diária e baixo risco são as mais indicadas para esse fim.",
+    zap: "💰 *Finanças em 1 minuto*\n\nReserva de emergência é o dinheiro só para imprevisto.\n\n1. Meta: de 3 a 6 meses do seu custo de vida\n2. Separe um valor fixo assim que receber\n3. Deixe onde dá para tirar a qualquer hora, com rendimento\n\nComeçar com pouco já vale."
+  },
+  tecnologia: {
+    insta: "🔐 Seu WhatsApp tem a confirmação em duas etapas?\n\nCom ela, o golpista não consegue usar o seu número mesmo que consiga o código que chega por SMS.\n\nComo ligar:\n• Abra o WhatsApp > Configurações > Conta.\n• Toque em Confirmação em duas etapas > Ativar.\n• Crie um PIN de 6 números e cadastre um e-mail.\n\nNunca passe esse PIN nem o código do SMS para ninguém, nem para quem diz ser da empresa.\n\nCompartilhe com quem você quer proteger 💜\n\n#seguranca #whatsapp #golpe",
+    blog: "<span class=\"tit\">Como proteger o seu WhatsApp do golpe do código</span>\n\nUm golpe comum é alguém pedir o código de 6 números que o WhatsApp manda por SMS, fingindo ser de uma loja ou de um serviço. Com esse código, a pessoa instala o seu número no aparelho dela e passa a falar com os seus contatos.\n\nA proteção: confirmação em duas etapas\nCom ela ligada, além do código do SMS o WhatsApp pede um PIN que só você sabe. Para ativar: abra Configurações, toque em Conta, depois em Confirmação em duas etapas e em Ativar. Crie o PIN e cadastre um e-mail para recuperar o acesso, se esquecer.\n\nRegras de ouro\nNinguém de empresa séria pede o código do SMS ou o PIN. Se alguém pedir, é golpe. E se um amigo pedir dinheiro por mensagem, confirme por uma ligação antes.",
+    zap: "🔐 *Dica de segurança*\n\nLigue a confirmação em duas etapas do WhatsApp:\n\n1. Configurações > Conta\n2. Confirmação em duas etapas > Ativar\n3. Crie um PIN de 6 números\n\nNunca passe o PIN nem o código do SMS para ninguém."
+  },
+  estilo: {
+    insta: "🌙 Dorme mal e acorda sem energia?\n\nPequenas mudanças na rotina ajudam o corpo a desligar:\n\n• Durma e acorde no mesmo horário, inclusive no fim de semana.\n• Deixe o celular de lado um pouco antes de deitar.\n• Quarto escuro, silencioso e fresco.\n• Café só até o meio da tarde.\n\nSe o cansaço continuar mesmo assim, vale conversar com um médico.\n\nQual dessas você vai testar hoje? Conta aqui 👇\n\n#sono #rotina #bemestar",
+    blog: "<span class=\"tit\">4 hábitos para dormir melhor ainda esta semana</span>\n\nDormir mal deixa o dia mais pesado: falta de energia, irritação e dificuldade de concentração. Antes de qualquer outra coisa, vale olhar para a rotina da noite.\n\n1. Horário regular\nDormir e acordar no mesmo horário, até no fim de semana, ajuda o relógio do corpo a funcionar no ritmo certo.\n\n2. Menos tela antes de deitar\nA luz e os estímulos do celular deixam o cérebro em alerta. Tente parar um pouco antes de ir para a cama.\n\n3. Quarto preparado\nEscuro, silencioso e com temperatura agradável.\n\n4. Atenção ao café\nCafé, chá preto e refrigerante de cola à noite atrapalham o sono de muita gente.\n\nSe o problema continuar, procure um médico: insônia frequente tem tratamento.",
+    zap: "🌙 *Para dormir melhor*\n\n1. Mesmo horário todo dia\n2. Celular de lado antes de deitar\n3. Quarto escuro e silencioso\n4. Café só até o meio da tarde\n\nCansaço que não passa? Converse com um médico."
+  }
+};
+const REVISAO = {
+  insta: ["Ortografia e acentuação conferidas", "Abre com uma pergunta para prender a atenção", "Dentro das 2.200 letras da legenda", "Chamada para ação no fim", "Hashtags do assunto"],
+  blog: ["Ortografia e acentuação conferidas", "Título que diz o que a pessoa vai aprender", "Parágrafos curtos, com intertítulos", "Cada dado conferido na fonte", "Sem promessa que o texto não pode cumprir"],
+  zap: ["Ortografia e acentuação conferidas", "Lida em menos de 1 minuto", "Negrito e lista que o WhatsApp mostra", "Sem link encurtado (evita cara de golpe)", "Tom de conversa, sem exagero"]
+};
+let tema = "saude", canal = "insta", rodando = null;
+function botoes(el, itens, atual, quando) {
+  el.innerHTML = "";
+  for (const [k, v] of Object.entries(itens)) {
+    const b = document.createElement("button");
+    b.textContent = typeof v === "string" ? v : v.nome;
+    if (k === atual) b.className = "sel";
+    b.onclick = () => { quando(k); [...el.children].forEach(x => x.className = ""); b.className = "sel"; };
+    el.appendChild(b);
+  }
+}
+botoes(document.getElementById("temas"), TEMAS, tema, k => tema = k);
+botoes(document.getElementById("canais"), CANAIS, canal, k => canal = k);
+function semTags(t) { return t.replace(/<[^>]+>/g, ""); }
+function escrever() {
+  clearTimeout(rodando);
+  const tela = document.getElementById("tela"), btn = document.getElementById("escrever");
+  const texto = TEXTOS[tema][canal], limpo = semTags(texto);
+  tela.className = "tela " + canal;
+  document.getElementById("rev").innerHTML = "";
+  document.getElementById("fonte").textContent = "";
+  document.getElementById("cont").hidden = true;
+  btn.disabled = true;
+  const titulo = (texto.match(/^<span class="tit">([^<]*)<\/span>/) || [])[1];
+  const corpo = titulo ? limpo.slice(titulo.length) : limpo;
+  let i = 0;
+  const passo = Math.max(3, Math.round(corpo.length / 140));
+  function anda() {
+    i = Math.min(corpo.length, i + passo);
+    tela.innerHTML = "";
+    if (titulo) { const s = document.createElement("span"); s.className = "tit"; s.textContent = titulo; tela.appendChild(s); }
+    tela.appendChild(document.createTextNode(corpo.slice(0, i)));
+    if (i < corpo.length) {
+      const c = document.createElement("span"); c.className = "cursor"; tela.appendChild(c);
+      rodando = setTimeout(anda, 16);
+    } else { fim(limpo); btn.disabled = false; }
+  }
+  anda();
+}
+function fim(limpo) {
+  if (canal === "blog") {   // intertítulos em negrito: linha curta, sem ponto final
+    const tela = document.getElementById("tela");
+    tela.querySelectorAll("span.cursor").forEach(c => c.remove());
+    const nos = [...tela.childNodes].filter(n => n.nodeType === 3);
+    nos.forEach(n => {
+      const frag = document.createDocumentFragment();
+      n.textContent.split("\n").forEach((ln, k, arr) => {
+        if (ln && ln.length < 45 && !/[.!?:]$/.test(ln)) { const b = document.createElement("b"); b.textContent = ln; frag.appendChild(b); }
+        else frag.appendChild(document.createTextNode(ln));
+        if (k < arr.length - 1) frag.appendChild(document.createTextNode("\n"));
+      });
+      n.replaceWith(frag);
+    });
+  }
+  const pal = (limpo.match(/[A-Za-zÀ-ÿ0-9]+/g) || []).length;
+  document.getElementById("nPal").textContent = pal;
+  document.getElementById("nLei").textContent = Math.max(1, Math.round(pal / 200));
+  const c = CANAIS[canal];
+  document.getElementById("nLim").textContent = c.limite ? limpo.length + "/" + c.limite : "ok";
+  document.getElementById("cont").hidden = false;
+  const ul = document.getElementById("rev");
+  REVISAO[canal].forEach((t, k) => {
+    const li = document.createElement("li"); li.textContent = t; ul.appendChild(li);
+    setTimeout(() => li.classList.add("ver"), 250 * (k + 1));
+  });
+  setTimeout(() => document.getElementById("fonte").textContent = FONTES[tema], 250 * (REVISAO[canal].length + 1));
+}
+document.getElementById("escrever").onclick = escrever;
+</script>
+</body>
+</html>
