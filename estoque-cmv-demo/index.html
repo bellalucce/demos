@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planilha de controle de estoque e CMV - demonstração</title>
+<style>
+:root{--cor:#00796b;--cor2:#004d40;--fundo:#f3f7f6;--cinza:#555;--amarelo:#fff8d6;--lilas:#ede7f6}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:980px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:980px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.full{grid-column:1/-1}
+label{display:block;font-size:.85rem;color:var(--cinza);margin:10px 0 3px}
+input,select{width:100%;font-size:1rem;padding:9px 10px;border:1px solid #b2d8d2;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus{outline:2px solid #80cbc4}
+.dois{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:11px 18px;font-size:1rem;margin-top:12px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--cor2)}
+.btn.claro{background:#e0f2f1;color:var(--cor2)}
+.btn.claro:hover{background:#b2dfdb}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.tab{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{padding:7px 6px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+th{background:var(--cor);color:#fff;font-weight:600;font-size:.8rem}
+td.v,th.v{text-align:right;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:700;border-top:2px solid var(--cor)}
+.repor{background:#ffcdd2;color:#b71c1c;font-weight:700;border-radius:6px;padding:2px 8px}
+.ok{color:#1b5e20}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px}
+.big div{background:#e0f2f1;border-radius:10px;padding:10px}
+.big b{display:block;font-size:1.25rem;color:var(--cor2);font-variant-numeric:tabular-nums}
+.big span{font-size:.78rem;color:var(--cinza)}
+.msg{font-size:.88rem;margin-top:8px;min-height:1.2em}
+.msg.erro{color:#b71c1c;font-weight:600}.msg.feito{color:#1b5e20}
+.novo{animation:pisca 1.6s ease-out}
+@keyframes pisca{from{background:#fff59d}to{background:transparent}}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.95rem}
+.selo{display:inline-block;background:#e8f5e9;color:#256029;border-radius:12px;padding:3px 10px;font-size:.8rem;margin-bottom:6px}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}.big{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Planilha de controle de estoque e CMV</h1>
+  <p>Entradas e saídas no mesmo lugar: saldo, custo médio, alerta de reposição, CMV, lucro bruto e margem saem sozinhos.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Loja de cosméticos inventada; os produtos, custos e vendas são exemplos. As contas da página são as mesmas das fórmulas da planilha.</div>
+<main>
+<section>
+  <h2>1. Registre um movimento</h2>
+  <span class="selo">Mesma conta da planilha</span>
+  <label for="prod">Produto</label>
+  <select id="prod"></select>
+  <div class="dois">
+    <div><label for="tipo">Tipo</label><select id="tipo"><option>Saída</option><option>Entrada</option></select></div>
+    <div><label for="qtd">Quantidade (un)</label><input id="qtd" type="number" inputmode="numeric" min="1" step="1" value="2"></div>
+  </div>
+  <label for="valor" id="rotValor">Preço unitário da venda (R$)</label>
+  <input id="valor" type="number" inputmode="decimal" min="0" step="0.01">
+  <button class="btn" id="registrar">Registrar</button>
+  <button class="btn claro" id="desfazer">Desfazer o último</button>
+  <div class="msg" id="msg" role="status"></div>
+</section>
+<section>
+  <h2>2. Resumo do período</h2>
+  <div class="big">
+    <div><b id="kReceita">-</b><span>Receita das vendas</span></div>
+    <div><b id="kCmv">-</b><span>CMV (custo do que vendeu)</span></div>
+    <div><b id="kMargem">-</b><span>Margem bruta</span></div>
+  </div>
+  <div class="big">
+    <div><b id="kValor">-</b><span>Valor parado em estoque</span></div>
+    <div><b id="kRepor">-</b><span>Produtos para repor</span></div>
+    <div><b id="kConf">-</b><span>Conta clássica bate?</span></div>
+  </div>
+  <p class="hint">Conta clássica: estoque inicial + compras − estoque final = CMV. A planilha faz essa conferência sozinha.</p>
+</section>
+<section class="full">
+  <h2>3. Estoque (aba "Estoque")</h2>
+  <div class="tab"><table id="tEstoque"></table></div>
+  <p class="hint">Custo médio = (valor do estoque inicial + valor de todas as compras) ÷ (quantidade inicial + comprada). "REPOR" aparece quando o saldo chega no mínimo cadastrado.</p>
+</section>
+<section class="full">
+  <h2>4. CMV e lucro por produto (aba "CMV")</h2>
+  <div class="tab"><table id="tCmv"></table></div>
+  <p class="hint">CMV = unidades vendidas × custo médio. Lucro bruto = receita − CMV. Margem = lucro bruto ÷ receita.</p>
+</section>
+<section class="full">
+  <h2>5. Movimentos (aba "Movimentos")</h2>
+  <div class="tab"><table id="tMov"></table></div>
+</section>
+<section class="full">
+  <h2>6. Baixe a planilha</h2>
+  <a class="btn" href="planilha-estoque-cmv.xlsx" download="planilha-estoque-cmv.xlsx">Baixar a planilha (.xlsx)</a>
+  <p class="hint">Abre no Excel, no LibreOffice e no Google Planilhas. Tem 5 abas: Produtos, Movimentos (com lista de código e tipo), Estoque, CMV e Como usar. Células amarelas você preenche; as lilases são fórmula.</p>
+  <ol>
+    <li>Na aba Produtos, cadastre código, nome, estoque e custo do começo do mês, estoque mínimo e preço.</li>
+    <li>Na aba Movimentos, cada compra é uma "Entrada" com o custo; cada venda é uma "Saída" com o preço.</li>
+    <li>Nas abas Estoque e CMV, leia o saldo, o alerta de reposição, o CMV, o lucro e a margem.</li>
+    <li>Para virar o mês, copie o saldo e o custo médio para o estoque e o custo iniciais.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Monto a planilha com os seus produtos, o seu jeito de registrar e os relatórios que você precisa, e deixo explicado como usar.</footer>
+<script src="dados.js"></script>
+<script>
+var MOV=DADOS.movimentos.slice(), PROD=DADOS.produtos, ULT=-1;
+function $(i){return document.getElementById(i)}
+function brl(v){var s=Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(v<-0.004?'-':'')+'R$ '+s}
+function pct(v){return(v*100).toFixed(1).replace('.',',')+'%'}
+function num(v){return String(Math.round(v*100)/100).replace('.',',')}
+function hoje(){var d=new Date();return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()}
+function calcular(){
+  return PROD.map(function(p){
+    var ent=MOV.filter(function(m){return m.cod===p.cod&&m.tipo==='Entrada'}),
+        sai=MOV.filter(function(m){return m.cod===p.cod&&m.tipo==='Saída'});
+    var qe=ent.reduce(function(s,m){return s+m.qtd},0), qs=sai.reduce(function(s,m){return s+m.qtd},0);
+    var medio=(p.ini+qe)?(p.ini*p.custo+ent.reduce(function(s,m){return s+m.qtd*m.custo},0))/(p.ini+qe):0;
+    var saldo=p.ini+qe-qs, receita=sai.reduce(function(s,m){return s+m.qtd*m.preco},0), cmv=qs*medio;
+    return {p:p,ent:qe,sai:qs,saldo:saldo,medio:medio,valor:saldo*medio,repor:saldo<=p.minimo,receita:receita,cmv:cmv,lucro:receita-cmv};
+  });
+}
+function linha(t,cels,cls){var tr=document.createElement('tr');if(cls)tr.className=cls;cels.forEach(function(c){var td=document.createElement(c.th?'th':'td');if(c.v)td.className='v';if(c.html)td.innerHTML=c.html;else td.textContent=c.t;tr.appendChild(td)});t.appendChild(tr);return tr}
+function H(t,v){return{t:t,th:1,v:v}}
+function desenhar(){
+  var r=calcular(), te=$('tEstoque'), tc=$('tCmv'), tm=$('tMov');
+  te.innerHTML='';tc.innerHTML='';tm.innerHTML='';
+  linha(te,[H('Código'),H('Produto'),H('Inicial',1),H('Entradas',1),H('Saídas',1),H('Saldo',1),H('Custo médio',1),H('Valor em estoque',1),H('Situação')]);
+  var tv=0,trc=0,tcmv=0,tl=0,tq=0,nrep=0;
+  r.forEach(function(x){
+    tv+=x.valor;trc+=x.receita;tcmv+=x.cmv;tl+=x.lucro;tq+=x.sai;if(x.repor)nrep++;
+    var sit=x.saldo<0?'<span class="repor">ERRO: saiu mais do que tinha</span>':(x.repor?'<span class="repor">REPOR</span>':'<span class="ok">ok</span>');
+    linha(te,[{t:x.p.cod},{t:x.p.nome},{t:num(x.p.ini),v:1},{t:num(x.ent),v:1},{t:num(x.sai),v:1},{t:num(x.saldo),v:1},{t:brl(x.medio),v:1},{t:brl(x.valor),v:1},{html:sit}]);
+  });
+  linha(te,[{t:''},{t:'TOTAL'},{t:''},{t:''},{t:''},{t:''},{t:''},{t:brl(tv),v:1},{t:''}],'total');
+  linha(tc,[H('Código'),H('Produto'),H('Vendidos',1),H('Receita',1),H('CMV',1),H('Lucro bruto',1),H('Margem',1)]);
+  r.forEach(function(x){linha(tc,[{t:x.p.cod},{t:x.p.nome},{t:num(x.sai),v:1},{t:brl(x.receita),v:1},{t:brl(x.cmv),v:1},{t:brl(x.lucro),v:1},{t:x.receita?pct(x.lucro/x.receita):'-',v:1}])});
+  linha(tc,[{t:''},{t:'TOTAL'},{t:num(tq),v:1},{t:brl(trc),v:1},{t:brl(tcmv),v:1},{t:brl(tl),v:1},{t:trc?pct(tl/trc):'-',v:1}],'total');
+  linha(tm,[H('Data'),H('Código'),H('Produto'),H('Tipo'),H('Qtde',1),H('Custo un.',1),H('Preço un.',1)]);
+  MOV.map(function(m,i){return[m,i]}).reverse().forEach(function(a){
+    var m=a[0],p=PROD.filter(function(q){return q.cod===m.cod})[0];
+    linha(tm,[{t:m.data},{t:m.cod},{t:p?p.nome:'?'},{t:m.tipo},{t:num(m.qtd),v:1},{t:m.custo!=null?brl(m.custo):'',v:1},{t:m.preco!=null?brl(m.preco):'',v:1}],a[1]===ULT?'novo':'');
+  });
+  var ei=PROD.reduce(function(s,p){return s+p.ini*p.custo},0), comp=MOV.filter(function(m){return m.tipo==='Entrada'}).reduce(function(s,m){return s+m.qtd*m.custo},0);
+  $('kReceita').textContent=brl(trc);$('kCmv').textContent=brl(tcmv);$('kMargem').textContent=trc?pct(tl/trc):'-';
+  $('kValor').textContent=brl(tv);$('kRepor').textContent=nrep;$('kConf').textContent=Math.abs(ei+comp-tv-tcmv)<0.01?'sim':'não';
+  $('desfazer').disabled=MOV.length<=DADOS.movimentos.length;
+  window.RESULTADO={receita:trc,cmv:tcmv,valor:tv,repor:nrep,linhas:r.map(function(x){return{cod:x.p.cod,saldo:x.saldo,medio:x.medio,cmv:x.cmv,receita:x.receita}})};
+}
+function ajustarValor(){
+  var p=PROD.filter(function(q){return q.cod===$('prod').value})[0], ent=$('tipo').value==='Entrada';
+  $('rotValor').textContent=ent?'Custo unitário da compra (R$)':'Preço unitário da venda (R$)';
+  $('valor').value=(ent?p.custo:p.preco).toFixed(2);
+}
+PROD.forEach(function(p){var o=document.createElement('option');o.value=p.cod;o.textContent=p.cod+' · '+p.nome;$('prod').appendChild(o)});
+$('prod').addEventListener('change',ajustarValor);$('tipo').addEventListener('change',ajustarValor);
+$('registrar').addEventListener('click',function(){
+  var cod=$('prod').value,tipo=$('tipo').value,q=parseInt($('qtd').value,10),v=parseFloat($('valor').value);
+  var msg=$('msg');msg.className='msg erro';
+  if(!(q>0)){msg.textContent='Quantidade tem que ser maior que zero.';return}
+  if(!(v>=0)){msg.textContent='Confira o valor.';return}
+  var atual=calcular().filter(function(x){return x.p.cod===cod})[0];
+  if(tipo==='Saída'&&q>atual.saldo){msg.textContent='Só tem '+num(atual.saldo)+' em estoque: a planilha marcaria ERRO.';return}
+  MOV.push({data:hoje(),cod:cod,tipo:tipo,qtd:q,custo:tipo==='Entrada'?v:null,preco:tipo==='Saída'?v:null});ULT=MOV.length-1;
+  desenhar();msg.className='msg feito';msg.textContent=tipo+' de '+q+' registrada. Saldo, custo médio e CMV já foram recalculados.';
+});
+$('desfazer').addEventListener('click',function(){if(MOV.length>DADOS.movimentos.length){MOV.pop();ULT=-1;desenhar();$('msg').className='msg';$('msg').textContent='Último movimento desfeito.'}});
+ajustarValor();desenhar();
+</script>
+</body>
+</html>
