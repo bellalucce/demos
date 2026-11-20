@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pesquisa de satisfação com NPS - demonstração</title>
+<style>
+:root{--cor:#1565c0;--cor2:#0d47a1;--fundo:#f3f6fb;--cinza:#555;--verde:#2e7d32;--amarelo:#f9a825;--vermelho:#c62828}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:980px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:980px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.full{grid-column:1/-1}
+label,.rot{display:block;font-size:.85rem;color:var(--cinza);margin:12px 0 4px}
+.escala{display:flex;flex-wrap:wrap;gap:4px}
+.escala button{flex:1 0 34px;min-width:34px;padding:8px 0;border:1px solid #bbdefb;background:#fff;border-radius:8px;font-size:.95rem;cursor:pointer;font-family:inherit}
+.escala button.sel{background:var(--cor);color:#fff;border-color:var(--cor)}
+.estrelas button{flex:0 0 40px}
+textarea{width:100%;min-height:64px;font-size:1rem;padding:9px 10px;border:1px solid #bbdefb;border-radius:8px;font-family:inherit}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:11px 18px;font-size:1rem;margin-top:12px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--cor2)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.msg{font-size:.88rem;margin-top:8px;min-height:1.2em}.msg.erro{color:var(--vermelho);font-weight:600}.msg.feito{color:var(--verde)}
+.nps{font-size:3rem;font-weight:800;color:var(--cor2);line-height:1}
+.barra{display:flex;height:22px;border-radius:11px;overflow:hidden;margin:10px 0 6px}
+.barra div{height:100%}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--cinza)}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{padding:7px 6px;border-bottom:1px solid #eee;text-align:left}
+th{background:var(--cor);color:#fff;font-weight:600;font-size:.8rem}
+td.v,th.v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tab{overflow-x:auto}
+.neg{color:var(--vermelho);font-weight:700}.pos{color:var(--verde);font-weight:600}
+.alerta{background:#e3f2fd;border-left:4px solid var(--cor);padding:10px 12px;border-radius:6px;font-size:.92rem;margin-top:10px}
+.mini{display:inline-block;height:9px;background:var(--cor);border-radius:5px;vertical-align:middle;margin-right:6px}
+.novo{animation:pisca 1.6s ease-out}@keyframes pisca{from{background:#fff59d}to{background:transparent}}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.95rem}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pesquisa de satisfação com NPS</h1>
+  <p>O cliente responde em 30 segundos; o painel mostra a nota, o que agrada, o que incomoda e por onde começar a melhorar.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO.</b> Loja inventada e 48 respostas de exemplo. Responda você também: o painel recalcula na hora.</div>
+<main>
+<section>
+  <h2>1. Responda a pesquisa</h2>
+  <span class="rot">De 0 a 10, quanto você recomendaria a loja a um amigo?</span>
+  <div class="escala" id="eNps"></div>
+  <span class="rot">Entrega</span><div class="escala estrelas" id="eEntrega"></div>
+  <span class="rot">Produto</span><div class="escala estrelas" id="eProduto"></div>
+  <span class="rot">Atendimento</span><div class="escala estrelas" id="eAtendimento"></div>
+  <label for="coment">O que mais chamou a sua atenção? (opcional)</label>
+  <textarea id="coment" maxlength="200" placeholder="Ex.: a entrega atrasou, mas o produto é ótimo"></textarea>
+  <button class="btn" id="enviar">Enviar resposta</button>
+  <div class="msg" id="msg" role="status"></div>
+</section>
+<section>
+  <h2>2. Nota NPS</h2>
+  <div class="nps" id="vNps">-</div>
+  <div class="hint" id="vTotal"></div>
+  <div class="barra" id="barra"></div>
+  <div class="leg"><span><i style="background:var(--verde)"></i>Promotores (9 e 10)</span><span><i style="background:var(--amarelo)"></i>Neutros (7 e 8)</span><span><i style="background:var(--vermelho)"></i>Detratores (0 a 6)</span></div>
+  <p class="hint">NPS = % de promotores − % de detratores. Vai de −100 a +100.</p>
+  <div class="tab"><table id="tMedias"></table></div>
+  <div class="alerta" id="foco"></div>
+</section>
+<section class="full">
+  <h2>3. O que os clientes comentaram, por tema</h2>
+  <div class="tab"><table id="tTemas"></table></div>
+  <p class="hint">Cada comentário é separado por tema (entrega, produto, atendimento, preço) e marcado como elogio ou reclamação. No trabalho real eu reviso a separação à mão antes do relatório.</p>
+</section>
+<section class="full">
+  <h2>4. Últimas respostas</h2>
+  <div class="tab"><table id="tResp"></table></div>
+  <a class="btn" href="respostas.csv" download="respostas-pesquisa.csv">Baixar as respostas (.csv)</a>
+  <p class="hint">O arquivo abre no Excel e no Google Planilhas.</p>
+</section>
+<section class="full">
+  <h2>5. Como funciona no seu caso</h2>
+  <ol>
+    <li>Monto as perguntas com você, curtas e sem induzir a resposta, no Google Formulários ou na ferramenta que você já usa.</li>
+    <li>O link vai por WhatsApp, e-mail ou QR code na embalagem; as respostas caem numa planilha.</li>
+    <li>O painel calcula o NPS, as médias e separa os comentários por tema.</li>
+    <li>Você recebe um relatório curto: o que está bom, o que incomoda e as 3 melhorias que mais pesam.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Respostas inventadas; nenhum dado pessoal é coletado nesta página.</footer>
+<script src="dados.js"></script>
+<script>
+var R=RESPOSTAS.slice(), N0=RESPOSTAS.length, ULT=-1, esc={nps:null,entrega:null,produto:null,atendimento:null};
+var TEMAS={Entrega:/entreg|chegou|prazo|frete|embalad|demor\w* para sair|atras|correio/i,Produto:/produto|cor\b|qualidade|cheiro|tampa|foto|veio com/i,
+  Atendimento:/atend|respond|whats|troca|educad|suporte/i,'Preço':/pre[çc]o|caro|barat|cupom|promo|desconto/i};
+var NEG=/atras|caro|diferente|quebrad|demor|poderia|ruim|p[ée]ssim|n[ãa]o (veio|chegou|gostei|respond)|errad|defeito|faltou/i;
+function $(i){return document.getElementById(i)}
+function fmt(v,c){return v.toFixed(c===undefined?1:c).replace('.',',')}
+function tema(t){for(var k in TEMAS)if(TEMAS[k].test(t))return k;return 'Outros'}
+function escala(id,campo,de,ate,rotulo){var e=$(id);for(var i=de;i<=ate;i++){(function(n){var b=document.createElement('button');b.type='button';b.textContent=rotulo?rotulo(n):n;b.setAttribute('aria-label',campo+' '+n);
+  b.addEventListener('click',function(){esc[campo]=n;Array.prototype.forEach.call(e.children,function(x){x.classList.remove('sel')});b.classList.add('sel')});e.appendChild(b)})(i)}}
+function linha(t,cels,cls){var tr=document.createElement('tr');if(cls)tr.className=cls;cels.forEach(function(c){var td=document.createElement(c.th?'th':'td');if(c.v)td.className='v';if(c.c)td.className+=' '+c.c;if(c.html)td.innerHTML=c.html;else td.textContent=c.t;tr.appendChild(td)});t.appendChild(tr)}
+function desenhar(){
+  var n=R.length,p=R.filter(function(r){return r.nps>=9}).length,d=R.filter(function(r){return r.nps<=6}).length,ne=n-p-d,nps=Math.round(100*(p-d)/n);
+  $('vNps').textContent=(nps>0?'+':'')+nps;$('vTotal').textContent=n+' respostas · '+p+' promotores, '+ne+' neutros, '+d+' detratores';
+  $('barra').innerHTML='<div style="width:'+(100*p/n)+'%;background:var(--verde)"></div><div style="width:'+(100*ne/n)+'%;background:var(--amarelo)"></div><div style="width:'+(100*d/n)+'%;background:var(--vermelho)"></div>';
+  var tm=$('tMedias');tm.innerHTML='';linha(tm,[{t:'Pergunta',th:1},{t:'Média (1 a 5)',th:1,v:1}]);
+  var med={};['entrega','produto','atendimento'].forEach(function(k){med[k]=R.reduce(function(s,r){return s+r[k]},0)/n;
+    linha(tm,[{t:k[0].toUpperCase()+k.slice(1)},{html:'<span class="mini" style="width:'+(med[k]*14)+'px"></span>'+fmt(med[k]),v:1,c:med[k]<3.5?'neg':''}])});
+  var grupos={};R.forEach(function(r){if(!r.comentario)return;var k=tema(r.comentario);grupos[k]=grupos[k]||{pos:0,neg:0,ex:{}};var ruim=NEG.test(r.comentario);grupos[k][ruim?'neg':'pos']++;if(!grupos[k].ex[ruim?'neg':'pos'])grupos[k].ex[ruim?'neg':'pos']=r.comentario});
+  var tt=$('tTemas');tt.innerHTML='';linha(tt,[{t:'Tema',th:1},{t:'Elogios',th:1,v:1},{t:'Reclamações',th:1,v:1},{t:'Exemplo de reclamação',th:1}]);
+  var ord=Object.keys(grupos).sort(function(a,b){return grupos[b].neg-grupos[a].neg});
+  ord.forEach(function(k){var g=grupos[k];linha(tt,[{t:k},{t:g.pos,v:1,c:'pos'},{t:g.neg,v:1,c:g.neg?'neg':''},{t:g.ex.neg?'"'+g.ex.neg+'"':'-'}])});
+  var pior=ord[0];$('foco').innerHTML=pior&&grupos[pior].neg?'<b>Por onde começar:</b> '+pior.toLowerCase()+', com '+grupos[pior].neg+' reclamações. Ex.: "'+grupos[pior].ex.neg+'".':'<b>Sem reclamação</b> nos comentários.';
+  var tr=$('tResp');tr.innerHTML='';linha(tr,[{t:'Data',th:1},{t:'NPS',th:1,v:1},{t:'Entrega',th:1,v:1},{t:'Produto',th:1,v:1},{t:'Atend.',th:1,v:1},{t:'Comentário',th:1}]);
+  R.map(function(r,i){return[r,i]}).slice(-8).reverse().forEach(function(a){var r=a[0];linha(tr,[{t:r.data},{t:r.nps,v:1,c:r.nps>=9?'pos':(r.nps<=6?'neg':'')},{t:r.entrega,v:1},{t:r.produto,v:1},{t:r.atendimento,v:1},{t:r.comentario||''}],a[1]===ULT?'novo':'')});
+  window.RESULTADO={n:n,nps:nps,promotores:p,detratores:d,medias:med,pior:pior,temas:grupos};
+}
+escala('eNps','nps',0,10);['entrega','produto','atendimento'].forEach(function(k){escala('e'+k[0].toUpperCase()+k.slice(1),k,1,5,function(n){return n+'★'})});
+$('enviar').addEventListener('click',function(){
+  var m=$('msg');m.className='msg erro';
+  if(esc.nps===null){m.textContent='Escolha a nota de 0 a 10.';return}
+  if(esc.entrega===null||esc.produto===null||esc.atendimento===null){m.textContent='Dê as estrelas de entrega, produto e atendimento.';return}
+  var d=new Date();R.push({data:('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(),nps:esc.nps,entrega:esc.entrega,produto:esc.produto,atendimento:esc.atendimento,comentario:$('coment').value.trim()});
+  ULT=R.length-1;desenhar();m.className='msg feito';m.textContent='Resposta registrada. O NPS, as médias e os temas já foram recalculados.';
+});
+desenhar();
+</script>
+</body>
+</html>
