@@ -1,0 +1,7 @@
+﻿Arquivo;Fornecedor;Data;Número;Itens;Soma dos itens (R$);Total do documento (R$);Diferença (R$);Conferência
+nota-compra-0001.pdf;Papelaria Lua de Papel Ltda;05/10/2026;000123;4;491,70;491,70;0,00;confere
+recibo-4587.pdf;Distribuidora Pedra Azul Ltda;12/10/2026;4587;3;211,40;211,40;0,00;confere
+pedido-2026-0318.pdf;Mercearia Vale Verde ME;14/10/2026;2026/0318;3;160,30;160,30;0,00;confere
+pedido-grafica-0042.pdf;Gráfica Tinta Viva Ltda;20/10/2026;2026/0042;3;424,80;424,80;0,00;confere
+ordem-servico-7781.pdf;Oficina Rodas Livres ME;03/11/2026;7781;4;535,90;555,90;20,00;não confere
+cupom-004512.pdf;Marmitaria Sabor Caseiro ME;09/11/2026;004512;3;156,00;156,00;0,00;confere

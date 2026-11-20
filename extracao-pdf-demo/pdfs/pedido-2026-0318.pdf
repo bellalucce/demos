@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 782 >>
+stream
+0.92 g 40.0 752.0 515.0 60.0 re f 0 g
+BT /F2 11 Tf 55.0 787.0 Td (Total da compra: R$ 160,30) Tj ET
+BT /F1 9 Tf 55.0 767.0 Td (Pedido nº 2026/0318  -  14/10/2026) Tj ET
+BT /F2 12 Tf 40.0 712.0 Td (Fornecedor: Mercearia Vale Verde ME) Tj ET
+BT /F1 9 Tf 40.0 694.0 Td (CNPJ 00.000.000/0003-00) Tj ET
+BT /F2 10 Tf 40.0 652.0 Td (Itens \(valor | quantidade | produto\)) Tj ET
+BT /F1 11 Tf 40.0 628.0 Td (R$ 18,90 cada   |   2 un   |   Café torrado 500 g) Tj ET
+BT /F1 11 Tf 40.0 606.0 Td (R$ 21,50 cada   |   3 un   |   Açúcar cristal 5 kg) Tj ET
+BT /F1 11 Tf 40.0 584.0 Td (R$ 58,00 cada   |   1 un   |   Leite integral \(caixa com 12\)) Tj ET
+0.5 w 40.0 52.0 m 555.0 52.0 l S
+BT /F1 8 Tf 40.0 42.0 Td (DOCUMENTO FICTÍCIO - USO EM DEMONSTRAÇÃO - nenhuma empresa ou valor é real) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Title (Mercearia Vale Verde ME \(fictício\)) >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000212 00000 n 
+0000000314 00000 n 
+0000000409 00000 n 
+0000000555 00000 n 
+0000001387 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /Info 8 0 R >>
+startxref
+1454
+%%EOF

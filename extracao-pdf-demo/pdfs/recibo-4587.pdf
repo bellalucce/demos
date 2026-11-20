@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 914 >>
+stream
+BT /F2 16 Tf 40.0 792.0 Td (Distribuidora Pedra Azul Ltda) Tj ET
+BT /F1 9 Tf 40.0 774.0 Td (CNPJ 00.000.000/0002-00  -  Avenida Teste, 200, Cidade Imaginária) Tj ET
+BT /F2 14 Tf 40.0 722.0 Td (RECIBO Nº 4587) Tj ET
+BT /F1 11 Tf 40.0 682.0 Td (Recebemos de Cliente de Demonstração o valor total de R$ 211,40, referente à) Tj ET
+BT /F1 11 Tf 40.0 662.0 Td (venda de 10 unidades de Caixa de parafusos 4x40 a R$ 12,50 cada; 4 unidades de) Tj ET
+BT /F1 11 Tf 40.0 642.0 Td (Fita isolante preta a R$ 6,90 cada; 6 unidades de Luva de raspa \(par\) a R$ 9,80) Tj ET
+BT /F1 11 Tf 40.0 622.0 Td (cada. Damos plena quitação deste recibo. Emitido em 12 de outubro de 2026.) Tj ET
+0.5 w 40.0 552.0 m 260.0 552.0 l S
+BT /F1 9 Tf 40.0 538.0 Td (Assinatura do emitente \(fictícia\)) Tj ET
+0.5 w 40.0 52.0 m 555.0 52.0 l S
+BT /F1 8 Tf 40.0 42.0 Td (DOCUMENTO FICTÍCIO - USO EM DEMONSTRAÇÃO - nenhuma empresa ou valor é real) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Title (Distribuidora Pedra Azul Ltda \(fictício\)) >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000212 00000 n 
+0000000314 00000 n 
+0000000409 00000 n 
+0000000555 00000 n 
+0000001519 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /Info 8 0 R >>
+startxref
+1592
+%%EOF

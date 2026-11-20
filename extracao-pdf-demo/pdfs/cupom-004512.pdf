@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 300 430] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 774 >>
+stream
+BT /F3 11 Tf 60.0 400.0 Td (MARMITARIA SABOR CASEIRO ME) Tj ET
+BT /F3 8 Tf 48.0 384.0 Td (CNPJ 00.000.000/0006-00) Tj ET
+BT /F3 9 Tf 48.0 360.0 Td (CUPOM DE COMPRA - Cupom 004512) Tj ET
+BT /F3 9 Tf 48.0 346.0 Td (Data: 09/11/2026) Tj ET
+BT /F3 8 Tf 14.0 330.0 Td (----------------------------------------------) Tj ET
+BT /F3 8 Tf 14.0 312.0 Td ( 5 UN x  18,00  Marmita executiva      90,00) Tj ET
+BT /F3 8 Tf 14.0 298.0 Td (10 UN x   4,50  Suco natural 300 ml    45,00) Tj ET
+BT /F3 8 Tf 14.0 284.0 Td ( 3 UN x   7,00  Pudim de leite         21,00) Tj ET
+BT /F3 8 Tf 14.0 270.0 Td (----------------------------------------------) Tj ET
+BT /F3 10 Tf 14.0 252.0 Td (TOTAL A PAGAR R$     156,00) Tj ET
+BT /F3 6 Tf 14.0 210.0 Td (DOCUMENTO FICTÍCIO - USO EM DEMONSTRAÇÃO) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Title (Marmitaria Sabor Caseiro ME \(fictício\)) >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000212 00000 n 
+0000000314 00000 n 
+0000000409 00000 n 
+0000000555 00000 n 
+0000001379 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /Info 8 0 R >>
+startxref
+1450
+%%EOF

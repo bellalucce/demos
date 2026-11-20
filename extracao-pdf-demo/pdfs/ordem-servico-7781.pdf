@@ -1,0 +1,75 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 1548 >>
+stream
+BT /F2 16 Tf 40.0 792.0 Td (Oficina Rodas Livres ME) Tj ET
+BT /F1 9 Tf 40.0 774.0 Td (CNPJ 00.000.000/0005-00  -  Rua Imaginária, 55, Cidade Imaginária) Tj ET
+BT /F2 13 Tf 400.0 792.0 Td (ORDEM DE SERVIÇO) Tj ET
+BT /F1 11 Tf 400.0 774.0 Td (Nº 7781  -  03/11/2026) Tj ET
+0.85 g 40.0 706.0 515.0 20.0 re f 0 g
+BT /F2 10 Tf 46.0 712.0 Td (Item) Tj ET
+BT /F2 10 Tf 340.0 712.0 Td (Quant.) Tj ET
+BT /F2 10 Tf 400.0 712.0 Td (Preço \(R$\)) Tj ET
+BT /F2 10 Tf 485.0 712.0 Td (Valor \(R$\)) Tj ET
+BT /F1 10 Tf 46.0 686.0 Td (Óleo de motor 5W30 \(litro\)) Tj ET
+BT /F1 10 Tf 348.0 686.0 Td (4) Tj ET
+BT /F1 10 Tf 405.0 686.0 Td (38,50) Tj ET
+BT /F1 10 Tf 490.0 686.0 Td (154,00) Tj ET
+0.5 w 40.0 680.0 m 555.0 680.0 l S
+BT /F1 10 Tf 46.0 662.0 Td (Filtro de óleo) Tj ET
+BT /F1 10 Tf 348.0 662.0 Td (1) Tj ET
+BT /F1 10 Tf 405.0 662.0 Td (32,00) Tj ET
+BT /F1 10 Tf 490.0 662.0 Td (32,00) Tj ET
+0.5 w 40.0 656.0 m 555.0 656.0 l S
+BT /F1 10 Tf 46.0 638.0 Td (Pastilha de freio \(jogo\)) Tj ET
+BT /F1 10 Tf 348.0 638.0 Td (1) Tj ET
+BT /F1 10 Tf 405.0 638.0 Td (189,90) Tj ET
+BT /F1 10 Tf 490.0 638.0 Td (189,90) Tj ET
+0.5 w 40.0 632.0 m 555.0 632.0 l S
+BT /F1 10 Tf 46.0 614.0 Td (Mão de obra \(hora\)) Tj ET
+BT /F1 10 Tf 348.0 614.0 Td (2) Tj ET
+BT /F1 10 Tf 405.0 614.0 Td (80,00) Tj ET
+BT /F1 10 Tf 490.0 614.0 Td (160,00) Tj ET
+0.5 w 40.0 608.0 m 555.0 608.0 l S
+BT /F2 12 Tf 380.0 574.0 Td (TOTAL  R$ 555,90) Tj ET
+0.5 w 40.0 52.0 m 555.0 52.0 l S
+BT /F1 8 Tf 40.0 42.0 Td (DOCUMENTO FICTÍCIO - USO EM DEMONSTRAÇÃO - nenhuma empresa ou valor é real) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Title (Oficina Rodas Livres ME \(fictício\)) >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000212 00000 n 
+0000000314 00000 n 
+0000000409 00000 n 
+0000000555 00000 n 
+0000002154 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /Info 8 0 R >>
+startxref
+2221
+%%EOF
