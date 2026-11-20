@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coleta de dados para planilha - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555;--verm:#b71c1c;--amar:#8a6100}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1000px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1000px;margin:auto}
+@media(min-width:800px){main{grid-template-columns:minmax(0,300px) minmax(0,1fr)}.largo{grid-column:1/-1}}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border:0;cursor:pointer;border-radius:8px;padding:10px 18px;font-size:.95rem;font-family:inherit}
+.btn:hover{background:#4a2791}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.vz{background:#fff;color:var(--roxo);border:2px solid var(--roxo);padding:8px 16px}
+.topo{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-bottom:12px}
+.estado{font-weight:700;color:var(--roxo);font-size:.9rem}
+.lista{list-style:none;margin:0;padding:0}
+.lista li{border:1px solid #e6dff3;border-radius:10px;padding:8px 10px;margin-bottom:8px;background:#fcfbfe;font-size:.86rem;transition:background .3s,border-color .3s}
+.lista li b{color:var(--roxo)}
+.lista li small{display:block;color:var(--cinza);font-size:.78rem}
+.lista li.lendo{background:#ede7f8;border-color:var(--roxo)}
+.lista li.feito{background:#f3fbf4;border-color:#bfe3c4}
+label.campo{display:block;font-size:.85rem;margin:10px 0 4px;color:var(--cinza)}
+select{width:100%;padding:8px;border-radius:8px;border:1px solid #cfc3e8;font-family:inherit;font-size:.9rem;background:#fff}
+.cont{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.cont div{background:#f0eaf9;border-radius:10px;padding:8px 6px;text-align:center}
+.cont b{display:block;font-size:1.25rem;color:var(--roxo)}
+.cont span{font-size:.74rem;color:var(--cinza)}
+.cont .ruim b{color:var(--verm)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#f0eaf9;color:var(--roxo);text-align:left;padding:7px 8px;font-size:.78rem}
+td{padding:7px 8px;border-bottom:1px solid #eee;vertical-align:top;overflow-wrap:anywhere}
+tr.nova{animation:entra .45s}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+tr.dup td{background:#fdecee;color:var(--verm);text-decoration:line-through}
+tr.dup td.st{text-decoration:none;font-weight:700}
+tr.falta td{background:#fff8e6}
+tr.falta td.st{color:var(--amar);font-weight:700}
+td.st.ok{color:#1b7a2c;font-weight:700}
+.mudou{background:#e8f5e9;border-radius:4px;padding:0 3px}
+.vazio{text-align:center;color:var(--cinza);padding:24px 8px}
+ol,ul.pontos{margin:0;padding-left:20px;line-height:1.6}
+.dois{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media(min-width:800px){.dois{grid-template-columns:repeat(2,minmax(0,1fr))}}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:600px){
+ header h1{font-size:1.1rem}
+ .cont{grid-template-columns:repeat(2,minmax(0,1fr))}
+ table,tbody,tr,td{display:block;width:100%}
+ thead{display:none}
+ tr{border:1px solid #e6dff3;border-radius:10px;margin-bottom:10px;padding:6px 2px;overflow:hidden}
+ td{border:0;padding:3px 10px}
+ td[data-r]::before{content:attr(data-r) ": ";font-weight:700;color:var(--cinza);font-size:.76rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Coleta de dados para planilha - demonstração</h1>
+  <p>Informações espalhadas em sites e listas viram uma planilha limpa, sem repetidos e com o que falta marcado.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com dados fictícios.</b> As empresas, os telefones (começam com 0000) e os e-mails (example.com) são inventados. Nada é buscado na internet nem enviado a lugar nenhum.</div>
+<main>
+<section>
+  <h2>1. Fontes de pesquisa</h2>
+  <label class="campo" for="nicho">Tipo de empresa</label>
+  <select id="nicho">
+    <option value="lab">Laboratórios odontológicos</option>
+    <option value="imob">Imobiliárias</option>
+    <option value="pet">Pet shops</option>
+  </select>
+  <ul class="lista" id="fontes" style="margin-top:12px"></ul>
+  <p class="hint">No trabalho real, as fontes são as que o cliente indicar (sites, diretórios, catálogos, planilhas antigas). Cada linha guarda de onde veio e quando foi coletada.</p>
+</section>
+<section>
+  <h2>2. Planilha</h2>
+  <div class="topo">
+    <button class="btn" id="coletar">Coletar</button>
+    <button class="btn vz" id="conferir" disabled>Conferir e limpar</button>
+    <button class="btn vz" id="baixar" disabled>Baixar planilha (.csv)</button>
+    <span class="estado" id="estado"></span>
+  </div>
+  <div class="cont">
+    <div><b id="cTot">0</b><span>coletadas</span></div>
+    <div class="ruim"><b id="cDup">0</b><span>repetidas</span></div>
+    <div class="ruim"><b id="cFal">0</b><span>com campo faltando</span></div>
+    <div><b id="cOk">0</b><span>prontas</span></div>
+  </div>
+  <table>
+    <thead><tr><th>Nome</th><th>Bairro</th><th>Telefone</th><th>E-mail</th><th>Fonte</th><th>Situação</th></tr></thead>
+    <tbody id="corpo"><tr><td colspan="6" class="vazio">Escolha o tipo de empresa e clique em <b>Coletar</b>.</td></tr></tbody>
+  </table>
+</section>
+<section class="largo">
+  <div class="dois">
+    <div>
+      <h2>O que a conferência faz</h2>
+      <ul class="pontos">
+        <li>Junta a mesma empresa vinda de fontes diferentes (mesmo telefone ou mesmo nome) e fica com uma linha só.</li>
+        <li>Padroniza o que veio bagunçado: nome com maiúsculas certas, bairro escrito igual, telefone no formato (11) 0000-0000.</li>
+        <li>Marca em amarelo o que ficou faltando (telefone ou e-mail), para completar ou avisar o cliente.</li>
+        <li>Guarda a fonte e a data de cada linha, para qualquer dado poder ser conferido depois.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Como funciona no trabalho real</h2>
+      <ol>
+        <li>Combino com você as colunas da planilha e as fontes.</li>
+        <li>Faço a coleta (à mão ou com um robô, conforme o volume e as regras de cada site).</li>
+        <li>Passo a conferência acima e reviso por amostra.</li>
+        <li>Entrego em Excel, Google Planilhas ou CSV, com um resumo do que faltou.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Demonstração feita por Iria Souza · dados fictícios · <a href="../">ver outras demonstrações</a></footer>
+<script>
+const NICHOS={
+ lab:{nome:"Laboratório",fontes:[["Diretório de empresas (site A)","lista com nome, bairro e telefone"],["Site de cada laboratório","e-mail e telefone da página de contato"],["Planilha antiga do cliente","nomes e telefones de 2024"]],
+  linhas:[["LABORATÓRIO DENTAL ALFA","moema","11 0000 1101","contato@alfa.example.com",0],["Laboratório Dental Alfa","Moema","(11) 0000-1101","",1],["lab prótese beta","Vila Mariana","1100001102","beta@example.com",0],["Laboratório Gama Odonto","PINHEIROS","(11) 0000-1103","",0],["Delta Próteses Dentárias","Tatuapé","","delta@example.com",1],["Laboratório Épsilon","Santana","11 0000-1105","epsilon@example.com",2],["Zeta Dental Lab","Santo Amaro","(11) 0000-1106","zeta@example.com",1],["LAB GAMA ODONTO","Pinheiros","11 0000 1103","gama@example.com",2],["Eta Cerâmica Dental","Lapa","(11)0000-1108","eta@example.com",0],["Teta Ortodontia Lab","ipiranga","11 0000-1109","",0]]},
+ imob:{nome:"Imobiliária",fontes:[["Portal de imóveis (site A)","nome, bairro e telefone dos anunciantes"],["Site de cada imobiliária","e-mail e telefone"],["Lista do sindicato (PDF)","nomes e telefones"]],
+  linhas:[["IMOBILIÁRIA ALFA","centro","11 0000 2201","alfa@example.com",0],["Imobiliária Alfa","Centro","(11) 0000-2201","",2],["beta imóveis","Jardins","1100002202","beta@example.com",0],["Gama Negócios Imobiliários","MOOCA","(11) 0000-2203","",0],["Delta Imóveis","Perdizes","","delta@example.com",1],["Épsilon Corretora","Butantã","11 0000-2205","epsilon@example.com",1],["Zeta Lar Imóveis","Penha","(11) 0000-2206","zeta@example.com",2],["GAMA NEGÓCIOS IMOBILIÁRIOS","Mooca","11 0000 2203","gama@example.com",1],["Eta Prime Imóveis","Brooklin","(11)0000-2208","eta@example.com",0],["Teta Casa e Cia","saúde","11 0000-2209","",0]]},
+ pet:{nome:"Pet shop",fontes:[["Mapa de empresas (site A)","nome, bairro e telefone"],["Rede social de cada loja","e-mail e telefone da bio"],["Planilha antiga do cliente","nomes e telefones"]],
+  linhas:[["PET SHOP ALFA","aclimação","11 0000 3301","alfa@example.com",0],["Pet Shop Alfa","Aclimação","(11) 0000-3301","",1],["beta pet","Bela Vista","1100003302","beta@example.com",0],["Gama Banho e Tosa","LIBERDADE","(11) 0000-3303","",0],["Delta Pet Center","Vila Prudente","","delta@example.com",1],["Épsilon Mundo Animal","Casa Verde","11 0000-3305","epsilon@example.com",2],["Zeta Pet Store","Jabaquara","(11) 0000-3306","zeta@example.com",1],["GAMA BANHO E TOSA","Liberdade","11 0000 3303","gama@example.com",2],["Eta Amigo Fiel","Barra Funda","(11)0000-3308","eta@example.com",0],["Teta Pet Vet","cambuci","11 0000-3309","",0]]}
+};
+const $=id=>document.getElementById(id);
+let atual="lab",linhas=[],conferido=false,rodando=false;
+const pausa=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hoje=new Date().toLocaleDateString("pt-BR");
+function desenhaFontes(){
+ $("fontes").innerHTML=NICHOS[atual].fontes.map((f,i)=>`<li id="f${i}"><b>${esc(f[0])}</b><small>${esc(f[1])}</small></li>`).join("");
+}
+const PEQ=new Set(["de","da","do","das","dos","e"]);
+function titulo(s){return s.toLowerCase().split(/\s+/).map((p,i)=>i&&PEQ.has(p)?p:p.charAt(0).toUpperCase()+p.slice(1)).join(" ").replace(/\bLab\b/,"Lab")}
+function fone(s){const d=String(s).replace(/\D/g,"");if(d.length!==10)return s;return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`}
+const chave=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/^(lab|laboratorio)\s+/,"").replace(/\s+/g," ").trim();
+function marca(a,b){return a!==b?`<span class="mudou" title="antes: ${esc(a)}">${esc(b)}</span>`:esc(b)}
+function linhaHTML(l,nova){
+ const st=l.st||"coletada",cls=l.st==="repetida"?"dup":l.st&&l.st.startsWith("falta")?"falta":"";
+ const f=NICHOS[atual].fontes[l.fonte][0];
+ return `<tr class="${cls}${nova?" nova":""}"><td data-r="Nome">${l.v?marca(l.o[0],l.v[0]):esc(l.o[0])}</td><td data-r="Bairro">${l.v?marca(l.o[1],l.v[1]):esc(l.o[1])}</td><td data-r="Telefone">${l.v?marca(l.o[2],l.v[2]):esc(l.o[2])||"—"}</td><td data-r="E-mail">${esc(l.v?l.v[3]:l.o[3])||"—"}</td><td data-r="Fonte">${esc(f)}<br><small>${hoje}</small></td><td data-r="Situação" class="st${st==="pronta"?" ok":""}">${esc(st)}</td></tr>`;
+}
+function conta(){
+ $("cTot").textContent=linhas.length;
+ $("cDup").textContent=linhas.filter(l=>l.st==="repetida").length;
+ $("cFal").textContent=linhas.filter(l=>l.st&&l.st.startsWith("falta")).length;
+ $("cOk").textContent=linhas.filter(l=>l.st==="pronta").length;
+}
+async function coletar(){
+ if(rodando)return;rodando=true;conferido=false;linhas=[];
+ ["coletar","conferir","baixar"].forEach(b=>$(b).disabled=true);$("nicho").disabled=true;
+ $("corpo").innerHTML="";conta();desenhaFontes();
+ const dados=NICHOS[atual].linhas;
+ for(let fi=0;fi<3;fi++){
+  $("f"+fi).className="lendo";$("estado").textContent="Lendo: "+NICHOS[atual].fontes[fi][0];
+  for(const d of dados.filter(x=>x[4]===fi)){
+   await pausa(380);
+   const l={o:d.slice(0,4),fonte:d[4]};linhas.push(l);
+   $("corpo").insertAdjacentHTML("beforeend",linhaHTML(l,true));conta();
+  }
+  $("f"+fi).className="feito";
+ }
+ $("estado").textContent=linhas.length+" linhas coletadas de 3 fontes";
+ $("conferir").disabled=false;$("coletar").disabled=false;$("nicho").disabled=false;rodando=false;
+}
+function conferir(){
+ const vistos=new Map();
+ for(const l of linhas){
+  l.v=[titulo(l.o[0]),titulo(l.o[1]),fone(l.o[2]),l.o[3]];
+  const k1=l.v[2]?"t"+l.v[2]:null,k2="n"+chave(l.v[0]);
+  const ant=(k1&&vistos.get(k1))||vistos.get(k2);
+  if(ant){ // completa a primeira com o que esta tem e marca esta como repetida
+   ant.v[2]=ant.v[2]||l.v[2];ant.v[3]=ant.v[3]||l.v[3];l.st="repetida";continue;
+  }
+  if(k1)vistos.set(k1,l);vistos.set(k2,l);
+ }
+ for(const l of linhas){
+  if(l.st==="repetida")continue;
+  const f=[];if(!l.v[2])f.push("telefone");if(!l.v[3])f.push("e-mail");
+  l.st=f.length?"falta "+f.join(" e "):"pronta";
+ }
+ $("corpo").innerHTML=linhas.map(l=>linhaHTML(l,false)).join("");conta();
+ const ok=linhas.filter(l=>l.st==="pronta").length,dup=linhas.filter(l=>l.st==="repetida").length;
+ $("estado").textContent=`Conferido: ${dup} repetidas juntadas, ${ok} prontas`;
+ conferido=true;$("baixar").disabled=false;$("conferir").disabled=true;
+}
+function baixar(){
+ const cab=["Nome","Bairro","Telefone","E-mail","Fonte","Data da coleta","Situação"];
+ const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+ const corpo=linhas.filter(l=>l.st!=="repetida").map(l=>[l.v[0],l.v[1],l.v[2],l.v[3],NICHOS[atual].fontes[l.fonte][0],hoje,l.st].map(q).join(";"));
+ const blob=new Blob(["﻿"+[cab.map(q).join(";")].concat(corpo).join("\r\n")],{type:"text/csv;charset=utf-8"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="coleta-"+atual+"-demonstracao.csv";a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+$("nicho").onchange=e=>{atual=e.target.value;linhas=[];conferido=false;desenhaFontes();
+ $("corpo").innerHTML='<tr><td colspan="6" class="vazio">Clique em <b>Coletar</b>.</td></tr>';conta();$("estado").textContent="";$("conferir").disabled=true;$("baixar").disabled=true};
+$("coletar").onclick=coletar;$("conferir").onclick=conferir;$("baixar").onclick=baixar;
+desenhaFontes();
+</script>
+</body>
+</html>
