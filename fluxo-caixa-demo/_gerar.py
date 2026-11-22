@@ -16,8 +16,9 @@ CATEGORIAS = [  # nome, tipo
     ("Aluguel", "Saída"), ("Fornecedor", "Saída"), ("Energia", "Saída"), ("Internet", "Saída"),
     ("Embalagens", "Saída"), ("Taxa de cartão", "Saída"), ("Pró-labore", "Saída"), ("Outras despesas", "Saída"),
 ]
-# meta de vendas de cada mês (outubro fecha no vermelho, para a planilha mostrar o alerta)
-MESES = [(2026, 9, 13200.00), (2026, 10, 10400.00), (2026, 11, 16400.00)]
+# meta de vendas de cada mês (o 2º mês fecha no vermelho, para a planilha mostrar o alerta). 22/11 05h54 (Claude):
+# ago-out, meses que já passaram (antes ia até 30/11, datas futuras); um lançamento de hoje abre novembro na página
+MESES = [(2026, 8, 13200.00), (2026, 9, 10400.00), (2026, 10, 16400.00)]
 FORMAS = ["Pix", "Cartão", "Dinheiro", "Boleto", "Transferência"]
 
 
