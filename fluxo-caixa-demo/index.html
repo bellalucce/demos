@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Controle financeiro e fluxo de caixa - demonstração</title>
+<style>
+:root{--cor:#00796b;--cor2:#004d40;--fundo:#f3f7f6;--cinza:#555;--amarelo:#fff8d6;--lilas:#ede7f6;--verm:#b71c1c}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:980px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:980px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.full{grid-column:1/-1}
+label{display:block;font-size:.85rem;color:var(--cinza);margin:10px 0 3px}
+input,select{width:100%;font-size:1rem;padding:9px 10px;border:1px solid #b2d8d2;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus{outline:2px solid #80cbc4}
+.dois{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:11px 18px;font-size:1rem;margin-top:12px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--cor2)}
+.btn.claro{background:#e0f2f1;color:var(--cor2)}
+.btn.claro:hover{background:#b2dfdb}
+.btn:disabled{opacity:.5;cursor:default}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.tab{overflow-x:auto}
+.rolagem{max-height:340px;overflow-y:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{padding:7px 6px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+th{background:var(--cor);color:#fff;font-weight:600;font-size:.8rem;position:sticky;top:0}
+td.v,th.v{text-align:right;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:700;border-top:2px solid var(--cor)}
+.neg{color:var(--verm);font-weight:700}
+.negbox{background:#ffcdd2;color:var(--verm);font-weight:700;border-radius:6px;padding:2px 8px}
+.ent{color:#1b5e20}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px}
+.big div{background:#e0f2f1;border-radius:10px;padding:10px}
+.big b{display:block;font-size:1.2rem;color:var(--cor2);font-variant-numeric:tabular-nums}
+.big b.neg{color:var(--verm)}
+.big span{font-size:.78rem;color:var(--cinza)}
+.msg{font-size:.88rem;margin-top:8px;min-height:1.2em}
+.msg.erro{color:var(--verm);font-weight:600}.msg.feito{color:#1b5e20}
+.novo{animation:pisca 1.6s ease-out}
+@keyframes pisca{from{background:#fff59d}to{background:transparent}}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.95rem}
+.selo{display:inline-block;background:#e8f5e9;color:#256029;border-radius:12px;padding:3px 10px;font-size:.8rem;margin-bottom:6px}
+.leg{display:flex;gap:16px;font-size:.84rem;color:var(--cinza);margin-bottom:4px;flex-wrap:wrap}
+.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:system-ui,Segoe UI,Arial,sans-serif}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}.big{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Controle financeiro e fluxo de caixa</h1>
+  <p>Entradas e saídas num lugar só: o lucro, a margem, o total por categoria e o saldo de cada mês saem sozinhos.</p>
+</header>
+<div class="aviso"><b>Demonstração com dados de exemplo.</b> Loja pequena inventada; os lançamentos e os valores são fictícios. As contas da página são as mesmas das fórmulas da planilha.</div>
+<main>
+<section>
+  <h2>1. Registre um lançamento</h2>
+  <span class="selo">Mesma conta da planilha</span>
+  <div class="dois">
+    <div><label for="data">Data</label><input id="data" type="date" min="2026-09-01" max="2026-12-31"></div>
+    <div><label for="tipo">Tipo</label><select id="tipo"><option>Saída</option><option>Entrada</option></select></div>
+  </div>
+  <label for="desc">Descrição</label>
+  <input id="desc" type="text" maxlength="60" placeholder="Ex.: Compra de mercadoria">
+  <div class="dois">
+    <div><label for="cat">Categoria</label><select id="cat"></select></div>
+    <div><label for="forma">Forma de pagamento</label><select id="forma"></select></div>
+  </div>
+  <label for="valor">Valor (R$)</label>
+  <input id="valor" type="number" inputmode="decimal" min="0" step="0.01" value="500">
+  <button class="btn" id="registrar">Registrar</button>
+  <button class="btn claro" id="desfazer">Desfazer o último</button>
+  <div class="msg" id="msg" role="status"></div>
+</section>
+<section>
+  <h2>2. Resumo de todo o período</h2>
+  <div class="big">
+    <div><b id="kEnt">-</b><span>Total de entradas</span></div>
+    <div><b id="kSai">-</b><span>Total de saídas</span></div>
+    <div><b id="kLucro">-</b><span>Lucro (entradas − saídas)</span></div>
+  </div>
+  <div class="big">
+    <div><b id="kMargem">-</b><span>Margem de lucro</span></div>
+    <div><b id="kSaldo">-</b><span>Saldo no caixa hoje</span></div>
+    <div><b id="kNeg">-</b><span>Meses no vermelho</span></div>
+  </div>
+  <p class="hint">Lucro = entradas − saídas. Margem = lucro ÷ entradas. Saldo = saldo inicial + lucro de todos os meses.</p>
+</section>
+<section class="full">
+  <h2>3. Entradas x saídas por mês</h2>
+  <div class="leg"><span><i style="background:#00796b"></i>Entradas</span><span><i style="background:#e57373"></i>Saídas</span></div>
+  <div id="grafico"></div>
+</section>
+<section class="full">
+  <h2>4. Resumo do mês (aba "Resumo do mês")</h2>
+  <div class="tab"><table id="tResumo"></table></div>
+  <h2 style="margin-top:18px">Total por categoria</h2>
+  <div class="tab"><table id="tCat"></table></div>
+</section>
+<section class="full">
+  <h2>5. Fluxo de caixa (aba "Fluxo de caixa")</h2>
+  <div class="tab"><table id="tFluxo"></table></div>
+  <p class="hint">O saldo final de um mês vira o saldo inicial do seguinte. Saldo negativo aparece em vermelho.</p>
+</section>
+<section class="full">
+  <h2>6. Lançamentos (aba "Lançamentos")</h2>
+  <div class="tab rolagem"><table id="tLanc"></table></div>
+</section>
+<section class="full">
+  <h2>7. Baixe a planilha</h2>
+  <a class="btn" href="planilha-fluxo-caixa.xlsx" download="planilha-fluxo-caixa.xlsx">Baixar a planilha (.xlsx)</a>
+  <p class="hint">Abre no Excel, no LibreOffice e no Google Planilhas. Tem 5 abas: Lançamentos (com listas de categoria, tipo e forma de pagamento, e filtros), Categorias, Resumo do mês, Fluxo de caixa e Como usar. Células amarelas você preenche; as lilases são fórmula.</p>
+  <ol>
+    <li>Na aba Lançamentos, cada dinheiro que entra ou sai é uma linha: data, descrição, categoria, tipo e valor.</li>
+    <li>Na aba Resumo do mês, leia entradas, saídas, lucro, margem e o total de cada categoria.</li>
+    <li>Na aba Fluxo de caixa, acompanhe o saldo inicial e final de cada mês.</li>
+    <li>Categoria nova: escreva na aba Categorias e ela já aparece nas listas e no resumo.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Monto a planilha com as suas categorias, o seu jeito de lançar e os relatórios que você precisa, e deixo explicado como usar.</footer>
+<script src="dados.js"></script>
+<script>
+var LANC=DADOS.lancamentos.slice(), CATS=DADOS.categorias, ULT=null;
+function $(i){return document.getElementById(i)}
+function brl(v){var s=Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(v<-0.004?'-':'')+'R$ '+s}
+function pct(v){return(v*100).toFixed(1).replace('.',',')+'%'}
+function dbr(iso){return iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4)}
+function mesBr(m){return m.slice(5,7)+'/'+m.slice(0,4)}
+function hojeIso(){var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,dia=d.getDate();return y+'-'+('0'+m).slice(-2)+'-'+('0'+dia).slice(-2)}
+function el(tag,txt,cls){var e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e}
+function linha(t,cels,cls){var tr=document.createElement('tr');if(cls)tr.className=cls;cels.forEach(function(c){var td=document.createElement(c.th?'th':'td');var k=[];if(c.v)k.push('v');if(c.c)k.push(c.c);if(k.length)td.className=k.join(' ');td.textContent=c.t;tr.appendChild(td)});t.appendChild(tr);return tr}
+function H(t,v){return{t:t,th:1,v:v}}
+function money(v,extra){return{t:brl(v),v:1,c:(extra||'')+(v<-0.004?' neg':'')}}
+function calcular(){
+  var meses=[];
+  LANC.forEach(function(l){var m=l.data.slice(0,7);if(meses.indexOf(m)<0)meses.push(m)});
+  meses.sort();
+  var saldo=DADOS.saldoInicial, res=[];
+  meses.forEach(function(m){
+    var ls=LANC.filter(function(l){return l.data.slice(0,7)===m});
+    var e=0,s=0,cat={};
+    ls.forEach(function(l){if(l.tipo==='Entrada')e+=l.valor;else s+=l.valor;cat[l.cat]=(cat[l.cat]||0)+l.valor});
+    var lucro=e-s;
+    res.push({mes:m,e:e,s:s,lucro:lucro,margem:e?lucro/e:0,ini:saldo,fim:saldo+lucro,cat:cat});
+    saldo+=lucro;
+  });
+  return res;
+}
+function grafico(r){
+  var W=640,Hh=260,ml=56,mb=34,mt=14,ph=Hh-mb-mt,pw=W-ml-10,max=0;
+  r.forEach(function(x){max=Math.max(max,x.e,x.s)});
+  var passo=Math.pow(10,Math.floor(Math.log10(max||1)));
+  [1,2,2.5,5,10].some(function(f){if(max/(passo*f)<=5){passo*=f;return true}return false});
+  var topo=Math.ceil(max/passo)*passo||1;
+  var ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 '+W+' '+Hh);svg.setAttribute('role','img');
+  svg.setAttribute('aria-label','Gráfico de barras: entradas e saídas de cada mês');
+  function add(tag,at,txt){var e=document.createElementNS(ns,tag);for(var k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e}
+  for(var v=0;v<=topo+0.001;v+=passo){
+    var y=mt+ph-v/topo*ph;
+    add('line',{x1:ml,x2:W-10,y1:y,y2:y,stroke:'#e3e8e7'});
+    add('text',{x:ml-6,y:y+4,'text-anchor':'end','font-size':11,fill:'#555'},'R$ '+(v/1000).toFixed(v%1000?1:0).replace('.',',')+(v?' mil':''));
+  }
+  var gw=pw/r.length,bw=Math.min(54,gw/2.6);
+  r.forEach(function(x,i){
+    var cx=ml+gw*i+gw/2;
+    [[x.e,'#00796b',-bw-2],[x.s,'#e57373',2]].forEach(function(b){
+      var h=b[0]/topo*ph;
+      add('rect',{x:cx+b[2],y:mt+ph-h,width:bw,height:h,rx:3,fill:b[1]});
+      add('text',{x:cx+b[2]+bw/2,y:mt+ph-h-4,'text-anchor':'middle','font-size':10.5,fill:'#333'},Math.round(b[0]).toLocaleString('pt-BR'));
+    });
+    add('text',{x:cx,y:Hh-12,'text-anchor':'middle','font-size':12,fill:'#333','font-weight':600},mesBr(x.mes));
+  });
+  $('grafico').innerHTML='';$('grafico').appendChild(svg);
+}
+function desenhar(){
+  var r=calcular(), tr=$('tResumo'), tc=$('tCat'), tf=$('tFluxo'), tl=$('tLanc');
+  [tr,tc,tf,tl].forEach(function(t){t.innerHTML=''});
+  var E=0,S=0,neg=0;
+  linha(tr,[H('Mês'),H('Entradas',1),H('Saídas',1),H('Lucro',1),H('Margem',1),H('Saldo acumulado',1)]);
+  r.forEach(function(x){E+=x.e;S+=x.s;if(x.lucro<0)neg++;
+    linha(tr,[{t:mesBr(x.mes)},money(x.e),money(x.s),money(x.lucro),{t:x.e?pct(x.margem):'-',v:1,c:x.lucro<0?'neg':''},money(x.fim)])});
+  linha(tr,[{t:'TOTAL DO PERÍODO'},money(E),money(S),money(E-S),{t:E?pct((E-S)/E):'-',v:1},{t:''}],'total');
+  linha(tc,[H('Categoria'),H('Tipo')].concat(r.map(function(x){return H(mesBr(x.mes),1)})).concat([H('Total',1)]));
+  CATS.forEach(function(c){
+    var tot=0,cels=[{t:c.nome},{t:c.tipo,c:c.tipo==='Entrada'?'ent':''}];
+    r.forEach(function(x){var v=x.cat[c.nome]||0;tot+=v;cels.push({t:brl(v),v:1})});
+    cels.push({t:brl(tot),v:1,c:'neg0'});linha(tc,cels);
+  });
+  linha(tf,[H('Mês'),H('Saldo inicial',1),H('Entradas',1),H('Saídas',1),H('Saldo final',1)]);
+  r.forEach(function(x){linha(tf,[{t:mesBr(x.mes)},money(x.ini),money(x.e),money(x.s),money(x.fim)])});
+  linha(tl,[H('Data'),H('Descrição'),H('Categoria'),H('Tipo'),H('Pagamento'),H('Valor',1)]);
+  LANC.map(function(l,i){return[l,i]}).sort(function(a,b){return a[0].data<b[0].data?1:a[0].data>b[0].data?-1:b[1]-a[1]}).forEach(function(a){
+    var l=a[0];linha(tl,[{t:dbr(l.data)},{t:l.desc},{t:l.cat},{t:l.tipo,c:l.tipo==='Entrada'?'ent':''},{t:l.forma},{t:(l.tipo==='Saída'?'-':'')+brl(l.valor).replace('-',''),v:1,c:l.tipo==='Saída'?'neg':'ent'}],a[1]===ULT?'novo':'');
+  });
+  var saldoFinal=r.length?r[r.length-1].fim:DADOS.saldoInicial;
+  function k(id,t,n){$(id).textContent=t;$(id).className=n?'neg':''}
+  k('kEnt',brl(E));k('kSai',brl(S));k('kLucro',brl(E-S),E-S<0);k('kMargem',E?pct((E-S)/E):'-',E-S<0);k('kSaldo',brl(saldoFinal),saldoFinal<0);k('kNeg',String(neg),neg>0);
+  $('desfazer').disabled=LANC.length<=DADOS.lancamentos.length;
+  grafico(r);
+  window.RESULTADO={entradas:E,saidas:S,lucro:E-S,saldo:saldoFinal,meses:r.map(function(x){return{mes:x.mes,e:x.e,s:x.s,lucro:x.lucro,fim:x.fim}})};
+}
+function preencherCats(){
+  var tipo=$('tipo').value,sel=$('cat');sel.innerHTML='';
+  CATS.filter(function(c){return c.tipo===tipo}).forEach(function(c){sel.appendChild(el('option',c.nome))});
+}
+DADOS.formas.forEach(function(f){$('forma').appendChild(el('option',f))});
+$('data').value='2026-11-22';
+$('tipo').addEventListener('change',preencherCats);
+$('registrar').addEventListener('click',function(){
+  var msg=$('msg');msg.className='msg erro';
+  var data=$('data').value,v=parseFloat($('valor').value),desc=$('desc').value.trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(data)){msg.textContent='Informe a data.';return}
+  if(!(v>0)){msg.textContent='O valor tem que ser maior que zero.';return}
+  var tipo=$('tipo').value;
+  if(!desc)desc=tipo==='Entrada'?'Entrada avulsa':'Saída avulsa';
+  LANC.push({data:data,desc:desc,cat:$('cat').value,tipo:tipo,forma:$('forma').value,valor:Math.round(v*100)/100});
+  ULT=LANC.length-1;desenhar();$('desc').value='';
+  msg.className='msg feito';msg.textContent=tipo+' de '+brl(v)+' registrada. Resumo, lucro, margem e fluxo de caixa já foram recalculados.';
+});
+$('desfazer').addEventListener('click',function(){if(LANC.length>DADOS.lancamentos.length){LANC.pop();ULT=null;desenhar();$('msg').className='msg';$('msg').textContent='Último lançamento desfeito.'}});
+preencherCats();desenhar();
+</script>
+</body>
+</html>

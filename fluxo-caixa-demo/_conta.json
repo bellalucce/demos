@@ -1,0 +1,29 @@
+[
+ {
+  "mes": "09/2026",
+  "entradas": 13200.0,
+  "saidas": 12190.83,
+  "lucro": 1009.17,
+  "margem": 0.0765,
+  "saldo_inicial": 4000.0,
+  "saldo_final": 5009.17
+ },
+ {
+  "mes": "10/2026",
+  "entradas": 10400.0,
+  "saidas": 10851.27,
+  "lucro": -451.27,
+  "margem": -0.0434,
+  "saldo_inicial": 5009.17,
+  "saldo_final": 4557.9
+ },
+ {
+  "mes": "11/2026",
+  "entradas": 16400.0,
+  "saidas": 13624.75,
+  "lucro": 2775.25,
+  "margem": 0.1692,
+  "saldo_inicial": 4557.9,
+  "saldo_final": 7333.15
+ }
+]
