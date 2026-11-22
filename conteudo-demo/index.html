@@ -43,6 +43,15 @@ ul.rev li.ver{opacity:1;transform:none}
 ul.rev li::before{content:"✓";position:absolute;left:4px;top:5px;color:var(--verde);font-weight:700}
 .fonte{font-size:.8rem;color:var(--cinza);margin-top:10px}
 ol{margin:0;padding-left:20px;line-height:1.6;font-size:.9rem}
+.cal-op{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cal-op .btn{width:auto;margin-top:0}
+.tab-wrap{overflow-x:auto;margin-top:12px;border:1px solid #e6dff3;border-radius:10px}
+table.cal{border-collapse:collapse;width:100%;min-width:520px;font-size:.86rem}
+table.cal th{background:#f0eaf9;color:var(--roxo);text-align:left;padding:8px}
+table.cal td{padding:7px 8px;border-top:1px solid #f0edf5;vertical-align:top}
+table.cal tr.sem td{background:#faf8fd;font-weight:700;color:var(--roxo)}
+.selo{display:inline-block;border-radius:12px;padding:1px 8px;font-size:.78rem;background:#eee}
+.selo.insta{background:#fde7f1}.selo.stories{background:#ece6fb}.selo.zap{background:#e1f5dc}
 </style>
 </head>
 <body>
@@ -71,6 +80,22 @@ ol{margin:0;padding-left:20px;line-height:1.6;font-size:.9rem}
     </div>
     <ul class="rev" id="rev"></ul>
     <p class="fonte" id="fonte"></p>
+  </section>
+  <section class="largo" id="calendario">
+    <h2>3. Calendário do mês</h2>
+    <p class="hint" style="margin-top:0">Com o assunto escolhido acima, quantas publicações por semana?</p>
+    <div class="cal-op">
+      <div class="op" id="freq"></div>
+      <button class="btn" id="montar">Montar calendário</button>
+      <button class="btn vz" id="baixar" hidden>Baixar planilha (.csv)</button>
+    </div>
+    <div class="cont" id="calCont" hidden>
+      <div><b id="cTot">0</b><span>publicações no mês</span></div>
+      <div><b id="cIns">0</b><span>no feed / stories</span></div>
+      <div><b id="cZap">0</b><span>no WhatsApp</span></div>
+    </div>
+    <div class="tab-wrap" id="calWrap" hidden><table class="cal"><thead><tr><th>Dia</th><th>Canal</th><th>Tipo</th><th>Assunto</th><th>Situação</th></tr></thead><tbody id="calCorpo"></tbody></table></div>
+    <p class="hint">Num projeto de verdade, as datas, os temas e as promoções vêm de você, e a planilha fica no Google Planilhas para você aprovar cada texto.</p>
   </section>
   <section class="largo">
     <h2>Como funciona num projeto</h2>
@@ -198,6 +223,59 @@ function fim(limpo) {
   setTimeout(() => document.getElementById("fonte").textContent = FONTES[tema], 250 * (REVISAO[canal].length + 1));
 }
 document.getElementById("escrever").onclick = escrever;
+// 22/11: calendário do mês (o pedido de salão marcou "de 2 a 5 publicações semanais")
+const PAUTAS = {  // cada assunto já vem com o tipo de publicação que combina com ele
+  saude: [["Água ao longo do dia", "Dica"], ["Suco de caixinha vale como fruta?", "Mito ou verdade"], ["Como ler o rótulo", "Passo a passo"], ["Você toma café da manhã?", "Enquete"], ["Sal escondido nos industrializados", "Dica"], ["Marmita da semana", "Passo a passo"], ["Fruta à noite engorda?", "Mito ou verdade"], ["Prato colorido", "Dica"], ["Qual lanche você leva para o trabalho?", "Enquete"], ["Movimento no dia a dia", "Dica"], ["Café da manhã rápido", "Passo a passo"], ["Resumo das dicas do mês", "Resumo"]],
+  financas: [["Reserva de emergência", "Dica"], ["Anotar os gastos por 30 dias", "Passo a passo"], ["Pagar o mínimo do cartão compensa?", "Mito ou verdade"], ["Você anota os seus gastos?", "Enquete"], ["Lista antes do mercado", "Dica"], ["Conta pessoal separada da do negócio", "Dica"], ["Contas no Pix agendado", "Passo a passo"], ["Golpe do boleto falso", "Dica"], ["Qual a sua meta para o ano que vem?", "Enquete"], ["Assinaturas esquecidas", "Dica"], ["Preço por unidade no mercado", "Passo a passo"], ["Resumo das dicas do mês", "Resumo"]],
+  tecnologia: [["Confirmação em duas etapas", "Passo a passo"], ["Golpe do código do SMS", "Dica"], ["Aba anônima deixa você invisível?", "Mito ou verdade"], ["Você já recebeu mensagem de golpe?", "Enquete"], ["Senha forte sem esquecer", "Dica"], ["Backup das fotos", "Passo a passo"], ["Link suspeito: como saber", "Dica"], ["Liberar espaço no celular", "Passo a passo"], ["Você atualiza o celular?", "Enquete"], ["Golpe do falso parente", "Dica"], ["Localizar celular perdido", "Passo a passo"], ["Resumo das dicas do mês", "Resumo"]],
+  estilo: [["Horário fixo de sono", "Dica"], ["Dá para recuperar o sono no fim de semana?", "Mito ou verdade"], ["Caminhada de 10 minutos", "Dica"], ["Que horas você costuma dormir?", "Enquete"], ["Pausa de tela", "Dica"], ["Planejar a semana no domingo", "Passo a passo"], ["Respiração em 1 minuto", "Passo a passo"], ["Café só até a tarde", "Dica"], ["Qual hábito você quer criar?", "Enquete"], ["Alongamento no trabalho", "Passo a passo"], ["Silenciar notificações", "Dica"], ["Resumo das dicas do mês", "Resumo"]],
+  beleza: [["Agenda de fim de ano aberta", "Promoção"], ["Esmalte que dura mais", "Dica"], ["Antes e depois da sobrancelha", "Antes e depois"], ["Bastidores: limpeza dos materiais", "Bastidor"], ["Cliente conta como foi", "Depoimento"], ["Qual cor de esmalte para dezembro?", "Enquete"], ["Combo mão, pé e sobrancelha", "Promoção"], ["Cuidados com cílios alongados", "Dica"], ["Maquiagem para a festa da firma", "Antes e depois"], ["Como agendar pelo WhatsApp", "Passo a passo"], ["Hidratação das cutículas", "Dica"], ["Traga uma amiga", "Promoção"]]
+};
+const DIAS = {2: ["Segunda", "Quinta"], 3: ["Segunda", "Quarta", "Sexta"], 4: ["Segunda", "Terça", "Quinta", "Sábado"], 5: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]};
+let freq = 3, linhasCal = [];
+botoes(document.getElementById("freq"), {2: "2 por semana", 3: "3 por semana", 4: "4 por semana", 5: "5 por semana"}, String(freq), k => freq = Number(k));
+function montarCalendario() {
+  const pautas = PAUTAS[tema], corpo = document.getElementById("calCorpo");
+  corpo.innerHTML = ""; linhasCal = [];
+  let i = 0, nIns = 0, nZap = 0;
+  for (let sem = 1; sem <= 4; sem++) {
+    const tr = document.createElement("tr"); tr.className = "sem";
+    const td = document.createElement("td"); td.colSpan = 5; td.textContent = "Semana " + sem; tr.appendChild(td); corpo.appendChild(tr);
+    for (const dia of DIAS[freq]) {
+      const [base, tipo] = pautas[i % pautas.length];
+      const assunto = base + (i >= pautas.length ? " (parte 2)" : "");
+      const canalC = tipo === "Enquete" ? ["stories", "Stories"] : (i % 3 === 2 ? ["zap", "WhatsApp"] : ["insta", "Instagram"]);
+      if (canalC[0] === "zap") nZap++; else nIns++;
+      const situacao = sem === 1 ? "Para aprovar" : "A escrever";
+      const l = document.createElement("tr");
+      [dia, null, tipo, assunto, situacao].forEach((v, k) => {
+        const c = document.createElement("td");
+        if (k === 1) { const s = document.createElement("span"); s.className = "selo " + canalC[0]; s.textContent = canalC[1]; c.appendChild(s); }
+        else c.textContent = v;
+        l.appendChild(c);
+      });
+      corpo.appendChild(l);
+      linhasCal.push(["Semana " + sem, dia, canalC[1], tipo, assunto, situacao]);
+      i++;
+    }
+  }
+  document.getElementById("cTot").textContent = i;
+  document.getElementById("cIns").textContent = nIns;
+  document.getElementById("cZap").textContent = nZap;
+  document.getElementById("calCont").hidden = false;
+  document.getElementById("calWrap").hidden = false;
+  document.getElementById("baixar").hidden = false;
+}
+function baixarCalendario() {
+  const cab = ["Semana", "Dia", "Canal", "Tipo", "Assunto", "Situação"];
+  const csv = "\ufeff" + [cab, ...linhasCal].map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(";")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type: "text/csv;charset=utf-8"}));
+  a.download = "calendario-" + tema + "-" + freq + "-por-semana.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById("montar").onclick = montarCalendario;
+document.getElementById("baixar").onclick = baixarCalendario;
 </script>
 </body>
 </html>
