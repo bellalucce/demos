@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suporte técnico remoto - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555;--verde:#1b7a2c}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1000px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1000px;margin:auto}
+@media(min-width:760px){main{grid-template-columns:minmax(0,300px) minmax(0,1fr)}.largo{grid-column:1/-1}}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.btn{display:inline-block;background:var(--roxo);color:#fff;border:0;cursor:pointer;border-radius:8px;padding:10px 18px;font-size:.95rem;font-family:inherit;margin-top:14px;width:100%}
+.btn:hover{background:#4a2791}
+.btn:disabled{opacity:.55;cursor:default}
+label.campo{display:block;font-size:.85rem;margin:12px 0 6px;color:var(--cinza)}
+.op{display:flex;flex-wrap:wrap;gap:6px}
+.op button{border:1px solid #cfc3e8;background:#fff;border-radius:20px;padding:6px 12px;font-family:inherit;font-size:.86rem;cursor:pointer;color:#333;text-align:left}
+.op button.sel{background:var(--roxo);border-color:var(--roxo);color:#fff}
+.tela{border:1px solid #e6dff3;border-radius:12px;padding:14px 16px;min-height:260px;background:#fcfbfe;white-space:pre-wrap;line-height:1.55;font-size:.93rem;overflow-wrap:break-word}
+.tela b{color:var(--roxo)}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--roxo);vertical-align:-2px;animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+.vazio{color:var(--cinza);text-align:center;padding-top:90px;white-space:normal}
+.cartao{margin-top:14px;border:2px solid var(--roxo);border-radius:12px;background:#fff;overflow:hidden}
+.cartao[hidden]{display:none}
+.cartao .topo{background:#ede7f6;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.9rem}
+.cartao .topo b{color:var(--roxo)}
+.sit{border-radius:20px;padding:2px 12px;font-size:.8rem;font-weight:700;color:#fff}
+.sit.res{background:var(--verde)}
+.sit.enc{background:#c77700}
+.cartao dl{margin:0;padding:10px 14px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+@media(min-width:760px){.cartao dl{grid-template-columns:130px minmax(0,1fr)}}
+.cartao dt{font-size:.78rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.03em}
+.cartao dd{margin:0 0 4px;font-size:.9rem;overflow-wrap:break-word}
+ul.rev{list-style:none;margin:12px 0 0;padding:0}
+ul.rev li{padding:6px 0 6px 28px;position:relative;font-size:.88rem;border-bottom:1px solid #f0edf5;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+ul.rev li.ver{opacity:1;transform:none}
+ul.rev li::before{content:"✓";position:absolute;left:4px;top:5px;color:var(--verde);font-weight:700}
+ol{margin:0;padding-left:20px;line-height:1.6;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Suporte técnico remoto: do problema à solução, com registro</h1>
+  <p>Escolha o problema e o sistema: veja as perguntas que eu faço, o passo a passo seguro e o registro do chamado.</p>
+</header>
+<div class="aviso">Demonstração com casos de exemplo; num atendimento de verdade eu confirmo cada passo com você antes de mexer.</div>
+<main>
+  <section>
+    <h2>1. Escolha o problema</h2>
+    <label class="campo">Problema</label>
+    <div class="op" id="probs"></div>
+    <label class="campo">Sistema</label>
+    <div class="op" id="sists"></div>
+    <button class="btn" id="diag">Diagnosticar</button>
+    <p class="hint">Num atendimento de verdade, eu começo ouvindo o que aconteceu, com as suas palavras.</p>
+  </section>
+  <section>
+    <h2>2. Diagnóstico e registro</h2>
+    <div class="tela" id="tela"><div class="vazio">Escolha o problema e o sistema e clique em <b>Diagnosticar</b>.</div></div>
+    <div class="cartao" id="cartao" hidden>
+      <div class="topo"><span><b id="cNum"></b> &nbsp;·&nbsp; <span id="cData"></span></span><span class="sit" id="cSit"></span></div>
+      <dl>
+        <dt>Problema</dt><dd id="cProb"></dd>
+        <dt>Causa provável</dt><dd id="cCausa"></dd>
+        <dt>O que foi feito</dt><dd id="cFeito"></dd>
+        <dt>Tempo estimado</dt><dd id="cTempo"></dd>
+      </dl>
+    </div>
+    <ul class="rev" id="rev"></ul>
+  </section>
+  <section class="largo">
+    <h2>Como funciona num atendimento</h2>
+    <ol>
+      <li>Você me conta o problema e eu faço algumas perguntas para entender o que aconteceu.</li>
+      <li>Combinamos um horário e eu me conecto por acesso remoto, só com a sua autorização, e você acompanha tudo na tela.</li>
+      <li>Explico cada passo em linguagem simples e não apago nada sem a sua permissão.</li>
+      <li>Você recebe o registro do chamado com a causa, o que foi feito e uma dica para evitar que volte.</li>
+    </ol>
+  </section>
+</main>
+<script>
+const PROBS = {
+  lento: "Computador lento",
+  impressora: "Impressora não imprime",
+  wifi: "Wi-Fi caindo",
+  office: "Não abre o Excel/Word (erro de licença ou travando)",
+  outlook: "E-mail não envia no Outlook"
+};
+const SISTS = {w11: "Windows 11", w10: "Windows 10"};
+
+// Passo em texto = igual nos dois sistemas; passo em lista = [Windows 10, Windows 11].
+const CASOS = {
+  lento: {
+    triagem: [
+      "Ficou lento de uma hora para outra ou foi piorando aos poucos?",
+      "É lento o tempo todo ou só ao abrir algum programa específico?",
+      "Quando foi a última vez que o computador foi reiniciado de verdade?",
+      "Aparece algum aviso de pouco espaço no disco?"
+    ],
+    passos: [
+      "Salve o que estiver aberto e reinicie pelo menu Iniciar > Reiniciar (não use só Desligar, porque o Windows pode guardar o estado da sessão anterior).",
+      "Abra o Gerenciador de Tarefas com Ctrl + Shift + Esc, vá na aba Processos e clique no título das colunas CPU, Memória e Disco para ver quem mais consome. Só olhe, sem encerrar nada ainda.",
+      ["No Gerenciador de Tarefas, aba Inicializar: veja os programas que abrem junto com o Windows. Desative só os que você reconhece e não precisa (botão direito > Desabilitar). Isso não desinstala nada.",
+       "No Gerenciador de Tarefas, abra Aplicativos de inicialização no menu lateral: veja os programas que abrem junto com o Windows. Desative só os que você reconhece e não precisa (botão direito > Desabilitar). Isso não desinstala nada."],
+      "Em Configurações > Sistema > Armazenamento, confira quanto espaço livre existe no disco C:. Abaixo de 15% livre já pesa no desempenho. Eu mostro o que ocupa mais espaço, mas não apago nenhum arquivo seu sem perguntar.",
+      ["Em Configurações > Atualização e Segurança > Windows Update, confira se há atualizações pendentes e instale.",
+       "Em Configurações > Windows Update, confira se há atualizações pendentes e instale."],
+      "Atenção: se um programa desconhecido continuar consumindo muito mesmo assim, ou se o disco estiver sempre em 100%, eu faço junto com você por acesso remoto, porque pode ser vírus, disco com defeito ou falta de memória."
+    ],
+    causa: "Muitos programas abrindo junto com o Windows e pouco espaço livre no disco.",
+    feito: "Reinício completo, desativação de programas de inicialização desnecessários e conferência do espaço livre e das atualizações.",
+    tempo: "30 a 45 minutos",
+    sit: "res",
+    dica: "reinicie o computador pelo menos uma vez por semana e mantenha mais de 15% do disco livre."
+  },
+  impressora: {
+    triagem: [
+      "A impressora é ligada por cabo USB ou pela rede (Wi-Fi)?",
+      "Aparece algum erro na tela da impressora ou do computador?",
+      "Imprime de outro computador ou do celular?",
+      "O problema começou depois de alguma atualização ou troca de roteador?"
+    ],
+    passos: [
+      "Veja se a impressora está ligada, com papel e tinta ou toner, sem luz de erro, e se o cabo está bem encaixado (ou se ela está na mesma rede Wi-Fi do computador).",
+      ["Abra Configurações > Dispositivos > Impressoras e scanners, clique na sua impressora e em Abrir fila de impressão.",
+       "Abra Configurações > Bluetooth e dispositivos > Impressoras e scanners, clique na sua impressora e em Abrir fila de impressão."],
+      "Na fila, veja se há um documento travado com o status Erro ou Pausado. Se houver, você pode cancelar só esse documento (o arquivo original continua salvo no computador).",
+      "No menu Impressora da fila, confira se Usar impressora offline e Pausar impressão estão desmarcados.",
+      "Na mesma tela de Impressoras e scanners, confirme se a sua impressora é a padrão e tente imprimir uma página de teste.",
+      "Atenção: reiniciar o serviço Spooler de Impressão (services.msc), remover e reinstalar o driver ou mudar a porta da impressora são passos que eu faço junto com você por acesso remoto."
+    ],
+    causa: "Documento travado na fila de impressão e impressora marcada como offline.",
+    feito: "Cancelamento do documento travado, conferência do status da impressora e página de teste impressa.",
+    tempo: "20 a 30 minutos",
+    sit: "res",
+    dica: "se a impressora for de rede, peça ao responsável pelo roteador para fixar um endereço para ela, assim o computador não perde a impressora."
+  },
+  wifi: {
+    triagem: [
+      "Cai em todos os aparelhos (celular, computador) ou só em um?",
+      "Cai em algum horário ou em algum cômodo específico?",
+      "Quando cai, o Wi-Fi some ou continua conectado, mas sem internet?",
+      "Há quanto tempo o roteador está ligado sem ser reiniciado?"
+    ],
+    passos: [
+      "Teste de outro aparelho: se todos caem, o problema está no roteador ou na internet; se só um cai, está naquele computador.",
+      "Reinicie o roteador: tire da tomada, espere 30 segundos e ligue de novo. Aguarde uns 2 minutos até as luzes se estabilizarem.",
+      "Teste com o computador mais perto do roteador. Parede, micro-ondas e outros aparelhos enfraquecem o sinal, principalmente na banda de 5 GHz.",
+      "Abra Configurações > Rede e Internet > Wi-Fi > Gerenciar redes conhecidas, escolha a sua rede, clique em Esquecer e conecte de novo com a senha (tenha a senha em mãos antes).",
+      ["Execute o solucionador: Configurações > Atualização e Segurança > Solução de Problemas > Solucionadores de problemas adicionais > Adaptadores de Rede.",
+       "Execute o solucionador: Configurações > Sistema > Solução de problemas > Outros solucionadores de problemas > Adaptadores de rede."],
+      "Atenção: a Redefinição de rede do Windows apaga as redes Wi-Fi salvas e outras configurações de rede, por isso eu só faço junto com você por acesso remoto, depois de anotar as senhas. O mesmo vale para mexer na energia do adaptador no Gerenciador de Dispositivos e para trocar o canal do roteador."
+    ],
+    causa: "Roteador ligado há muito tempo e sinal fraco no local do computador.",
+    feito: "Teste em outros aparelhos, reinício do roteador e reconexão à rede. A queda continuou em horários específicos.",
+    encaminhado: "Encaminhado ao provedor de internet para verificar o sinal na linha.",
+    tempo: "30 a 60 minutos",
+    sit: "enc",
+    dica: "deixe o roteador em lugar alto e aberto, longe de paredes e micro-ondas, e reinicie-o de vez em quando."
+  },
+  office: {
+    triagem: [
+      "Aparece alguma mensagem de erro? Qual é o texto exato?",
+      "O Word e o Excel nem abrem, ou abrem e travam?",
+      "O Office é assinatura do Microsoft 365 ou versão comprada uma vez só?",
+      "O problema começou depois de uma atualização ou troca de conta?"
+    ],
+    passos: [
+      "Feche tudo, aperte Win + R, digite excel /safe (ou winword /safe) e pressione Enter. Se abrir no modo seguro, o problema costuma ser um suplemento.",
+      "Com o programa aberto: Arquivo > Opções > Suplementos. Em Gerenciar, escolha Suplementos COM, clique em Ir e desmarque os que você não reconhece (isso não apaga os suplementos).",
+      "Em Arquivo > Conta, confira se está entrando com a conta certa e se aparece o produto ativado. Se o erro for de licença, confirme se a assinatura está ativa.",
+      ["Para reparar o Office: Configurações > Aplicativos > Aplicativos e recursos > Microsoft Office (ou Microsoft 365) > Modificar > Reparo Rápido. Os seus arquivos não são afetados.",
+       "Para reparar o Office: Configurações > Aplicativos > Aplicativos instalados > Microsoft Office (ou Microsoft 365) > menu de três pontos > Modificar > Reparo Rápido. Os seus arquivos não são afetados."],
+      "Atenção: reparo online, reinstalação e troca de licença eu faço junto com você por acesso remoto, e só com licença original. Não uso programas de ativação pirata."
+    ],
+    causa: "Suplemento com defeito travando o programa na abertura.",
+    feito: "Abertura em modo seguro, suplemento desativado e Reparo Rápido do Office.",
+    tempo: "30 a 40 minutos",
+    sit: "res",
+    dica: "mantenha o Office atualizado e instale só suplementos de que você realmente precisa."
+  },
+  outlook: {
+    triagem: [
+      "Aparece algum erro ao enviar? Qual é o texto?",
+      "Você recebe e-mails normalmente, ou só o envio falha?",
+      "O e-mail travado tem anexo grande?",
+      "A senha da conta foi trocada recentemente?"
+    ],
+    passos: [
+      "Veja se há internet abrindo uma página no navegador.",
+      "No Outlook clássico, guia Enviar/Receber: confira se Trabalhar offline não está ativado (se o botão estiver destacado, clique para voltar ao modo online).",
+      "Abra a Caixa de Saída. Se houver uma mensagem presa, abra-a, veja se o anexo é muito grande (muitos provedores limitam a 20 a 25 MB) e se os endereços estão corretos. Não apago a mensagem sem a sua permissão: se precisar, copio o texto antes.",
+      "Em Arquivo > Configurações da Conta > Configurações da Conta, selecione a conta e clique em Reparar. Se o provedor pedir a senha de novo, digite você mesmo; eu nunca peço a sua senha.",
+      "Para testar se é um suplemento, feche o Outlook, aperte Win + R, digite outlook /safe e envie um e-mail de teste.",
+      "Atenção: conferir porta, tipo de segurança e servidor de saída da conta, ou criar um novo perfil do Outlook (Painel de Controle > Email), eu faço junto com você por acesso remoto, usando os dados do seu provedor."
+    ],
+    causa: "E-mail com anexo maior que o limite do provedor preso na Caixa de Saída.",
+    feito: "Conferência do modo online, localização da mensagem presa, envio do anexo por link e reparo da conta.",
+    tempo: "20 a 40 minutos",
+    sit: "res",
+    dica: "para arquivos grandes, envie um link de nuvem em vez de anexar, e confira a Caixa de Saída quando um envio demorar."
+  }
+};
+
+let prob = "lento", sist = "w11", rodando = null;
+const $ = id => document.getElementById(id);
+
+function botoes(el, itens, atual, quando) {
+  el.innerHTML = "";
+  for (const k of Object.keys(itens)) {
+    const b = document.createElement("button");
+    b.textContent = itens[k];
+    if (k === atual) b.className = "sel";
+    b.onclick = () => { quando(k); [...el.children].forEach(x => x.className = ""); b.className = "sel"; };
+    el.appendChild(b);
+  }
+}
+botoes($("probs"), PROBS, prob, k => prob = k);
+botoes($("sists"), SISTS, sist, k => sist = k);
+
+function montaTexto(c) {
+  const idx = sist === "w10" ? 0 : 1;
+  let t = "Perguntas de triagem que eu faria\n";
+  c.triagem.forEach((q, i) => { t += (i + 1) + ". " + q + "\n"; });
+  t += "\nPasso a passo seguro (" + SISTS[sist] + ")\n";
+  c.passos.forEach((p, i) => { t += (i + 1) + ". " + (Array.isArray(p) ? p[idx] : p) + "\n"; });
+  return t.replace(/\s+$/, "");
+}
+
+function diagnosticar() {
+  clearTimeout(rodando);
+  const c = CASOS[prob], btn = $("diag"), tela = $("tela");
+  const texto = montaTexto(c);
+  $("rev").innerHTML = "";
+  $("cartao").hidden = true;
+  btn.disabled = true;
+  let i = 0;
+  const passo = Math.max(3, Math.round(texto.length / 160));
+  function anda() {
+    i = Math.min(texto.length, i + passo);
+    tela.textContent = texto.slice(0, i);
+    if (i < texto.length) {
+      const cur = document.createElement("span"); cur.className = "cursor"; tela.appendChild(cur);
+      rodando = setTimeout(anda, 16);
+    } else {
+      const partes = texto.split("\n");
+      tela.textContent = "";
+      partes.forEach((ln, k) => {
+        if (ln === "Perguntas de triagem que eu faria" || ln.indexOf("Passo a passo seguro") === 0) {
+          const b = document.createElement("b"); b.textContent = ln; tela.appendChild(b);
+        } else tela.appendChild(document.createTextNode(ln));
+        if (k < partes.length - 1) tela.appendChild(document.createTextNode("\n"));
+      });
+      mostraCartao(c);
+      btn.disabled = false;
+    }
+  }
+  anda();
+}
+
+function mostraCartao(c) {
+  const hoje = new Date().toLocaleDateString("pt-BR");
+  const num = "CH-" + String(142 + Object.keys(PROBS).indexOf(prob)).padStart(4, "0");
+  $("cNum").textContent = num;
+  $("cData").textContent = hoje;
+  $("cProb").textContent = PROBS[prob] + " (" + SISTS[sist] + ")";
+  $("cCausa").textContent = c.causa;
+  $("cFeito").textContent = c.feito + (c.encaminhado ? " " + c.encaminhado : "");
+  $("cTempo").textContent = c.tempo;
+  const s = $("cSit");
+  s.textContent = c.sit === "res" ? "Resolvido" : "Encaminhado";
+  s.className = "sit " + c.sit;
+  $("cartao").hidden = false;
+  const itens = [
+    "Nada apagado sem sua permissão",
+    "Cada passo explicado em linguagem simples",
+    "Registro do chamado salvo",
+    "Dica para não voltar a acontecer: " + c.dica
+  ];
+  const ul = $("rev");
+  itens.forEach((t, k) => {
+    const li = document.createElement("li"); li.textContent = t; ul.appendChild(li);
+    setTimeout(() => li.classList.add("ver"), 250 * (k + 1));
+  });
+}
+$("diag").onclick = diagnosticar;
+</script>
+</body>
+</html>
