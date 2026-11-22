@@ -77,7 +77,7 @@ footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24
 </header>
 <div class="aviso"><b>DEMONSTRAÇÃO.</b> Negócios, endereços, preços, horários e agendamentos abaixo são inventados, sem ligação com empresas reais. Nada é enviado pela internet.</div>
 <div class="barra"><label for="seletor" style="margin:0">Escolha o negócio de exemplo:</label>
-  <select id="seletor"><option value="clinica">Clínica Sorriso (exemplo)</option><option value="loja">Loja Exemplo Moda (exemplo)</option></select>
+  <select id="seletor"><option value="clinica">Clínica Sorriso (exemplo)</option><option value="loja">Loja Exemplo Moda (exemplo)</option><option value="cosmeticos">Beleza Exemplo Cosméticos (exemplo)</option></select>
   <span class="hint">Experimente escrever do seu jeito, até com erro de digitação.</span></div>
 <div class="abas"><button id="aba-chat" class="on" type="button">Conversa</button><button id="aba-painel" type="button">Painel do dono</button></div>
 <main>
@@ -129,6 +129,22 @@ const NEG={
    {id:"pagamento",menu:1,t:"Formas de pagamento",kw:"pagamento, pagar, pix, cartao, credito, debito, parcelar, parcela, dinheiro",r:"Pix com 5% de desconto, cartão de crédito em até 10x e débito."},
    {id:"entrega",menu:1,t:"Entrega e frete",kw:"entrega, frete, entregar, envio, enviar, correios, prazo",r:"Entregamos na cidade em até 2 dias úteis por R$ 12; frete grátis acima de R$ 250. Para outras cidades enviamos pelos Correios, com prazo informado no pedido."},
    {id:"troca",menu:1,t:"Trocas e devoluções",kw:"troca, trocas, trocar, devolucao, devolver, defeito",r:"Trocas em até 30 dias, com etiqueta e nota. A primeira troca é grátis."}
+  ]},
+ cosmeticos:{nome:"Beleza Exemplo Cosméticos (exemplo)",ini:"B",
+  boas:"Posso montar uma rotina para o seu tipo de pele, explicar ingredientes, ajudar com o tom da base, falar de preços, entrega e trocas, e marcar uma consultoria.",
+  servicos:[{n:"Consultoria de pele (15 min)",kw:["consultoria","pele","avaliacao"]},{n:"Teste de tom de base",kw:["teste","tom","base","cor"]},{n:"Retirada de pedido",kw:["retirada","retirar","pedido"]}],
+  slots:{seg:["10:00","14:00","17:00"],ter:["09:30","13:30","16:00"],qua:["10:00","15:00","18:00"],qui:["09:00","11:30","16:30"],sex:["10:30","14:30"]},
+  kb:[
+   {id:"ola",menu:0,t:"Saudação",kw:"oi, ola, bom dia, boa tarde, boa noite, eai",r:"Olá! Sou a assistente da loja. Posso montar uma rotina para o seu tipo de pele, explicar ingredientes, ajudar com o tom da base, falar de preços, entrega e trocas, ou marcar uma consultoria."},
+   {id:"rotina",menu:1,t:"Rotina para o meu tipo de pele",kw:"rotina, skincare, tipo de pele, oleosa, seca, mista, sensivel, acne, cravos, espinha, poros",r:"Rotina básica: de manhã, sabonete suave, hidratante e protetor solar; à noite, sabonete e hidratante. Pele oleosa: gel ou sabonete com ácido salicílico e hidratante leve, em gel. Pele seca: sabonete cremoso e hidratante com ceramidas. Pele sensível: fórmulas sem perfume e teste no braço antes. Me diga o seu tipo de pele que eu indico os produtos da loja."},
+   {id:"ingrediente",menu:1,t:"O que faz cada ingrediente",kw:"ingrediente, ingredientes, acido hialuronico, hialuronico, niacinamida, vitamina c, retinol, salicilico, ceramida, ativo",r:"Ácido hialurônico: hidrata. Niacinamida: controla a oleosidade e uniformiza o tom. Vitamina C: dá viço e ajuda nas manchas (use de dia, com protetor). Retinol: renovação da pele (só à noite e com protetor no dia seguinte; grávidas devem evitar). Ácido salicílico: limpa os poros. Na dúvida, procure um dermatologista."},
+   {id:"base",menu:1,t:"Escolher o tom da base",kw:"base, tom, cor da base, corretivo, subtom, clara, media, escura, po",r:"Teste a base no maxilar, perto do pescoço, e olhe na luz do dia: o tom certo some na pele. Veias mais azuladas costumam indicar subtom frio e mais esverdeadas, subtom quente. Mande uma foto com luz natural que eu sugiro 2 tons, ou marque um teste de tom na loja."},
+   {id:"preco",menu:1,t:"Preços e kits",kw:"preco, precos, valor, valores, quanto custa, custa, tabela, kit, kits, batom, protetor, hidratante",r:"Batons a partir de R$ 19 · Hidratantes de R$ 29 a R$ 69 · Protetor solar facial R$ 49 · Kit rotina básica (sabonete + hidratante + protetor) R$ 119."},
+   {id:"pagamento",menu:1,t:"Formas de pagamento",kw:"pagamento, pagar, pix, cartao, credito, debito, parcelar, parcela, dinheiro",r:"Pix com 5% de desconto, cartão de crédito em até 6x sem juros e débito."},
+   {id:"entrega",menu:1,t:"Entrega e frete",kw:"entrega, frete, entregar, envio, enviar, correios, prazo",r:"Entregamos na cidade no mesmo dia para pedidos até as 15h, por R$ 8; frete grátis acima de R$ 150. Para outras cidades enviamos pelos Correios."},
+   {id:"troca",menu:1,t:"Trocas e alergia",kw:"troca, trocas, trocar, devolucao, devolver, defeito, alergia, irritou, reacao, coceira",r:"Produto lacrado troca em até 7 dias. Se der irritação ou alergia, pare de usar, lave com água fria e procure um médico se não melhorar; fale com a gente que resolvemos a troca."},
+   {id:"horario",menu:1,t:"Horário de atendimento",kw:"horario, horarios, aberto, abre, fecha, fechado, funcionamento, expediente, horas",r:"A loja abre de segunda a sábado, das 9h às 19h. Por aqui eu respondo a qualquer hora."},
+   {id:"endereco",menu:1,t:"Endereço",kw:"endereco, onde fica, localizacao, chegar, mapa, rua, loja fisica",r:"Estamos na Rua da Beleza, 789, Centro (endereço fictício), Cidade Exemplo."}
   ]}
 };
 const DIAS=[{k:"seg",n:"Segunda-feira",a:["segunda","seg"]},{k:"ter",n:"Terça-feira",a:["terca","ter"]},{k:"qua",n:"Quarta-feira",a:["quarta","qua"]},{k:"qui",n:"Quinta-feira",a:["quinta","qui"]},{k:"sex",n:"Sexta-feira",a:["sexta","sex"]}];
@@ -175,7 +191,7 @@ function novaConversa(){
  conv={flow:null,humano:false,contada:false,resp:0,falhas:0};
  $("msgs").innerHTML="";
  const n=NEG[cur];
- addMsg("bot","Olá! Eu sou a assistente virtual da "+n.nome.replace(" (exemplo)","")+". Posso falar de horários, endereço, preços, pagamento, entrega e trocas, e também agendar um horário. Escreva do seu jeito ou toque num botão.");
+ addMsg("bot","Olá! Eu sou a assistente virtual da "+n.nome.replace(" (exemplo)","")+". "+(n.boas||"Posso falar de horários, endereço, preços, pagamento, entrega e trocas, e também agendar um horário.")+" Escreva do seu jeito ou toque num botão.");
 }
 function contaResolvida(){if(!conv.contada&&!conv.humano){conv.contada=true;S[cur].resolvidas++;renderStats()}}
 
