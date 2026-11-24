@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Automação de formulário, planilha e aviso - demonstração</title>
+<meta name="description" content="Demonstração de automação: o pedido do formulário vira linha na planilha, o dono recebe o aviso certo e o lembrete fica marcado, com registro de cada passo e nova tentativa quando algo falha.">
+<style>
+:root{--cor:#2d6a4f;--fundo:#f3f6f9;--ok:#24804a;--erro:#c0392b;--esp:#b7791f}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222;line-height:1.45}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.92rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1040px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1040px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.duas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px;align-items:start}
+label{display:block;font-size:.88rem;margin:8px 0 4px;font-weight:600}
+input,select{width:100%;padding:9px;border:1px solid #c7d0d8;border-radius:8px;font:inherit}
+.btn{display:inline-block;background:var(--cor);color:#fff;border:0;cursor:pointer;border-radius:8px;padding:10px 16px;font-size:.95rem;font-family:inherit;margin-top:12px}
+.btn:hover{filter:brightness(.92)}
+.btn.vz{background:#fff;color:var(--erro);border:2px solid var(--erro);padding:8px 14px}
+.btn:disabled{opacity:.5;cursor:default}
+.passos{list-style:none;margin:0;padding:0}
+.passos li{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:8px;margin-bottom:6px;background:#f6f8fa;border-left:4px solid #ccd5dd}
+.passos li .ic{font-size:1.2rem;width:1.6rem;text-align:center;flex:none}
+.passos li b{display:block}
+.passos li small{color:#555}
+.passos li.rod{border-color:var(--esp);background:#fff8e6}
+.passos li.ok{border-color:var(--ok);background:#ecf7f0}
+.passos li.erro{border-color:var(--erro);background:#fdecea}
+.passos li.pulou{opacity:.55}
+.tabela{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:520px}
+th,td{border:1px solid #d5dde4;padding:5px 8px;text-align:left}
+th{background:#eef3f6}
+tr.nova{animation:pisca 1.6s}
+@keyframes pisca{from{background:#fff3b0}to{background:transparent}}
+.zap{background:#e5ddd5;border-radius:10px;padding:10px;min-height:64px}
+.balao{background:#dcf8c6;border-radius:8px;padding:8px 10px;font-size:.88rem;margin-bottom:6px;max-width:92%;white-space:pre-wrap}
+.balao.mail{background:#fff;border:1px solid #ccd}
+.log{background:#1e1e1e;color:#cde;font:12px/1.5 Consolas,monospace;border-radius:8px;padding:10px;max-height:200px;overflow:auto;white-space:pre-wrap}
+.log .e{color:#ff8a80}.log .k{color:#9be7a5}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tres div{background:#f6f8fa;border-radius:10px;padding:12px}
+.tres b{display:block;margin-bottom:4px}
+.nota{font-size:.82rem;color:#666}
+@media (max-width:760px){.duas,.tres{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header><h1>Automação: formulário → planilha → aviso certo</h1>
+<p>O pedido que chega não precisa ser copiado à mão: vira linha na planilha, avisa quem precisa e marca o lembrete.</p></header>
+<div class="aviso">Demonstração com uma empresa inventada. Nada sai desta página: a planilha, o WhatsApp e o e-mail aqui são simulados.</div>
+<main>
+<section class="duas">
+<div>
+<h2>1. Um cliente preenche o formulário</h2>
+<form id="form">
+<label for="nome">Nome</label><input id="nome" value="Marina Exemplo" required>
+<label for="serv">Serviço</label><select id="serv"><option>Instalação de ar-condicionado</option><option>Manutenção preventiva</option><option>Limpeza de split</option></select>
+<label for="valor">Valor estimado (R$)</label><input id="valor" type="number" min="0" value="850" required>
+<button class="btn" id="enviar" type="submit">Enviar pedido</button>
+<button class="btn vz" id="falha" type="button">Enviar com a planilha fora do ar</button>
+</form>
+<p class="nota">Regra desta empresa: pedido acima de R$ 500 avisa o dono no WhatsApp na hora; os outros vão no e-mail de resumo.</p>
+</div>
+<div>
+<h2>2. O que a automação faz, passo a passo</h2>
+<ul class="passos" id="passos"></ul>
+</div>
+</section>
+
+<section>
+<h2>3. A planilha que se preenche sozinha</h2>
+<div class="tabela"><table><thead><tr><th>Data</th><th>Nome</th><th>Serviço</th><th>Valor</th><th>Situação</th><th>Lembrete</th></tr></thead>
+<tbody id="linhas"><tr><td>23/11 16:02</td><td>João Exemplo</td><td>Limpeza de split</td><td>R$ 180</td><td>Respondido</td><td>-</td></tr></tbody></table></div>
+</section>
+
+<section class="duas">
+<div><h2>4. O aviso que chega</h2><div class="zap" id="zap"><span class="nota">Os avisos aparecem aqui.</span></div></div>
+<div><h2>5. Registro de cada execução</h2><div class="log" id="log">Esperando o primeiro pedido…</div>
+<p class="nota">Quando algo falha, a automação tenta de novo e, se não der, avisa uma pessoa. Nenhum pedido se perde em silêncio.</p></div>
+</section>
+
+<section>
+<h2>Como funciona no seu caso</h2>
+<div class="tres">
+<div><b>Começa pelo que você já usa</b>Formulário do Google, site, WhatsApp, e-mail ou planilha. Feito em Python, ou no n8n, Make ou Zapier se você já usa um deles.</div>
+<div><b>Regras no seu jeito</b>Quem recebe o aviso, a partir de que valor, quando lembrar e o que vai no resumo do dia.</div>
+<div><b>Nada some sem aviso</b>Registro de cada passo, nova tentativa quando um serviço cai e aviso para uma pessoa se não resolver.</div>
+</div>
+<p class="nota">Entrega: a automação funcionando, um passo a passo de 1 página para você mexer nas regras e uma rodada de ajuste incluída.</p>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const PASSOS=[["📝","Pedido recebido","Nome, serviço e valor conferidos (campo vazio não passa)."],
+ ["📊","Linha nova na planilha","Data, nome, serviço, valor e situação \"Novo\"."],
+ ["🔀","Regra do valor","Acima de R$ 500 → WhatsApp do dono; senão → e-mail do resumo."],
+ ["📲","Aviso enviado","Mensagem curta com o que importa para responder rápido."],
+ ["⏰","Lembrete marcado","Se em 2 dias a situação seguir \"Novo\", lembra o dono."]];
+function hora(){const d=new Date();return d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+function log(t,c){const l=$("log");if(l.dataset.v!=="1"){l.textContent="";l.dataset.v="1"}const s=document.createElement("div");if(c)s.className=c;s.textContent=`[${hora()}] ${t}`;l.appendChild(s);l.scrollTop=l.scrollHeight}
+function montar(){$("passos").innerHTML=PASSOS.map((p,i)=>`<li id="p${i}"><span class="ic">${p[0]}</span><span><b>${p[1]}</b><small>${p[2]}</small></span></li>`).join("")}
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+async function passo(i,estado,txt){const li=$("p"+i);li.className=estado;if(txt)li.querySelector("small").textContent=txt}
+async function rodar(falhar){
+  const nome=$("nome").value.trim(),serv=$("serv").value,valor=Number($("valor").value);
+  if(!nome||!(valor>=0))return;
+  $("enviar").disabled=$("falha").disabled=true;montar();
+  const agora=new Date(),dt=agora.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" "+agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  log(`pedido de ${nome}: ${serv}, R$ ${valor}`);
+  await passo(0,"rod");await espera(500);await passo(0,"ok");
+  await passo(1,"rod");await espera(600);
+  if(falhar){
+    await passo(1,"erro","A planilha não respondeu. Tentando de novo em 2 s…");log("planilha fora do ar (tentativa 1 de 3)","e");await espera(1300);
+    await passo(1,"rod","2ª tentativa…");log("tentando de novo (tentativa 2 de 3)");await espera(900);
+  }
+  const tr=document.createElement("tr");tr.className="nova";
+  tr.innerHTML=`<td>${dt}</td><td></td><td></td><td>R$ ${valor.toLocaleString("pt-BR")}</td><td>Novo</td><td>em 2 dias</td>`;
+  tr.children[1].textContent=nome;tr.children[2].textContent=serv;$("linhas").prepend(tr);
+  await passo(1,"ok",falhar?"Gravado na 2ª tentativa; nada se perdeu.":null);log("linha gravada na planilha","k");
+  await passo(2,"rod");await espera(500);
+  const vip=valor>500;await passo(2,"ok",vip?`R$ ${valor} é acima de R$ 500 → WhatsApp do dono.`:`R$ ${valor} até R$ 500 → vai no e-mail do resumo.`);
+  log(vip?"regra: acima de R$ 500 → WhatsApp":"regra: até R$ 500 → e-mail do resumo");
+  await passo(3,"rod");await espera(600);
+  const z=$("zap");if(z.querySelector(".nota"))z.innerHTML="";
+  const b=document.createElement("div");b.className="balao"+(vip?"":" mail");
+  b.textContent=vip?`🔔 Pedido novo acima de R$ 500\n${nome} · ${serv}\nValor estimado: R$ ${valor.toLocaleString("pt-BR")}\nResponda hoje; está na planilha.`:`📧 Resumo do dia (e-mail)\n• ${nome} · ${serv} · R$ ${valor.toLocaleString("pt-BR")}`;
+  z.appendChild(b);await passo(3,"ok");log(vip?"aviso enviado no WhatsApp do dono":"pedido incluído no e-mail do resumo","k");
+  await passo(4,"rod");await espera(400);await passo(4,"ok");log("lembrete marcado para daqui a 2 dias se seguir \"Novo\"","k");
+  $("enviar").disabled=$("falha").disabled=false;
+}
+montar();
+$("form").onsubmit=e=>{e.preventDefault();rodar(false)};
+$("falha").onclick=()=>{if($("form").reportValidity())rodar(true)};
+</script>
+</body>
+</html>
