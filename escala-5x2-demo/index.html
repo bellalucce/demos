@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Escala de trabalho 5x2 automática - demonstração</title>
+<style>
+:root{--cor:#7b2d43;--cor2:#5a1f30;--fundo:#faf6f1;--cinza:#666;--verde:#d9ead3;--azul:#cfe2f3;--lar:#fce5cd;--verm:#f4cccc;--vermt:#9c0006}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1100px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1100px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+.full{grid-column:1/-1}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+label{display:block;font-size:.85rem;color:var(--cinza);margin:8px 0 3px}
+input,select{font-size:.95rem;padding:7px 8px;border:1px solid #d9c3c9;border-radius:8px;background:#fff;font-family:inherit;max-width:100%}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tres input,.tres select{width:100%}
+.tab{overflow-x:auto}
+table{border-collapse:collapse;font-size:.85rem}
+td,th{padding:5px 6px;border:1px solid #e3d6d9;text-align:center;white-space:nowrap}
+th{background:var(--cor);color:#fff;font-weight:600;font-size:.78rem}
+td.n{text-align:left}
+.equipe td{border:0;border-bottom:1px solid #eee;padding:4px}
+.equipe select{padding:4px}
+.F{background:var(--verde);font-weight:700}.FE{background:var(--azul);font-weight:700}.AT{background:var(--lar);font-weight:700}
+.dom{font-weight:700}
+.menos{background:var(--verm);color:var(--vermt);font-weight:700}
+.alerta{background:var(--verm);color:var(--vermt);font-weight:600}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:10px 16px;font-size:.95rem;margin-top:10px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--cor2)}
+.btn.claro{background:#f3e5e9;color:var(--cor2)}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0 12px}
+.big div{background:#f3e5e9;border-radius:10px;padding:10px}
+.big b{display:block;font-size:1.2rem;color:var(--cor2)}
+.big b.ruim{color:var(--vermt)}
+.big span{font-size:.78rem;color:var(--cinza)}
+.leg{display:flex;gap:14px;font-size:.84rem;color:var(--cinza);margin:8px 0;flex-wrap:wrap}
+.leg i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:5px;vertical-align:-2px;border:1px solid #ddd}
+ul.aj{margin:6px 0 0;padding-left:18px;font-size:.88rem;line-height:1.6}
+ul.aj button{border:0;background:none;color:var(--vermt);cursor:pointer;font-size:.85rem}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}.big,.tres{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header>
+<h1>Escala de trabalho 5x2 que se monta sozinha</h1>
+<p>Você escolhe o mês, os funcionários e as 2 folgas de cada um. A escala do mês inteiro sai pronta.</p>
+</header>
+<div class="aviso">Demonstração com dados inventados (uma loja com 10 funcionários). Troque uma folga, o mês ou o mínimo por dia e veja a escala mudar. O mesmo cálculo está na planilha de Excel, que pode ser baixada.</div>
+<main>
+<section>
+<h2>1. Configurar</h2>
+<div class="tres">
+<div><label for="mes">Mês</label><input type="month" id="mes" value="2026-12"></div>
+<div><label for="minimo">Mínimo de pessoas por dia</label><input type="number" id="minimo" value="6" min="1" max="30"></div>
+<div><label for="regra">Regra do domingo</label><select id="regra"><option>Sim</option><option>Não</option></select></div>
+</div>
+<p class="hint">Regra do domingo = avisa quem passa 3 domingos seguidos sem folga (comércio: Lei 10.101/2000, art. 6º).</p>
+<div class="tab"><table class="equipe" id="equipe"></table></div>
+<p class="hint">"Dom. a cada 3": na semana do grupo, a Folga 2 vira o domingo, e a pessoa continua com 2 folgas na semana.</p>
+</section>
+<section>
+<h2>2. Férias, atestado e troca de folga</h2>
+<div class="tres">
+<div><label for="ajNome">Funcionário</label><select id="ajNome"></select></div>
+<div><label for="ajDia">Dia do mês</label><input type="number" id="ajDia" value="18" min="1" max="31"></div>
+<div><label for="ajCod">O que acontece</label><select id="ajCod"><option value="FE">Férias</option><option value="AT">Atestado</option><option value="F">Folga (troca)</option><option value="T">Trabalha (troca)</option></select></div>
+</div>
+<button class="btn" id="ajAdd">Adicionar</button>
+<ul class="aj" id="ajLista"></ul>
+<div class="leg"><span><i style="background:#fff"></i>T trabalha</span><span><i style="background:var(--verde)"></i>F folga</span><span><i style="background:var(--azul)"></i>FE férias</span><span><i style="background:var(--lar)"></i>AT atestado</span><span><i style="background:var(--verm)"></i>gente de menos</span></div>
+<a class="btn claro" href="planilha-escala-5x2.xlsx" download>Baixar a planilha (.xlsx)</a>
+</section>
+<section class="full">
+<h2 id="titulo">3. Escala</h2>
+<div class="big"><div><b id="kMenos">0</b><span>dias com gente de menos</span></div><div><b id="kDom">0</b><span>pessoas com 3 domingos seguidos sem folga</span></div><div><b id="kHoras">0</b><span>horas trabalhadas no mês (equipe)</span></div></div>
+<div class="tab"><table id="escala"></table></div>
+</section>
+</main>
+<footer>Demonstração de portfólio com dados inventados. Monto também a escala 6x1 ou 12x36, sob medida.</footer>
+<script>
+const DIAS=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const equipe=[["Ana Paula","Dom","Seg",false,1],["Bruno","Seg","Ter",true,1],["Camila","Ter","Qua",true,2],["Diego","Qua","Qui",true,3],["Elaine","Qui","Sex",true,1],["Fábio","Sáb","Seg",true,2],["Gabriela","Seg","Qua",true,3],["Heitor","Sex","Sáb",true,2],["Íris","Ter","Qui",true,3],["João","Qua","Sex",true,1]];
+let ajustes=[["Camila",8,"FE"],["Camila",9,"FE"],["Camila",10,"FE"],["Camila",11,"FE"],["Camila",12,"FE"],["Diego",14,"AT"],["Elaine",21,"AT"],["Bruno",22,"T"],["Bruno",23,"F"]];
+const NOMES={FE:"férias",AT:"atestado",F:"folga (troca)",T:"trabalha (troca)"};
+const REF=Date.UTC(2026,0,4); // um domingo: as semanas do rodízio contam a partir dele
+const $=id=>document.getElementById(id);
+function sel(v,ops){return '<select>'+ops.map(o=>'<option'+(String(o)===String(v)?' selected':'')+'>'+o+'</option>').join('')+'</select>'}
+function montarEquipe(){
+  $('equipe').innerHTML='<tr><th>Funcionário</th><th>Folga 1</th><th>Folga 2</th><th>Dom. a cada 3</th><th>Grupo</th></tr>'+
+    equipe.map((p,i)=>'<tr data-i="'+i+'"><td class="n">'+p[0]+'</td><td>'+sel(p[1],DIAS)+'</td><td>'+sel(p[2],DIAS)+'</td><td><input type="checkbox"'+(p[3]?' checked':'')+'></td><td>'+sel(p[4],[1,2,3])+'</td></tr>').join('');
+  $('equipe').querySelectorAll('tr[data-i]').forEach(tr=>{
+    const i=+tr.dataset.i, s=tr.querySelectorAll('select'), c=tr.querySelector('input');
+    s[0].onchange=()=>{equipe[i][1]=s[0].value;calcular()};
+    s[1].onchange=()=>{equipe[i][2]=s[1].value;calcular()};
+    s[2].onchange=()=>{equipe[i][4]=+s[2].value;calcular()};
+    c.onchange=()=>{equipe[i][3]=c.checked;calcular()};
+  });
+  $('ajNome').innerHTML=equipe.map(p=>'<option>'+p[0]+'</option>').join('');
+}
+function listaAjustes(){
+  $('ajLista').innerHTML=ajustes.map((a,i)=>'<li>'+a[0]+', dia '+a[1]+': '+NOMES[a[2]]+' <button data-i="'+i+'" title="Tirar este ajuste">tirar</button></li>').join('');
+  $('ajLista').querySelectorAll('button').forEach(b=>b.onclick=()=>{ajustes.splice(+b.dataset.i,1);listaAjustes();calcular()});
+}
+function calcular(){
+  const [ano,mes]=$('mes').value.split('-').map(Number), minimo=+$('minimo').value||0, regra=$('regra').value==='Sim';
+  const nd=new Date(Date.UTC(ano,mes,0)).getUTCDate();
+  const dias=[];
+  for(let k=1;k<=nd;k++){const t=Date.UTC(ano,mes-1,k);const w=(new Date(t).getUTCDay()+6)%7;dias.push({k,t,w,nome:DIAS[w]})}
+  $('titulo').textContent='3. Escala de '+MESES[mes-1]+' de '+ano;
+  const cob=new Array(nd).fill(0); let horasEq=0, domRuim=0;
+  let h='<tr><th>Funcionário</th>'+dias.map(d=>'<th>'+String(d.k).padStart(2,'0')+'<br>'+d.nome+'</th>').join('')+'<th>Dias trab.</th><th>Folgas</th><th>Férias/AT</th><th>Horas</th><th>Dom. de folga</th><th>Regra do domingo</th></tr>';
+  equipe.forEach(p=>{
+    const linha=dias.map((d,j)=>{
+      const aj=ajustes.find(a=>a[0]===p[0]&&a[1]===d.k);
+      if(aj) return aj[2];
+      const domingo=d.t+(6-d.w)*864e5, sem=Math.floor((domingo-REF)/(7*864e5));
+      const gira=p[3]&&(((sem-p[4])%3)+3)%3===0;
+      if(gira) return (d.nome==='Dom'||d.nome===p[1])?'F':'T';
+      return (d.nome===p[1]||d.nome===p[2])?'F':'T';
+    });
+    linha.forEach((c,j)=>{if(c==='T')cob[j]++});
+    const T=linha.filter(c=>c==='T').length, F=linha.filter(c=>c==='F').length, X=linha.filter(c=>c==='FE'||c==='AT').length;
+    const doms=dias.map((d,j)=>d.nome==='Dom'?linha[j]:null).filter(c=>c!==null);
+    const folgaDom=doms.filter(c=>c!=='T').length;
+    let tres=false; for(let a=0;a+2<doms.length;a++) if(doms[a]==='T'&&doms[a+1]==='T'&&doms[a+2]==='T') tres=true;
+    if(regra&&tres) domRuim++;
+    const min=Math.round(T*8.8*60); horasEq+=min;
+    h+='<tr><td class="n">'+p[0]+'</td>'+linha.map((c,j)=>'<td class="'+(c!=='T'?c:'')+(dias[j].nome==='Dom'?' dom':'')+'">'+c+'</td>').join('')+
+      '<td>'+T+'</td><td>'+F+'</td><td>'+X+'</td><td>'+Math.floor(min/60)+':'+String(min%60).padStart(2,'0')+'</td><td>'+folgaDom+'</td><td'+(regra&&tres?' class="alerta">Atenção: 3 domingos seguidos':'>'+(regra?'OK':''))+'</td></tr>';
+  });
+  let menos=0;
+  h+='<tr><td class="n"><b>Trabalhando</b></td>'+cob.map(n=>{const r=n<minimo; if(r)menos++; return '<td class="'+(r?'menos':'')+'">'+n+'</td>'}).join('')+'<td colspan="6"></td></tr>';
+  h+='<tr><td class="n" style="color:#666"><i>Mínimo pedido</i></td>'+cob.map(()=>'<td style="color:#666">'+minimo+'</td>').join('')+'<td colspan="6"></td></tr>';
+  $('escala').innerHTML=h;
+  $('kMenos').textContent=menos; $('kMenos').className=menos?'ruim':'';
+  $('kDom').textContent=domRuim; $('kDom').className=domRuim?'ruim':'';
+  $('kHoras').textContent=Math.round(horasEq/60)+' h';
+}
+$('ajAdd').onclick=()=>{
+  const n=$('ajNome').value, d=+$('ajDia').value, c=$('ajCod').value;
+  if(!n||!(d>=1&&d<=31)) return;
+  ajustes=ajustes.filter(a=>!(a[0]===n&&a[1]===d)); ajustes.push([n,d,c]); listaAjustes(); calcular();
+};
+['mes','minimo','regra'].forEach(id=>$(id).onchange=calcular);
+montarEquipe(); listaAjustes(); calcular();
+</script>
+</body>
+</html>
