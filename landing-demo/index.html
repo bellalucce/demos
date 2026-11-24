@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Página de serviço para pequeno negócio - demonstração</title>
+<meta name="description" content="Demonstração de página de uma tela para pequeno negócio: serviços, região atendida, perguntas frequentes e pedido de orçamento que vira mensagem pronta no WhatsApp.">
+<style>
+:root{--cor:#1f5f8b;--cor2:#174a6d;--claro:#e8f1f8;--fundo:#f3f6f9}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222;line-height:1.45}
+.demo{background:#fff3cd;border-bottom:3px solid #e0a800;padding:10px 16px;font-size:.9rem}
+.demo .in{max-width:980px;margin:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.demo b{margin-right:4px}
+.nicho{border:2px solid #b8860b;background:#fff;color:#6b4e00;border-radius:20px;padding:5px 14px;font:inherit;cursor:pointer}
+.nicho.on{background:#b8860b;color:#fff}
+
+.hero{background:var(--cor);color:#fff;padding:36px 16px 40px}
+.hero .in,.bloco .in{max-width:980px;margin:auto}
+.marca{font-size:.95rem;letter-spacing:.04em;opacity:.9;text-transform:uppercase;font-weight:700}
+.hero h1{font-size:clamp(1.6rem,4.5vw,2.4rem);margin:10px 0 8px;line-height:1.15}
+.hero p{margin:0 0 18px;font-size:1.05rem;opacity:.95;max-width:620px}
+.btn{display:inline-block;background:#25d366;color:#08361a;font-weight:700;text-decoration:none;border:0;cursor:pointer;border-radius:30px;padding:13px 24px;font-size:1rem;font-family:inherit}
+.btn:hover{filter:brightness(.95)}
+.btn.sec{background:#fff;color:var(--cor);margin-left:6px}
+.selos{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:.88rem}
+.selos span{background:#ffffff26;border-radius:16px;padding:4px 12px}
+.bloco{padding:28px 16px}
+.bloco.alt{background:#fff}
+h2{margin:0 0 14px;font-size:1.3rem;color:var(--cor)}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.serv{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 4px #0002;border-top:4px solid var(--cor)}
+.bloco.alt .serv{background:var(--claro)}
+.serv .ic{font-size:1.6rem}
+.serv h3{margin:6px 0 4px;font-size:1.02rem}
+.serv p{margin:0;font-size:.92rem;color:#444}
+.duas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.info p{margin:0 0 8px}
+details{background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;box-shadow:0 1px 3px #0001}
+.bloco.alt details{background:var(--claro)}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 0;color:#444}
+form{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px #0002}
+label{display:block;font-size:.9rem;margin:8px 0 4px;font-weight:600}
+input,select{width:100%;padding:10px;border:1px solid #c7d0d8;border-radius:8px;font:inherit}
+.msg{display:none;margin-top:12px;background:#dcf8c6;border-radius:10px;padding:10px 12px;font-size:.92rem;white-space:pre-wrap}
+.msg.on{display:block}
+.nota{font-size:.82rem;color:#666;margin-top:6px}
+footer{background:#222;color:#ccc;font-size:.85rem;padding:18px 16px;text-align:center}
+.zap{position:fixed;right:16px;bottom:16px;width:56px;height:56px;border-radius:50%;background:#25d366;border:0;box-shadow:0 3px 10px #0004;cursor:pointer;font-size:1.6rem}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;font-size:.9rem;max-width:calc(100% - 32px);opacity:0;pointer-events:none;transition:opacity .3s}
+.toast.on{opacity:1}
+.explica{background:#fff;border-top:6px solid #e0a800}
+.explica li{margin-bottom:6px}
+@media (max-width:700px){.duas{grid-template-columns:minmax(0,1fr)}.btn.sec{margin:8px 0 0}}
+</style>
+</head>
+<body>
+<div class="demo"><div class="in"><b>Demonstração (negócios inventados).</b> Troque o tipo de negócio:
+<button class="nicho on" data-n="eletricista">Eletricista</button>
+<button class="nicho" data-n="salao">Salão de beleza</button>
+<button class="nicho" data-n="doces">Doces sob encomenda</button></div></div>
+
+<div class="site">
+<section class="hero"><div class="in">
+<div class="marca" id="marca"></div>
+<h1 id="titulo"></h1>
+<p id="sub"></p>
+<button class="btn" data-zap>Chamar no WhatsApp</button><a class="btn sec" href="#orcamento">Pedir orçamento</a>
+<div class="selos" id="selos"></div>
+</div></section>
+
+<section class="bloco"><div class="in">
+<h2 id="t-serv">Serviços</h2>
+<div class="grade" id="servicos"></div>
+</div></section>
+
+<section class="bloco alt"><div class="in duas">
+<div class="info"><h2>Onde e quando</h2><p id="area"></p><p id="horario"></p><p id="pagamento"></p></div>
+<div><h2>Perguntas frequentes</h2><div id="faq"></div></div>
+</div></section>
+
+<section class="bloco" id="orcamento"><div class="in duas">
+<div><h2>Peça um orçamento</h2><p>Preencha e a mensagem já sai pronta para o WhatsApp. Ninguém precisa digitar tudo de novo.</p>
+<p class="nota">Nesta demonstração a mensagem aparece aqui embaixo e não é enviada.</p></div>
+<form id="form">
+<label for="nome">Seu nome</label><input id="nome" required placeholder="Ex.: Ana">
+<label for="serv">Serviço</label><select id="serv"></select>
+<label for="bairro" id="l-bairro">Bairro</label><input id="bairro" required placeholder="Ex.: Centro">
+<p><button class="btn" type="submit">Montar mensagem</button></p>
+<div class="msg" id="msg"></div>
+</form>
+</div></section>
+</div>
+
+<section class="bloco explica"><div class="in">
+<h2 style="color:#6b4e00">O que vem na sua página</h2>
+<ul>
+<li>Uma tela só, feita primeiro para o celular, que abre rápido até no 4G fraco.</li>
+<li>Botão do WhatsApp sempre à vista e pedido de orçamento que chega com nome, serviço e bairro.</li>
+<li>Título e descrição prontos para o Google, com a cidade e os serviços.</li>
+<li>Serviços, região atendida, horário, formas de pagamento e perguntas frequentes no seu jeito de falar.</li>
+<li>Pode ficar no ar sem custo de hospedagem (ou no seu domínio, se você já tiver).</li>
+<li>Fotos e textos são seus: nada de foto de banco que o cliente já viu em outro site.</li>
+<li>Uma rodada de ajuste já está incluída.</li>
+</ul>
+<p class="nota">Esta página troca de negócio em 1 clique porque a estrutura é a mesma; a sua sai com as suas cores, fotos e textos.</p>
+</div></section>
+
+<footer>Demonstração com negócios, telefone e endereço inventados. Nenhum dado é enviado.</footer>
+<button class="zap" data-zap aria-label="WhatsApp">💬</button>
+<div class="toast" id="toast">Na sua página, este botão abre o seu WhatsApp com a mensagem pronta.</div>
+
+<script>
+const N={
+ eletricista:{cor:"#1f5f8b",cor2:"#174a6d",claro:"#e8f1f8",marca:"Luz Certa Elétrica (exemplo)",
+  titulo:"Eletricista em Cidade Exemplo, com hora marcada e orçamento antes",
+  sub:"Instalação, troca de disjuntor, chuveiro e tomadas. Você sabe o preço antes de começar.",
+  selos:["Orçamento antes do serviço","Material com nota","Atende no mesmo dia*"],
+  serv:[["💡","Tomadas e iluminação","Troca, instalação de luminária e interruptor."],["🚿","Chuveiro e resistência","Troca da resistência e instalação com disjuntor certo."],["⚡","Quadro de energia","Disjuntor que desarma, quadro antigo, aterramento."],["🔌","Instalação nova","Ponto para ar-condicionado, forno e cooktop."]],
+  area:"Atende Cidade Exemplo e bairros próximos.",horario:"Segunda a sábado, das 8h às 18h.",pag:"Pix, dinheiro ou cartão.",
+  faq:[["Cobra a visita?","A visita para orçamento é grátis se o serviço for feito."],["Atende emergência?","Sim, quando há horário livre no dia (*)."],["Dá garantia?","90 dias no serviço feito."]],
+  campo:"Bairro"},
+ salao:{cor:"#a23b72",cor2:"#7f2d59",claro:"#f8e9f1",marca:"Studio Flor de Lis (exemplo)",
+  titulo:"Cabelo, unhas e sobrancelha com horário marcado em Cidade Exemplo",
+  sub:"Escolha o serviço, mande o pedido e a gente confirma o horário pelo WhatsApp.",
+  selos:["Horário marcado","Material esterilizado","Estacionamento na rua"],
+  serv:[["✂️","Corte e escova","Corte feminino, escova e finalização."],["🎨","Coloração","Retoque de raiz, mechas e tonalização."],["💅","Manicure e pedicure","Esmaltação comum ou em gel."],["👁️","Sobrancelha","Design com pinça ou henna."]],
+  area:"Rua Exemplo, 123, Centro, Cidade Exemplo.",horario:"Terça a sábado, das 9h às 19h.",pag:"Pix, débito ou crédito.",
+  faq:[["Precisa marcar?","Sim, para não ter espera. Encaixe só se houver horário."],["Quanto tempo leva a coloração?","De 1h30 a 3h, conforme o cabelo."],["Posso remarcar?","Sim, avisando com 1 dia de antes."]],
+  campo:"Dia que prefere"},
+ doces:{cor:"#b5651d",cor2:"#8e4f17",claro:"#fbefe3",marca:"Doce Ateliê (exemplo)",
+  titulo:"Bolos e doces sob encomenda para aniversário e festa em Cidade Exemplo",
+  sub:"Escolha o bolo e a quantidade de doces. Encomenda com 3 dias de antes.",
+  selos:["Feito na hora da entrega","Retirada ou entrega","Cardápio com preço"],
+  serv:[["🎂","Bolo de festa","Massa e recheio à escolha, de 1 a 4 kg."],["🍬","Docinhos","Brigadeiro, beijinho e bicho-de-pé, a partir de 50."],["🧁","Cupcakes","Caixa com 6 ou 12, decorados no tema."],["🎁","Kit festa","Bolo + 100 doces + 25 salgados."]],
+  area:"Retirada no Jardim Exemplo ou entrega na cidade.",horario:"Encomendas de segunda a sexta, das 9h às 17h.",pag:"Sinal de 50% no Pix e o resto na entrega.",
+  faq:[["Com quanto tempo encomendo?","3 dias para bolo; 2 dias para docinhos."],["Tem sem lactose?","Sim, sob consulta, com o recheio da lista."],["Faz entrega?","Sim, na cidade, com taxa por bairro."]],
+  campo:"Data da festa"}
+};
+let atual="eletricista";
+const $=id=>document.getElementById(id);
+function pinta(n){
+  atual=n;const d=N[n],r=document.documentElement.style;
+  r.setProperty("--cor",d.cor);r.setProperty("--cor2",d.cor2);r.setProperty("--claro",d.claro);
+  $("marca").textContent=d.marca;$("titulo").textContent=d.titulo;$("sub").textContent=d.sub;
+  $("selos").innerHTML=d.selos.map(s=>`<span>${s}</span>`).join("");
+  $("servicos").innerHTML=d.serv.map(s=>`<div class="serv"><div class="ic">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join("");
+  $("area").innerHTML="📍 "+d.area;$("horario").innerHTML="🕘 "+d.horario;$("pagamento").innerHTML="💳 "+d.pag;
+  $("faq").innerHTML=d.faq.map(f=>`<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join("");
+  $("serv").innerHTML=d.serv.map(s=>`<option>${s[1]}</option>`).join("");
+  $("l-bairro").textContent=d.campo;$("bairro").placeholder=n==="eletricista"?"Ex.: Centro":n==="salao"?"Ex.: sábado de manhã":"Ex.: 12/12";
+  $("msg").classList.remove("on");
+  document.querySelectorAll(".nicho").forEach(b=>b.classList.toggle("on",b.dataset.n===n));
+  document.title=d.marca.replace(" (exemplo)","")+" - demonstração de página";
+}
+document.querySelectorAll(".nicho").forEach(b=>b.onclick=()=>pinta(b.dataset.n));
+let tt;document.querySelectorAll("[data-zap]").forEach(b=>b.onclick=()=>{const t=$("toast");t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2600)});
+$("form").onsubmit=e=>{e.preventDefault();const d=N[atual];
+  $("msg").textContent=`Olá, ${d.marca.replace(" (exemplo)","")}! Sou ${$("nome").value.trim()}.\nQuero: ${$("serv").value}.\n${d.campo}: ${$("bairro").value.trim()}.\nPode me passar o orçamento?`;
+  $("msg").classList.add("on")};
+pinta("eletricista");
+</script>
+</body>
+</html>
