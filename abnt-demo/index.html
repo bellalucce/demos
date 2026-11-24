@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Formatação ABNT de TCC e trabalhos - demonstração</title>
+<style>
+:root{--cor:#1f5f8b;--fundo:#f3f6f9;--cinza:#555;--ok:#24804a;--erro:#c0392b}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:980px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:980px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.topo{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;cursor:pointer;border-radius:8px;padding:10px 18px;font-size:.95rem;font-family:inherit}
+.btn:hover{background:#174a6d}
+.btn.vz{background:#fff;color:var(--cor);border:2px solid var(--cor);padding:8px 16px}
+.estado{font-weight:700}
+.estado.a{color:var(--erro)}.estado.d{color:var(--ok)}
+.duas{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+/* folha */
+.folha{position:relative;background:#fff;border:1px solid #cfd6dd;box-shadow:3px 3px 0 #dde3e8;aspect-ratio:210/297;width:100%;max-width:520px;margin:auto;overflow:hidden;transition:padding .5s}
+.guia{position:absolute;inset:0;pointer-events:none;border:1px dashed transparent;transition:all .5s}
+.texto{height:100%;overflow:hidden;transition:all .5s}
+.pag{position:absolute;font-size:11px;transition:all .5s}
+.so-d{display:none}
+/* ANTES */
+.folha.antes{padding:18px 16px}
+.antes .texto{font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.25;text-align:center}
+.antes h3{font-size:15px;color:var(--erro);text-decoration:underline;margin:0 0 10px;font-weight:700}
+.antes p{margin:0 0 8px}
+.antes .cit{font-family:"Comic Sans MS","Segoe Print",cursive;color:#2b3fb5;text-align:left;font-size:12px}
+.antes .ref-t{font-weight:700;text-align:left;margin-top:12px;text-transform:lowercase}
+.antes .ref{text-align:left;font-size:11px}
+.antes .tab{margin:8px auto;border-collapse:collapse;font-size:11px}
+.antes .tab td,.antes .tab th{border:1px solid #888;padding:2px 6px}
+.antes .tab-t{font-size:11px;font-style:italic;color:#777}
+.antes .pag{left:16px;bottom:10px}
+/* DEPOIS: A4 com 3 cm em cima e à esquerda e 2 cm embaixo e à direita (padding em % conta pela largura, a guia pela altura) */
+.folha.depois{padding:14.3% 9.5% 9.5% 14.3%}
+.depois .guia{border-color:#9cc3e6;top:10.1%;right:9.5%;bottom:6.7%;left:14.3%}
+.depois .texto{font-family:"Times New Roman",Times,serif;font-size:12px;line-height:1.5;text-align:justify}
+.depois h3{font-size:12px;font-weight:700;text-transform:uppercase;margin:0 0 8px;color:#000}
+.depois p{margin:0;text-indent:7.8%}
+.depois .cit{margin:8px 0 8px 25%;font-size:10px;line-height:1.15;text-indent:0}
+.depois .ref-t{font-weight:700;text-transform:uppercase;text-align:center;margin:12px 0 6px;text-indent:0}
+.depois .ref{font-size:12px;line-height:1.15;text-align:left;text-indent:0}
+.depois .tab{margin:2px auto;border-collapse:collapse;font-size:10px;line-height:1.2}
+.depois .tab td,.depois .tab th{border-top:1px solid #000;border-bottom:1px solid #000;padding:2px 6px}
+.depois .tab-t{font-size:10px;text-align:center;text-indent:0;line-height:1.2;margin-top:8px}
+.depois .fonte{font-size:10px;text-align:center;text-indent:0;line-height:1.2;margin-bottom:6px}
+.depois .pag{right:9.5%;top:6.7%;transform:translateY(-100%)}
+.depois .so-d{display:block}
+.depois .so-a{display:none}
+.depois span.so-d{display:inline}
+/* lista */
+.lista{list-style:none;margin:0;padding:0}
+.lista li{display:flex;gap:8px;align-items:baseline;padding:6px 8px;border-radius:8px;margin-bottom:4px;font-size:.9rem;background:#fbecea;color:var(--erro);transition:background .4s,color .4s}
+.lista li b{flex:none;width:1.4em;text-align:center}
+.lista li.ok{background:#e8f5ed;color:var(--ok)}
+.placar{font-size:.95rem;margin:10px 0 0;font-weight:700}
+ol.passos{margin:0;padding-left:20px;line-height:1.6;font-size:.92rem}
+.itens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;font-size:.9rem;margin:0;padding-left:18px}
+.nota{font-size:.82rem;color:var(--cinza);margin-top:8px}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:760px){.duas{grid-template-columns:minmax(0,1fr)}.itens{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){header h1{font-size:1.1rem}.antes .texto,.depois .texto{font-size:9px}.antes h3{font-size:12px}.depois h3{font-size:9px}.antes .ref,.depois .ref{font-size:8.5px}.depois .cit,.depois .tab,.depois .tab-t,.depois .fonte,.antes .tab,.antes .tab-t{font-size:8px}.pag{font-size:9px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Formatação ABNT de TCC, artigo e relatório - demonstração</h1>
+  <p>O texto é seu; eu deixo no padrão da banca: margens, fonte, citações, tabelas, sumário e referências.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com texto inventado.</b> O trabalho, o autor e as referências são fictícios, feitos só para mostrar a formatação. Nada é de aluno real.</div>
+<main>
+<section>
+  <h2>1. A mesma página, antes e depois</h2>
+  <div class="topo">
+    <button class="btn" id="bt" type="button">Formatar na ABNT</button>
+    <span class="estado a" id="est">Antes: do jeito que o aluno entregou</span>
+  </div>
+  <div class="duas">
+    <div class="folha antes" id="folha">
+      <div class="guia"></div>
+      <div class="pag"><span class="so-a">pág 1</span><span class="so-d">7</span></div>
+      <div class="texto">
+        <h3><span class="so-d">2 </span>Manejo Sanitário de Bezerros</h3>
+        <p>O manejo sanitário de bezerros é muito importante para a saúde do rebanho. A ingestão de colostro nas primeiras horas de vida reduz as perdas por doenças, segundo <span class="so-a">almeida 2019</span><span class="so-d">Almeida (2019)</span>.</p>
+        <p class="so-d">Para o autor, a rotina diária pesa mais do que as ações pontuais:</p>
+        <p class="cit"><span class="so-a">Segundo Almeida 2019: </span>O bezerro nasce sem defesas próprias e depende da transferência de imunidade pelo colostro, e a rotina de fornecimento deve ser prioridade da propriedade, acima de qualquer intervenção eventual.<span class="so-d"> (ALMEIDA, 2019, p. 45).</span></p>
+        <p class="tab-t"><span class="so-a">tabela de perdas</span><span class="so-d">Tabela 1 – Perdas de bezerros por fase, em uma propriedade fictícia</span></p>
+        <table class="tab">
+          <tr><th>Fase</th><th>Bezerros</th><th>Perdas</th></tr>
+          <tr><td>0 a 30 dias</td><td>40</td><td>3</td></tr>
+          <tr><td>31 a 60 dias</td><td>37</td><td>1</td></tr>
+        </table>
+        <p class="fonte so-d">Fonte: dados fictícios (2026).</p>
+        <p class="ref-t">Referências</p>
+        <p class="ref"><span class="so-a">Almeida, R.C. - manejo sanitário de bovinos leiteiros - editora exemplo 2019</span><span class="so-d">ALMEIDA, Renato Carvalho. <b>Manejo sanitário de bovinos leiteiros</b>. 2. ed. Belo Horizonte: Editora Exemplo, 2019.</span></p>
+      </div>
+    </div>
+    <div>
+      <ul class="lista" id="lista">
+        <li data-i="0"><b>x</b><span>Margens 3 cm em cima e à esquerda, 2 cm embaixo e à direita</span></li>
+        <li data-i="1"><b>x</b><span>Times 12, espaçamento 1,5, texto justificado, recuo de 1,25 cm</span></li>
+        <li data-i="2"><b>x</b><span>Título numerado, em maiúsculas e negrito, sem cor</span></li>
+        <li data-i="3"><b>x</b><span>Citação curta com autor e ano: Almeida (2019)</span></li>
+        <li data-i="4"><b>x</b><span>Citação longa com recuo de 4 cm, fonte 10, espaço simples e página</span></li>
+        <li data-i="5"><b>x</b><span>Tabela numerada, com título em cima e fonte embaixo</span></li>
+        <li data-i="6"><b>x</b><span>Referência na NBR 6023:2018, com o título em negrito</span></li>
+        <li data-i="7"><b>x</b><span>Número da página no canto de cima, contado desde a folha de rosto</span></li>
+      </ul>
+      <p class="placar" id="placar">0 de 8 itens no padrão</p>
+      <p class="nota">As linhas azuis tracejadas mostram as margens. A folha está em escala de A4.</p>
+    </div>
+  </div>
+</section>
+<section>
+  <h2>2. Trabalho completo de exemplo (PDF, 8 páginas)</h2>
+  <p style="margin:0 0 10px;font-size:.92rem">Capa, folha de rosto, resumo com palavras-chave, sumário automático, introdução, citações, figura, tabela e referências, tudo dentro das normas.</p>
+  <a class="btn" href="trabalho-abnt-exemplo.pdf" target="_blank" rel="noopener">Abrir o PDF de exemplo</a>
+</section>
+<section>
+  <h2>3. O que eu confiro no seu trabalho</h2>
+  <ul class="itens">
+    <li>Capa e folha de rosto (NBR 14724)</li>
+    <li>Resumo e abstract com palavras-chave</li>
+    <li>Sumário automático, que se atualiza sozinho</li>
+    <li>Listas de figuras, tabelas e siglas</li>
+    <li>Citações diretas e indiretas (NBR 10520)</li>
+    <li>Referências em ordem alfabética (NBR 6023)</li>
+    <li>Figuras, quadros e tabelas com título e fonte</li>
+    <li>Numeração das páginas e dos títulos</li>
+    <li>Apêndices e anexos</li>
+    <li>Modelo da sua instituição, quando ela tiver</li>
+  </ul>
+</section>
+<section>
+  <h2>4. Como funciona</h2>
+  <ol class="passos">
+    <li>Você me manda o Word e, se tiver, o manual da sua instituição.</li>
+    <li>Eu formato sem mudar o seu texto. Erro de digitação que eu achar fica marcado para você decidir.</li>
+    <li>Você recebe o Word editável e o PDF, com uma lista do que foi ajustado.</li>
+    <li>Se o orientador pedir mudança na formatação, eu ajusto sem custo.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio com texto inventado. Formato também artigo, relatório de estágio, projeto de pesquisa e trabalho de disciplina.</footer>
+<script>
+const folha=document.getElementById('folha'),bt=document.getElementById('bt'),est=document.getElementById('est');
+const itens=[...document.querySelectorAll('#lista li')],placar=document.getElementById('placar');
+let depois=false,timers=[];
+function marcar(n){itens.forEach((li,i)=>{const ok=i<n;li.classList.toggle('ok',ok);li.querySelector('b').textContent=ok?'ok':'x'});placar.textContent=n+' de '+itens.length+' itens no padrão';}
+bt.addEventListener('click',()=>{
+  timers.forEach(clearTimeout);timers=[];depois=!depois;
+  folha.classList.toggle('depois',depois);folha.classList.toggle('antes',!depois);
+  est.textContent=depois?'Depois: no padrão ABNT':'Antes: do jeito que o aluno entregou';
+  est.className='estado '+(depois?'d':'a');
+  bt.textContent=depois?'Ver como estava':'Formatar na ABNT';
+  if(depois){itens.forEach((_,i)=>timers.push(setTimeout(()=>marcar(i+1),250*(i+1))));}else marcar(0);
+});
+</script>
+</body>
+</html>
