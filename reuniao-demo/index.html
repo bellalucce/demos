@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transcrição de reunião com ata - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:960px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:960px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+h3{margin:14px 0 6px;font-size:.95rem;color:#333}
+.bt{display:inline-flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.bt button{border:1px solid var(--roxo);background:#fff;color:var(--roxo);border-radius:8px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.bt button.on{background:var(--roxo);color:#fff}
+.transc{max-height:460px;overflow-y:auto;border:1px solid #e6e0f3;border-radius:8px;padding:6px 12px;background:#fcfbff}
+.fala{margin:8px 0;line-height:1.55;font-size:.94rem}
+.t{font-family:Consolas,monospace;font-size:.78rem;color:#888;background:#f0edf7;border-radius:4px;padding:1px 5px}
+.assunto{margin:16px 0 6px;padding:6px 10px;background:#ede7f6;border-radius:6px;font-weight:700;color:var(--roxo);font-size:.9rem}
+.p0{color:#5e35b1}.p1{color:#00796b}.p2{color:#c2185b}.p3{color:#e65100}
+.vicio{background:#ffe0b2;border-radius:3px;padding:0 2px}
+.marca{background:#b2ebf2;border-radius:3px;padding:0 3px;font-size:.88rem}
+body.limpa .dl,body.literal .dc{display:none}
+.legenda{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.84rem;margin:10px 0 0;color:var(--cinza)}
+.ata{border:1px solid #ddd;border-radius:8px;padding:16px 18px;font-size:.92rem;line-height:1.5}
+.ata .cab{border-bottom:2px solid var(--roxo);padding-bottom:8px;margin-bottom:8px}
+.ata .cab b{font-size:1.02rem}
+.ata ol,.ata ul{margin:0;padding-left:20px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:var(--roxo);color:#fff;text-align:left;padding:7px 8px}
+td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-size:.95rem;margin:12px 8px 0 0}
+.btn:hover{background:#4a2791}
+ol.passos{margin:0;padding-left:20px;line-height:1.6}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:700px){header h1{font-size:1.1rem}table{font-size:.8rem}th,td{padding:5px 4px}.ata{padding:12px}}
+</style>
+</head>
+<body class="limpa">
+<header>
+  <h1>Transcrição de reunião com ata - demonstração</h1>
+  <p>Áudio de reunião vira texto com o nome de quem falou, o tempo de cada troca de assunto e uma ata de 1 página com decisões e tarefas.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com texto fictício.</b> A reunião, a empresa e as pessoas foram inventadas para esta página. Nenhuma gravação ou dado é real.</div>
+<main>
+<section>
+  <h2>1. Transcrição (Reunião semanal de equipe, 27 min 40 s)</h2>
+  <div class="bt"><button id="bl" class="on" onclick="modo('limpa')">Transcrição limpa</button><button id="bv" onclick="modo('literal')">Literal (com vícios de fala)</button></div>
+  <div class="transc">
+<div class="assunto"><span class="t">00:00:04</span> Abertura</div>
+<p class="fala"><span class="t">00:00:04</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl"><span class="vicio">Bom,</span> vamos começar que o Otávio tem outra reunião às dez. <span class="vicio">Tá todo mundo me ouvindo?</span></span><span class="dc">Vamos começar que o Otávio tem outra reunião às dez.</span></span></p>
+<p class="fala"><span class="t">00:00:09</span> <b class="p3">Otávio Ramos:</b> <span class="dito"><span class="dl">Ouvindo bem, Carla. <span class="vicio">Pode ir.</span></span><span class="dc">Ouvindo bem, Carla.</span></span></p>
+<p class="fala"><span class="t">00:00:12</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">São quatro assuntos hoje: encomendas de Natal, preço do panetone, as entregas por aplicativo e a escala do fim de ano.</span><span class="dc">São quatro assuntos hoje: encomendas de Natal, preço do panetone, as entregas por aplicativo e a escala do fim de ano.</span></span></p>
+<div class="assunto"><span class="t">00:00:31</span> Assunto 1 · Encomendas de Natal</div>
+<p class="fala"><span class="t">00:00:31</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl">Até ontem a gente fechou 46 encomendas de Natal, <span class="vicio">né,</span> 31 pelo WhatsApp e 15 no balcão. No ano passado, nessa mesma semana, eram 28.</span><span class="dc">Até ontem a gente fechou 46 encomendas de Natal, 31 pelo WhatsApp e 15 no balcão. No ano passado, nessa mesma semana, eram 28.</span></span></p>
+<p class="fala"><span class="t">00:00:52</span> <b class="p1">Diego Prado:</b> <span class="dito"><span class="dl"><span class="vicio">Então,</span> com esse ritmo a cozinha aguenta até umas 120. Passou disso, <span class="vicio">eu</span> preciso de uma pessoa a mais nos dias 22 e 23.</span><span class="dc">Com esse ritmo a cozinha aguenta até umas 120. Passou disso, preciso de uma pessoa a mais nos dias 22 e 23.</span></span></p>
+<p class="fala"><span class="t">00:01:10</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Vamos fazer assim: a gente trava em 120. Chegou em 110, a Lívia me avisa e a gente decide se abre mais ou fecha a agenda.</span><span class="dc">Vamos fazer assim: a gente trava em 120. Chegou em 110, a Lívia me avisa e a gente decide se abre mais ou fecha a agenda.</span></span></p>
+<p class="fala"><span class="t">00:01:25</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl">Fechado. <span class="vicio">E</span> eu já coloco no formulário um aviso de &quot;vagas limitadas&quot;, <span class="vicio">que</span> isso costuma acelerar quem está em dúvida.</span><span class="dc">Fechado. Eu já coloco no formulário um aviso de &quot;vagas limitadas&quot;, isso costuma acelerar quem está em dúvida.</span></span></p>
+<p class="fala"><span class="t">00:01:38</span> <b class="p3">Otávio Ramos:</b> <span class="dito"><span class="dl">Só um ponto: as encomendas com sinal pago precisam entrar no caixa com a data da entrega, senão dezembro fica distorcido. <span class="marca">[falas sobrepostas]</span></span><span class="dc">Só um ponto: as encomendas com sinal pago precisam entrar no caixa com a data da entrega, senão dezembro fica distorcido. <span class="marca">[falas sobrepostas]</span></span></span></p>
+<p class="fala"><span class="t">00:01:50</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl"><span class="vicio">Tá,</span> Lívia, você manda a planilha das encomendas para o Otávio toda sexta?</span><span class="dc">Lívia, você manda a planilha das encomendas para o Otávio toda sexta?</span></span></p>
+<p class="fala"><span class="t">00:01:55</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl">Mando, <span class="vicio">sim.</span></span><span class="dc">Mando,</span></span></p>
+<div class="assunto"><span class="t">00:06:12</span> Assunto 2 · Preço do panetone</div>
+<p class="fala"><span class="t">00:06:12</span> <b class="p1">Diego Prado:</b> <span class="dito"><span class="dl">O quilo do chocolate subiu de novo. O panetone de 500 gramas está custando R$ 23,40 para a gente, só de ingrediente e embalagem.</span><span class="dc">O quilo do chocolate subiu de novo. O panetone de 500 gramas está custando R$ 23,40 para a gente, só de ingrediente e embalagem.</span></span></p>
+<p class="fala"><span class="t">00:06:31</span> <b class="p3">Otávio Ramos:</b> <span class="dito"><span class="dl"><span class="vicio">Olha,</span> vendendo a R$ 39,90, com a taxa do cartão e a do aplicativo, a margem cai para uns 18%. Eu subiria para R$ 44,90.</span><span class="dc">Vendendo a R$ 39,90, com a taxa do cartão e a do aplicativo, a margem cai para uns 18%. Eu subiria para R$ 44,90.</span></span></p>
+<p class="fala"><span class="t">00:06:48</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Quarenta e quatro e noventa no balcão eu topo. <span class="vicio">Mas</span> quem já encomendou paga o preço antigo, isso eu não mudo.</span><span class="dc">Quarenta e quatro e noventa no balcão eu topo. Quem já encomendou paga o preço antigo, isso eu não mudo.</span></span></p>
+<p class="fala"><span class="t">00:07:02</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl">Concordo. <span class="vicio">E</span> eu aviso no story que o preço novo vale para encomenda a partir de segunda.</span><span class="dc">Concordo. Eu aviso no story que o preço novo vale para encomenda a partir de segunda.</span></span></p>
+<p class="fala"><span class="t">00:07:31</span> <b class="p1">Diego Prado:</b> <span class="dito"><span class="dl">Outra coisa: o fornecedor de fita <span class="marca">[inaudível 00:07:33]</span> só entrega dia 30. Se atrasar, a gente usa a fita kraft que já tem.</span><span class="dc">Outra coisa: o fornecedor de fita <span class="marca">[inaudível 00:07:33]</span> só entrega dia 30. Se atrasar, a gente usa a fita kraft que já tem.</span></span></p>
+<div class="assunto"><span class="t">00:13:05</span> Assunto 3 · Entregas por aplicativo</div>
+<p class="fala"><span class="t">00:13:05</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl"><span class="vicio">Gente,</span> três reclamações essa semana de bolo chegando torto. Todas pelo mesmo aplicativo, <span class="vicio">tipo,</span> motoboy sem baú.</span><span class="dc">Três reclamações essa semana de bolo chegando torto. Todas pelo mesmo aplicativo, motoboy sem baú.</span></span></p>
+<p class="fala"><span class="t">00:13:24</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Então bolo de andar sai só com entrega nossa. Aplicativo fica para doce pequeno e panetone.</span><span class="dc">Então bolo de andar sai só com entrega nossa. Aplicativo fica para doce pequeno e panetone.</span></span></p>
+<p class="fala"><span class="t">00:13:37</span> <b class="p1">Diego Prado:</b> <span class="dito"><span class="dl">Eu consigo fazer a caixa com a base de papelão mais grossa até sexta, <span class="vicio">aí</span> até o pequeno chega melhor. <span class="marca">[risos]</span> Sem garantia para o motoboy<span class="vicio">, né</span>.</span><span class="dc">Eu consigo fazer a caixa com a base de papelão mais grossa até sexta, até o pequeno chega melhor. <span class="marca">[risos]</span> Sem garantia para o motoboy.</span></span></p>
+<p class="fala"><span class="t">00:13:52</span> <b class="p3">Otávio Ramos:</b> <span class="dito"><span class="dl">Lembrando que entrega própria tem custo: combustível e o tempo do Diego. Precisa entrar no preço do frete.</span><span class="dc">Lembrando que entrega própria tem custo: combustível e o tempo do Diego. Precisa entrar no preço do frete.</span></span></p>
+<p class="fala"><span class="t">00:14:08</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Otávio, você me passa quanto deveria ser o frete mínimo até quinta?</span><span class="dc">Otávio, você me passa quanto deveria ser o frete mínimo até quinta?</span></span></p>
+<p class="fala"><span class="t">00:14:12</span> <b class="p3">Otávio Ramos:</b> <span class="dito"><span class="dl">Passo até quinta, <span class="vicio">sim.</span></span><span class="dc">Passo até quinta,</span></span></p>
+<div class="assunto"><span class="t">00:21:40</span> Assunto 4 · Escala do fim de ano</div>
+<p class="fala"><span class="t">00:21:40</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Dia 24 a gente abre das 7 às 15. Dia 25 fechado. Dia 31 das 7 às 14 e dia 1º fechado.</span><span class="dc">Dia 24 a gente abre das 7 às 15. Dia 25 fechado. Dia 31 das 7 às 14 e dia 1º fechado.</span></span></p>
+<p class="fala"><span class="t">00:21:58</span> <b class="p1">Diego Prado:</b> <span class="dito"><span class="dl">Nos dias 22 e 23 eu preciso daquela pessoa a mais, se passar de 120 encomendas, <span class="vicio">como eu falei.</span></span><span class="dc">Nos dias 22 e 23 eu preciso daquela pessoa a mais, se passar de 120 encomendas,</span></span></p>
+<p class="fala"><span class="t">00:22:10</span> <b class="p2">Lívia Torres:</b> <span class="dito"><span class="dl">Eu falo com a Bruna, que trabalhou com a gente na Páscoa. Se ela não puder, eu vejo outra indicação.</span><span class="dc">Eu falo com a Bruna, que trabalhou com a gente na Páscoa. Se ela não puder, eu vejo outra indicação.</span></span></p>
+<p class="fala"><span class="t">00:22:24</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl">Pode falar. A decisão de contratar fica para quando bater 110, como combinamos.</span><span class="dc">Pode falar. A decisão de contratar fica para quando bater 110, como combinamos.</span></span></p>
+<div class="assunto"><span class="t">00:27:20</span> Encerramento</div>
+<p class="fala"><span class="t">00:27:20</span> <b class="p0">Carla Menezes:</b> <span class="dito"><span class="dl"><span class="vicio">Então é isso.</span> Próxima reunião terça que vem, mesmo horário. Obrigada, gente.</span><span class="dc">Próxima reunião terça que vem, mesmo horário. Obrigada, gente.</span></span></p>
+  </div>
+  <div class="legenda">
+    <span><span class="t">00:00:00</span> = tempo no áudio</span>
+    <span><span class="vicio">né, tipo, então</span> = vício de fala (só no modo literal)</span>
+    <span><span class="marca">[inaudível]</span> = marcação do que não dá para ouvir, sobreposição ou risos</span>
+  </div>
+  <p class="hint">O trecho entre os assuntos foi encurtado nesta demonstração; na entrega real, a reunião vai inteira.</p>
+  <a class="btn" href="transcricao.docx" download="transcricao.docx">Baixar a transcrição (.docx)</a>
+  <a class="btn" href="transcricao.txt" download="transcricao.txt">Baixar em texto (.txt)</a>
+</section>
+<section>
+  <h2>2. Ata de 1 página</h2>
+  <div class="ata">
+    <div class="cab"><b>Ata de reunião · Doceria Flor de Açúcar (empresa fictícia)</b><br>Reunião semanal de equipe · terça-feira, 17/11 (data fictícia) · duração 27 min 40 s<br><small>Participantes: Carla Menezes (proprietária); Diego Prado (produção); Lívia Torres (atendimento e redes sociais); Otávio Ramos (contador, pela chamada de vídeo)</small></div>
+    <h3>Decisões</h3><ol><li>Encomendas de Natal limitadas a 120. Ao chegar em 110, a equipe decide se abre mais vagas ou fecha a agenda.</li><li>Panetone de 500 g passa de R$ 39,90 para R$ 44,90 nas encomendas feitas a partir de segunda (23/11). Quem já encomendou paga o preço antigo.</li><li>Bolo de andar sai só com entrega própria. Aplicativo de entrega só para doces pequenos e panetone.</li><li>Horário de fim de ano: dia 24 das 7h às 15h, dia 31 das 7h às 14h, fechado nos dias 25 e 1º.</li></ol>
+    <h3>Tarefas</h3>
+    <div style="max-width:100%;overflow-x:auto"><table><thead><tr><th>O quê</th><th>Quem</th><th>Até quando</th></tr></thead><tbody><tr><td>Pôr o aviso de &quot;vagas limitadas&quot; no formulário de encomendas</td><td>Lívia</td><td>18/11</td></tr><tr><td>Avisar no story o preço novo do panetone</td><td>Lívia</td><td>20/11</td></tr><tr><td>Mandar a planilha de encomendas ao contador</td><td>Lívia</td><td>toda sexta</td></tr><tr><td>Caixa com base de papelão mais grossa para doces pequenos</td><td>Diego</td><td>20/11</td></tr><tr><td>Calcular o frete mínimo da entrega própria</td><td>Otávio</td><td>19/11</td></tr><tr><td>Sondar a Bruna (ajudante da Páscoa) para os dias 22 e 23</td><td>Lívia</td><td>24/11</td></tr><tr><td>Avisar a Carla quando as encomendas chegarem a 110</td><td>Lívia</td><td>quando acontecer</td></tr></tbody></table></div>
+    <h3>Pendências</h3><ul><li>Contratar ajudante para os dias 22 e 23: só se as encomendas passarem de 110.</li><li>Fita do fornecedor só chega dia 30; se atrasar, usar a fita kraft do estoque.</li><li>Trecho inaudível em 00:07:33 (nome do fornecedor de fita): confirmar com o Diego.</li></ul>
+    <p class="hint">Próxima reunião: terça-feira seguinte, mesmo horário.</p>
+  </div>
+  <a class="btn" href="ata.docx" download="ata.docx">Baixar a ata (.docx)</a>
+  <a class="btn" href="ata.txt" download="ata.txt">Baixar a ata (.txt)</a>
+</section>
+<section>
+  <h2>3. Como eu trabalho</h2>
+  <ol class="passos">
+    <li><b>Você envia</b> o áudio ou o vídeo (MP3, WAV, MP4, link do Drive). Eu passo prazo e valor por minuto antes de começar.</li>
+    <li><b>Transcrição com apoio de IA</b> e revisão minha ouvindo o áudio inteiro: nomes, números e termos técnicos conferidos.</li>
+    <li><b>Quem falou o quê:</b> cada fala com o nome da pessoa, o tempo a cada troca de assunto e marcação do que não dá para ouvir.</li>
+    <li><b>Você escolhe</b> transcrição limpa (para ler) ou literal (para pesquisa e entrevista), em Word, PDF ou texto, com a ata se quiser.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Transcrição de reuniões, entrevistas e podcasts, com ata de decisões e tarefas.</footer>
+<script>
+function modo(m) {
+  document.body.className = m;
+  document.getElementById('bl').className = m === 'limpa' ? 'on' : '';
+  document.getElementById('bv').className = m === 'literal' ? 'on' : '';
+}
+</script>
+</body>
+</html>
