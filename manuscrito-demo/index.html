@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transcrição de manuscritos para Word - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:960px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:960px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.par{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+figure{margin:0}
+figure img{width:100%;height:auto;border-radius:8px;display:block;border:1px solid #ddd}
+figcaption{font-size:.8rem;color:var(--cinza);text-align:center;margin-top:4px}
+.texto{font-family:Georgia,'Times New Roman',serif;font-size:.95rem;line-height:1.65;background:#fcfbff;border:1px solid #e6e0f3;border-radius:8px;padding:12px 14px}
+.texto .fl{font-family:system-ui,Segoe UI,Arial,sans-serif;font-weight:700;color:var(--roxo);font-size:.85rem}
+.risco{text-decoration:line-through;color:#888}
+.ileg{background:#fff59d;padding:0 3px;border-radius:3px}
+.duv{background:#b2ebf2;padding:0 3px;border-radius:3px}
+.marg{font-style:italic;color:#9c2b2b}
+.legenda{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.84rem;margin:10px 0 0;color:var(--cinza)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{background:var(--roxo);color:#fff;text-align:left;padding:8px}
+td{padding:7px 8px;border-bottom:1px solid #eee;vertical-align:top}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-size:.95rem;margin:12px 8px 0 0}
+.btn:hover{background:#4a2791}
+ol{margin:0;padding-left:20px;line-height:1.6}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.bt{display:inline-flex;gap:6px;margin:0 0 10px}
+.bt button{border:1px solid var(--roxo);background:#fff;color:var(--roxo);border-radius:8px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.bt button.on{background:var(--roxo);color:#fff}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:700px){header h1{font-size:1.1rem}.par{grid-template-columns:minmax(0,1fr)}table{font-size:.8rem}th,td{padding:6px 4px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Transcrição de manuscritos para Word - demonstração</h1>
+  <p>Anotações à mão (cadernos, cartas, diários de pesquisa) viram texto editável e pesquisável, fiel ao original.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com texto fictício.</b> As duas folhas foram escritas para esta página, com letra de mão simulada. Nomes, datas e números são inventados. Nenhum documento é real.</div>
+<main>
+<section>
+  <h2>1. Original e transcrição lado a lado</h2>
+  <div class="bt"><button id="b1" class="on" onclick="ver(1)">Folha 12</button><button id="b2" onclick="ver(2)">Folha 13</button></div>
+  <div class="par">
+    <figure><img id="img" src="pagina1.png" alt="Folha manuscrita de caderno pautado, com palavra riscada, mancha e nota na margem (texto fictício)"><figcaption id="cap">Original: caderno 3, folha 12</figcaption></figure>
+    <div class="texto" id="txt"></div>
+  </div>
+  <div class="legenda">
+    <span><span class="risco">riscado</span> = riscado no original (mantido)</span>
+    <span><span class="duv">[palavra?]</span> = leitura provável</span>
+    <span><span class="ileg">[ilegível]</span> = não dá para ler, com o motivo</span>
+    <span><span class="marg">[nota na margem]</span> = escrito fora do corpo</span>
+  </div>
+</section>
+<section>
+  <h2>2. Palavras em dúvida (vai junto na entrega)</h2>
+  <div style="max-width:100%;overflow-x:auto">
+  <table>
+    <thead><tr><th>Folha / linha</th><th>Leitura provável</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>12 / 4</td><td>Teodoro</td><td>o "T" pode ser "F" (Feodoro?)</td></tr>
+      <tr><td>13 / 4</td><td>quase</td><td>letra emendada; pode ser "uns"</td></tr>
+      <tr><td>12 / 8</td><td>(ilegível)</td><td>mancha de umidade; pelo sentido, o lugar onde a escola funciona</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="hint">Nada é "adivinhado" em silêncio: toda leitura incerta fica marcada para você decidir.</p>
+  <a class="btn" href="transcricao.docx" download="transcricao.docx">Baixar a transcrição (.docx)</a>
+  <a class="btn" href="transcricao.txt" download="transcricao.txt">Baixar em texto (.txt)</a>
+</section>
+<section>
+  <h2>3. Como eu trabalho</h2>
+  <ol>
+    <li><b>Você envia</b> os PDFs ou fotos. Eu conto as páginas e passo prazo e valor por página antes de começar.</li>
+    <li><b>Leitura com apoio de ferramentas:</b> OCR comum quase não lê letra de mão, então cada linha é lida por mim, com ampliação e IA de apoio, e conferida com a imagem.</li>
+    <li><b>Fidelidade:</b> mantenho grafia, abreviações e quebras do original; riscos, notas de margem e trechos ilegíveis ficam marcados, não somem.</li>
+    <li><b>Entrega</b> em Word e em texto, com a folha de origem de cada trecho e a tabela de dúvidas, pronto para pesquisar (Ctrl+F) e editar.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Transcrição de manuscritos, cartas e anotações de pesquisa para Word ou TXT.</footer>
+<script>
+const F = {
+ 1: {img: 'pagina1.png', cap: 'Original: caderno 3, folha 12', html:
+  '<div class="fl">[Cad. 3 - fl. 12]</div>12 de março de 1957 - Notas sobre a vila<br>Chegaram mais 14 famílias pela estrada<br>de terra, vindas de <span class="risco">Maringá</span> Paranavaí.<br>O armazém do Sr. <span class="duv">[Teodoro?]</span> vende fiado<br>até a colheita do café. Anotar preços:<br>saco de arroz 60 kg ...... Cr$ 420<br>querosene, lata ............. Cr$ 85<br>A escola funciona na <span class="ileg">[ilegível: mancha]</span>, com<br>uma só professora para 38 alunos.<br><span class="marg">[nota na margem, a lápis vermelho: ver carta de 1958]</span>'},
+ 2: {img: 'pagina2.png', cap: 'Original: caderno 3, folha 13', html:
+  '<div class="fl">[fl. 13]</div>Conversa com D. Amélia (n. 1901):<br>lembra da primeira missa campal,<br>"debaixo de uma peroba que caiu<br>na geada de 55". Diz que eram <span class="duv">[quase?]</span> 200<br>pessoas. Hoje a vila tem <span class="risco">2 mil</span> 3 mil.<br>Pedir fotos ao filho dela (Rua 7).<br>Pendente: mapa dos lotes de 1953.<br><span class="marg">[nota na margem, a lápis vermelho: conferir no cartório]</span>'}
+};
+function ver(n) {
+  document.getElementById('img').src = F[n].img;
+  document.getElementById('cap').textContent = F[n].cap;
+  document.getElementById('txt').innerHTML = F[n].html;
+  document.getElementById('b1').className = n === 1 ? 'on' : '';
+  document.getElementById('b2').className = n === 2 ? 'on' : '';
+}
+ver(1);
+</script>
+</body>
+</html>
