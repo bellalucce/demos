@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pesquisa de produtos para loja online - demonstração</title>
+<style>
+:root{--roxo:#5e35b1;--fundo:#f6f4fa;--cinza:#555;--verde:#00796b;--verm:#c62828}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--roxo);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:960px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:960px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--roxo)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid #e6e0f3;border-radius:10px;padding:10px 12px;background:#fcfbff;min-width:0}
+.kpi small{display:block;color:var(--cinza);font-size:.78rem}
+.kpi b{display:block;font-size:1.35rem;color:var(--roxo);margin-top:2px;overflow-wrap:anywhere}
+.kpi b.peq{font-size:.98rem;line-height:1.25}
+.kpi.vm b{color:var(--verm)}
+.filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.filtros label{display:block;font-size:.84rem;color:var(--cinza)}
+.filtros select,.filtros input[type=range]{width:100%;margin-top:4px;font-size:.92rem}
+.filtros select{padding:7px 8px;border:1px solid var(--roxo);border-radius:8px;background:#fff;color:#222}
+.bt{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.bt button{border:1px solid var(--roxo);background:#fff;color:var(--roxo);border-radius:8px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.bt button.on{background:var(--roxo);color:#fff}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.barra{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) 38px;gap:8px;align-items:center;margin:6px 0;font-size:.86rem}
+.barra .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{background:#ede7f6;border-radius:6px;height:20px;overflow:hidden}
+.barra .pr{height:100%;background:var(--roxo);border-radius:6px;transition:width .3s}
+.barra .pr.baixa{background:#b39ddb}
+.barra .vl{font-weight:700;color:var(--roxo);text-align:right}
+.rolar{max-width:100%;overflow-x:auto;margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th{background:var(--roxo);color:#fff;text-align:left;padding:7px 8px;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap}
+td.vm{background:#ffebee;color:var(--verm);font-weight:700}
+td.nota{font-weight:700;color:var(--roxo)}
+.top3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{border:1px solid #e6e0f3;border-radius:10px;padding:12px;background:#fcfbff}
+.card .pos{display:inline-block;background:var(--roxo);color:#fff;border-radius:50%;width:26px;height:26px;line-height:26px;text-align:center;font-weight:700;font-size:.85rem}
+.card h3{margin:6px 0 4px;font-size:.98rem}
+.card p{margin:0;font-size:.86rem;line-height:1.45;color:#333}
+.card .nt{font-size:.8rem;color:var(--roxo);font-weight:700;margin-top:6px}
+ol.passos{margin:0;padding-left:20px;line-height:1.6}
+.formula{background:#ede7f6;border-radius:8px;padding:10px 12px;font-size:.88rem;line-height:1.5;margin:0 0 12px}
+.btn{display:inline-block;background:var(--roxo);color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-size:.95rem;margin:12px 8px 0 0}
+.btn:hover{background:#4a2791}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:700px){
+header h1{font-size:1.1rem}
+.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+.filtros{grid-template-columns:minmax(0,1fr)}
+.top3{grid-template-columns:minmax(0,1fr)}
+.barra{grid-template-columns:minmax(0,100px) minmax(0,1fr) 34px;font-size:.78rem}
+table{font-size:.78rem}th,td{padding:5px 5px}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pesquisa de produtos para loja online (Shopee e Mercado Livre)</h1>
+  <p>Exemplo no nicho de maquiagem e cuidados com a pele: custo, taxa do canal, frete, lucro, margem e uma nota de oportunidade para cada produto.</p>
+</header>
+<div class="aviso"><b>DEMONSTRAÇÃO com dados fictícios.</b> Os produtos, preços, vendas e concorrentes foram inventados para esta página. Nenhum número é de loja ou vendedor real.</div>
+<main>
+<section>
+  <h2>1. Resumo</h2>
+  <div class="kpis">
+    <div class="kpi"><small>Produtos analisados</small><b id="k1">-</b></div>
+    <div class="kpi"><small>Margem média</small><b id="k2">-</b></div>
+    <div class="kpi"><small>Melhor oportunidade</small><b id="k3" class="peq">-</b></div>
+    <div class="kpi vm"><small>Margem abaixo de 15%</small><b id="k4">-</b></div>
+  </div>
+</section>
+<section>
+  <h2>2. Filtros</h2>
+  <div class="filtros">
+    <div><label>Canal de venda</label>
+      <div class="bt"><button id="c0" class="on" onclick="canal('Shopee')">Shopee</button><button id="c1" onclick="canal('Mercado Livre')">Mercado Livre</button></div>
+      <p class="hint" id="regra"></p></div>
+    <div><label for="mm">Margem mínima: <b id="mmv">0%</b></label>
+      <input type="range" id="mm" min="0" max="40" step="1" value="0"></div>
+    <div><label for="ord">Ordenar por</label>
+      <select id="ord"><option value="nota">Nota de oportunidade</option><option value="margem">Margem</option><option value="vendas">Vendas por mês</option></select></div>
+  </div>
+</section>
+<section>
+  <h2>3. Nota de oportunidade e tabela completa</h2>
+  <div class="formula"><b>Como a nota é calculada (0 a 10):</b> 40% pela margem (vale nota cheia a partir de 40%) + 35% pela procura + 25% pela baixa concorrência. A mesma régua vale para todos os produtos.</div>
+  <div id="grafico"></div>
+  <div class="rolar"><table>
+    <thead><tr><th>Produto</th><th class="n">Custo</th><th class="n">Preço</th><th class="n">Taxa</th><th class="n">Frete</th><th class="n">Lucro</th><th class="n">Margem</th><th class="n">Vendas/mês</th><th class="n">Vendedores</th><th class="n">Procura</th><th class="n">Concorr.</th><th class="n">Nota</th></tr></thead>
+    <tbody id="corpo"></tbody>
+  </table></div>
+  <p class="hint">Vendas por mês, vendedores e as notas de procura e concorrência (1 a 5) são estimativas fictícias. Margem em vermelho = abaixo de 15%.</p>
+</section>
+<section>
+  <h2>4. Os 3 que eu começaria</h2>
+  <div class="top3" id="top3"></div>
+</section>
+<section>
+  <h2>5. Como eu faço a pesquisa</h2>
+  <ol class="passos">
+    <li><b>Procura e concorrência:</b> levanto nos marketplaces quanto cada produto vende e quantos vendedores disputam, olhando os anúncios públicos.</li>
+    <li><b>Conta de cada canal:</b> calculo custo + taxa + frete de cada produto, na regra da Shopee e na do Mercado Livre.</li>
+    <li><b>Nota com a mesma régua:</b> todo produto recebe a nota de 0 a 10 pela mesma fórmula, para comparar de forma justa.</li>
+    <li><b>Entrega:</b> planilha com fórmulas (você muda um preço e tudo recalcula), este painel e um resumo dos 3 melhores.</li>
+  </ol>
+  <p class="hint">Não uso ferramentas pagas de análise: as estimativas vêm da observação dos anúncios, e eu aviso quando um número é estimado.</p>
+</section>
+<section>
+  <h2>6. Downloads</h2>
+  <p class="hint" style="margin-top:0">A planilha vem com fórmulas de verdade, escolha de canal, cabeçalho formatado, valores em R$ e uma aba &quot;Como ler&quot;.</p>
+  <a class="btn" href="pesquisa.xlsx" download="pesquisa.xlsx">Baixar a planilha (.xlsx)</a>
+  <a class="btn" href="pesquisa.csv" download="pesquisa.csv">Baixar em .csv</a>
+</section>
+</main>
+<footer>Demonstração de portfólio. Pesquisa de produtos para loja online, com planilha e painel.</footer>
+<script>
+var DADOS = [{"nome": "Gloss labial com brilho", "custo": 5.5, "preco": 19.9, "frete": 2.5, "vendas": 2400, "vend": 180, "procura": 5, "conc": 5}, {"nome": "Pó compacto", "custo": 11.0, "preco": 29.9, "frete": 3.0, "vendas": 1600, "vend": 130, "procura": 4, "conc": 4}, {"nome": "Sérum de vitamina C 30 ml", "custo": 14.0, "preco": 49.9, "frete": 3.5, "vendas": 1500, "vend": 90, "procura": 4, "conc": 3}, {"nome": "Esponja de maquiagem", "custo": 2.8, "preco": 12.9, "frete": 2.0, "vendas": 3100, "vend": 220, "procura": 5, "conc": 5}, {"nome": "Kit pincéis 12 peças", "custo": 13.0, "preco": 39.9, "frete": 4.0, "vendas": 1300, "vend": 110, "procura": 4, "conc": 4}, {"nome": "Lip tint", "custo": 4.2, "preco": 16.9, "frete": 2.2, "vendas": 1900, "vend": 140, "procura": 4, "conc": 4}, {"nome": "Máscara de cílios", "custo": 7.5, "preco": 24.9, "frete": 2.8, "vendas": 1700, "vend": 120, "procura": 4, "conc": 4}, {"nome": "Hidratante facial", "custo": 13.5, "preco": 44.9, "frete": 4.0, "vendas": 1100, "vend": 70, "procura": 4, "conc": 3}, {"nome": "Demaquilante bifásico", "custo": 8.5, "preco": 27.9, "frete": 3.5, "vendas": 780, "vend": 45, "procura": 3, "conc": 2}, {"nome": "Paleta de sombras 9 cores", "custo": 10.5, "preco": 34.9, "frete": 3.2, "vendas": 1400, "vend": 150, "procura": 4, "conc": 4}];
+var CFG = {"canais": {"Shopee": {"pct": 0.2, "fixa": 4.0, "limite": null}, "Mercado Livre": {"pct": 0.13, "fixa": 6.5, "limite": 79.0}}, "pm": 0.4, "pp": 0.35, "pc": 0.25, "ref": 0.4};
+var CANAL = 'Shopee';
+var real = function(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});};
+var pct = function(v){return (v*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';};
+var dec = function(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});};
+var esc = function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+
+function calcula(p){
+  var c = CFG.canais[CANAL];
+  var fixa = (c.limite === null || p.preco < c.limite) ? c.fixa : 0;
+  var taxa = p.preco * c.pct + fixa;
+  var lucro = p.preco - p.custo - taxa - p.frete;
+  var margem = lucro / p.preco;
+  var sm = Math.max(0, Math.min(margem / CFG.ref, 1)) * 10;
+  var sp = (p.procura - 1) / 4 * 10;
+  var sc = (5 - p.conc) / 4 * 10;
+  var nota = Math.round((sm * CFG.pm + sp * CFG.pp + sc * CFG.pc) * 10) / 10;
+  return Object.assign({}, p, {taxa:taxa, lucro:lucro, margem:margem, nota:nota});
+}
+function canal(n){
+  CANAL = n;
+  document.getElementById('c0').className = n === 'Shopee' ? 'on' : '';
+  document.getElementById('c1').className = n === 'Mercado Livre' ? 'on' : '';
+  atualiza();
+}
+function motivo(p){
+  var f = [];
+  if (p.margem >= 0.30) f.push('margem alta de ' + pct(p.margem));
+  else if (p.margem >= 0.20) f.push('margem boa de ' + pct(p.margem));
+  else f.push('margem de ' + pct(p.margem));
+  if (p.procura >= 4) f.push('procura ' + p.procura + ' de 5');
+  if (p.conc <= 3) f.push('só ' + p.vend + ' vendedores disputando');
+  else f.push(p.vend + ' vendedores disputando');
+  return 'Nota ' + dec(p.nota) + ': ' + f.join(', ') + ', lucro de ' + real(p.lucro) + ' por venda.';
+}
+function atualiza(){
+  var min = +document.getElementById('mm').value / 100;
+  document.getElementById('mmv').textContent = Math.round(min * 100) + '%';
+  var c = CFG.canais[CANAL];
+  document.getElementById('regra').textContent = 'Taxa estimada: ' + Math.round(c.pct * 100) + '% + ' + real(c.fixa) + ' por item' + (c.limite ? ' (abaixo de ' + real(c.limite) + ')' : '') + '.';
+  var todos = DADOS.map(calcula);
+  var lista = todos.filter(function(p){return min <= 0 || p.margem >= min - 1e-9;});
+  var ord = document.getElementById('ord').value;
+  lista.sort(function(a,b){return b[ord] - a[ord] || b.nota - a.nota;});
+  // indicadores (sobre os produtos que passam no filtro)
+  var media = lista.length ? lista.reduce(function(s,p){return s + p.margem;}, 0) / lista.length : 0;
+  var melhor = lista.slice().sort(function(a,b){return b.nota - a.nota;})[0];
+  document.getElementById('k1').textContent = lista.length + (lista.length !== todos.length ? ' de ' + todos.length : '');
+  document.getElementById('k2').textContent = lista.length ? pct(media) : '-';
+  document.getElementById('k3').textContent = melhor ? melhor.nome + ' (' + dec(melhor.nota) + ')' : '-';
+  document.getElementById('k4').textContent = lista.filter(function(p){return p.margem < 0.15;}).length;
+  // gráfico
+  var g = document.getElementById('grafico');
+  var porNota = lista.slice().sort(function(a,b){return b.nota - a.nota;});
+  g.innerHTML = porNota.length ? porNota.map(function(p){
+    return '<div class="barra"><span class="nm" title="' + esc(p.nome) + '">' + esc(p.nome) + '</span><div class="tr"><div class="pr' + (p.nota < 5 ? ' baixa' : '') + '" style="width:' + (p.nota * 10) + '%"></div></div><span class="vl">' + dec(p.nota) + '</span></div>';
+  }).join('') : '<p class="hint">Nenhum produto com essa margem mínima. Diminua o filtro.</p>';
+  // tabela
+  document.getElementById('corpo').innerHTML = lista.map(function(p){
+    return '<tr><td>' + esc(p.nome) + '</td><td class="n">' + real(p.custo) + '</td><td class="n">' + real(p.preco) + '</td><td class="n">' + real(p.taxa) + '</td><td class="n">' + real(p.frete) + '</td><td class="n">' + real(p.lucro) + '</td><td class="n' + (p.margem < 0.15 ? ' vm' : '') + '">' + pct(p.margem) + '</td><td class="n">' + p.vendas.toLocaleString('pt-BR') + '</td><td class="n">' + p.vend + '</td><td class="n">' + p.procura + '</td><td class="n">' + p.conc + '</td><td class="n nota">' + dec(p.nota) + '</td></tr>';
+  }).join('');
+  // top 3 (sempre sobre todos os produtos do canal, com margem mínima)
+  var t3 = porNota.slice(0, 3);
+  document.getElementById('top3').innerHTML = t3.map(function(p, i){
+    return '<div class="card"><span class="pos">' + (i + 1) + '</span><h3>' + esc(p.nome) + '</h3><p>' + motivo(p) + '</p><div class="nt">' + CANAL + '</div></div>';
+  }).join('');
+}
+document.getElementById('mm').addEventListener('input', atualiza);
+document.getElementById('ord').addEventListener('change', atualiza);
+atualiza();
+</script>
+</body>
+</html>
