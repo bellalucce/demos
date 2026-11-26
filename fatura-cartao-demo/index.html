@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fatura do cartão organizada em planilha - demonstração</title>
+<style>
+:root{--cor:#1565c0;--cor2:#0d47a1;--fundo:#f1f5fb;--cinza:#555;--azulc:#e3f2fd;--verm:#b71c1c}
+*{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--fundo);color:#222}
+header{background:var(--cor);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:1.3rem}
+header p{margin:4px 0 0;font-size:.9rem;opacity:.92}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 16px;margin:12px auto;max-width:1040px;font-size:.88rem;border-radius:6px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:0 16px 16px;max-width:1040px;margin:auto}
+section{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0002;padding:16px;min-width:0}
+h2{margin:0 0 10px;font-size:1.05rem;color:var(--cor)}
+.full{grid-column:1/-1}
+label{display:block;font-size:.85rem;color:var(--cinza);margin:0 0 3px}
+input,select{width:100%;font-size:1rem;padding:9px 10px;border:1px solid #a9c6ec;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus{outline:2px solid #90caf9}
+.filtros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.regra{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end}
+.btn{display:inline-block;background:var(--cor);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--cor2)}
+.btn.claro{background:#e3f2fd;color:var(--cor2)}
+.btn.claro:hover{background:#bbdefb}
+.btn:disabled{opacity:.5;cursor:default}
+.hint{font-size:.82rem;color:var(--cinza);margin:8px 0 0}
+.msg{font-size:.88rem;margin-top:8px;min-height:1.2em}
+.msg.erro{color:var(--verm);font-weight:600}.msg.feito{color:#1b5e20}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.kpis div{background:var(--azulc);border-radius:10px;padding:10px;min-width:0}
+.kpis b{display:block;font-size:1.1rem;color:var(--cor2);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpis b.neg{color:var(--verm)}
+.kpis span{font-size:.78rem;color:var(--cinza)}
+.tab{overflow-x:auto}
+.rolagem{max-height:430px;overflow-y:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+td,th{padding:6px 6px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+th{background:var(--cor);color:#fff;font-weight:600;font-size:.78rem;position:sticky;top:0}
+td.v,th.v{text-align:right;font-variant-numeric:tabular-nums}
+.bruta td{font-family:Consolas,Menlo,monospace;font-size:.8rem;background:#fafafa}
+.bruta th{background:#616161}
+.neg{color:var(--verm);font-weight:700}
+.chip{display:inline-block;border-radius:10px;padding:2px 9px;font-size:.78rem;background:var(--azulc);color:var(--cor2)}
+.chip.sem{background:#ffcdd2;color:var(--verm);font-weight:700}
+.chip.parc{background:#fff3cd;color:#7a5900}
+.novo{animation:pisca 1.6s ease-out}
+@keyframes pisca{from{background:#fff59d}to{background:transparent}}
+.barras{display:grid;gap:7px}
+.b{display:grid;grid-template-columns:150px minmax(0,1fr) 112px;gap:8px;align-items:center;font-size:.86rem}
+.b .nome{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b .trilho{background:#eef3fa;border-radius:6px;height:16px}
+.b .barra{background:var(--cor);height:16px;border-radius:6px;min-width:2px}
+.b .barra.sem{background:#e57373}
+.b .val{text-align:right;font-variant-numeric:tabular-nums}
+.selo{display:inline-block;background:#e8f5e9;color:#256029;border-radius:12px;padding:3px 10px;font-size:.8rem;margin-bottom:6px}
+ol{margin:10px 0 0;padding-left:20px;line-height:1.6;font-size:.95rem}
+footer{text-align:center;font-size:.8rem;color:var(--cinza);padding:12px 16px 24px}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}header h1{font-size:1.1rem}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.regra{grid-template-columns:minmax(0,1fr)}.b{grid-template-columns:105px minmax(0,1fr) 92px;font-size:.8rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fatura do cartão organizada em planilha</h1>
+  <p>A lista bagunçada que vem do banco, de um lado; a mesma fatura com o nome da loja limpo, a categoria, a parcela e os totais, do outro.</p>
+</header>
+<div class="aviso"><b>Demonstração com dados de exemplo.</b> Cartão e compras inventados, de 3 faturas (agosto, setembro e outubro de 2026). As contas da página são as mesmas das fórmulas da planilha.</div>
+<main>
+<section class="full">
+  <h2>1. Escolha o que quer ver</h2>
+  <div class="filtros">
+    <div><label for="fMes">Fatura (mês)</label><select id="fMes"></select></div>
+    <div><label for="fCat">Categoria</label><select id="fCat"></select></div>
+  </div>
+</section>
+<section class="full">
+  <div class="kpis">
+    <div><b id="kTotal">-</b><span>Total gasto</span></div>
+    <div><b id="kQtd">-</b><span>Compras</span></div>
+    <div><b id="kMaior">-</b><span id="kMaiorOnde">Maior gasto</span></div>
+    <div><b id="kParc">-</b><span>Parcelas futuras comprometidas</span></div>
+    <div><b id="kSem">-</b><span>Compras sem categoria</span></div>
+  </div>
+  <p class="hint">Parcelas futuras = o que ainda vai cair nas próximas faturas das compras parceladas que aparecem na última fatura (outubro).</p>
+</section>
+<section>
+  <h2>2. Antes: a fatura como vem do banco</h2>
+  <div class="tab rolagem"><table id="tBruta" class="bruta"></table></div>
+  <p class="hint">Nomes cortados, códigos e parcelas escondidas no fim. Difícil de somar e de entender.</p>
+</section>
+<section>
+  <h2>3. Depois: a mesma fatura organizada</h2>
+  <div class="tab rolagem"><table id="tOrg"></table></div>
+  <p class="hint">Cada compra ganhou nome limpo e categoria. A parcela foi lida do fim da descrição.</p>
+</section>
+<section class="full">
+  <h2>4. Gasto por categoria</h2>
+  <div class="barras" id="barras"></div>
+</section>
+<section class="full">
+  <h2>5. Total por categoria e por fatura (aba "Resumo")</h2>
+  <div class="tab"><table id="tResumo"></table></div>
+</section>
+<section class="full">
+  <h2>6. Ensine uma regra nova (aba "Regras")</h2>
+  <span class="selo">As compras sem categoria se resolvem aqui</span>
+  <div class="regra">
+    <div><label for="rK">Palavra que aparece na descrição</label><input id="rK" type="text" maxlength="30" placeholder="Ex.: PAGTO"></div>
+    <div><label for="rE">Nome limpo</label><input id="rE" type="text" maxlength="40" placeholder="Ex.: Pagamentos diversos"></div>
+    <div><label for="rC">Categoria</label><select id="rC"></select></div>
+    <button class="btn" id="rAdd">Adicionar regra</button>
+  </div>
+  <button class="btn claro" id="rDesf" style="margin-top:10px">Desfazer a última regra</button>
+  <div class="msg" id="msg" role="status"></div>
+  <p class="hint">Na planilha, você escreve a palavra-chave na aba Regras e todas as compras parecidas, de todas as faturas, se arrumam juntas.</p>
+</section>
+<section class="full">
+  <h2>7. Baixe a planilha</h2>
+  <a class="btn" href="planilha-fatura-cartao.xlsx" download="planilha-fatura-cartao.xlsx">Baixar a planilha (.xlsx)</a>
+  <p class="hint">Abre no Excel, no LibreOffice e no Google Planilhas. Tem 4 abas: Transações (você cola a fatura; nome limpo, categoria e parcela saem sozinhos, com lista para corrigir), Regras (palavra-chave e categoria, que você acrescenta), Resumo (totais, maior gasto, parcelas futuras e gráficos) e Como usar.</p>
+  <ol>
+    <li>Copie as linhas da fatura (PDF ou CSV do banco) para a aba Transações.</li>
+    <li>Veja a categoria aparecer. O que ficar em vermelho "Sem categoria" ganha uma regra na aba Regras.</li>
+    <li>Na aba Resumo, leia o total por categoria e por mês e quanto ainda vem em parcelas.</li>
+  </ol>
+</section>
+</main>
+<footer>Demonstração de portfólio. Organizo as suas faturas do cartão em planilha, com as suas categorias, e deixo explicado como acrescentar regras e usar.</footer>
+<script src="dados.js"></script>
+<script>
+var REGRAS=DADOS.regras.slice(), TR=DADOS.transacoes, CATS=DADOS.categorias, ULT=null, ULTK=null;
+function $(i){return document.getElementById(i)}
+function brl(v){var s=Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(v<-0.004?'-':'')+'R$ '+s}
+function dbr(iso){return iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4)}
+function mesBr(m){return m.slice(5,7)+'/'+m.slice(0,4)}
+function el(tag,txt){var e=document.createElement(tag);if(txt!=null)e.textContent=txt;return e}
+function linha(t,cels,cls){var tr=document.createElement('tr');if(cls)tr.className=cls;cels.forEach(function(c){var td=document.createElement(c.th?'th':'td');var k=[];if(c.v)k.push('v');if(c.c)k.push(c.c);if(k.length)td.className=k.join(' ');if(c.chip){var s=el('span',c.t);s.className='chip '+c.chip;td.appendChild(s)}else td.textContent=c.t;tr.appendChild(td)});t.appendChild(tr);return tr}
+function H(t,v){return{t:t,th:1,v:v}}
+function classificar(desc){
+  var u=desc.toUpperCase();
+  for(var i=0;i<REGRAS.length;i++){if(u.indexOf(REGRAS[i].k.toUpperCase())>=0)return{est:REGRAS[i].est,cat:REGRAS[i].cat}}
+  return{est:desc,cat:'Sem categoria'};
+}
+function parcela(d){var m=/ (\d{2})\/(\d{2})$/.exec(d);return m?{a:+m[1],n:+m[2],t:m[1]+'/'+m[2]}:null}
+function montar(){
+  return TR.map(function(x,i){var c=classificar(x.desc),p=parcela(x.desc);
+    return{i:i,data:x.data,mes:x.data.slice(0,7),desc:x.desc,valor:x.valor,est:c.est,cat:c.cat,parc:p}});
+}
+function mesesLista(L){var m=[];L.forEach(function(x){if(m.indexOf(x.mes)<0)m.push(x.mes)});return m.sort()}
+function preencherFiltros(){
+  var L=montar(),ms=mesesLista(L),fm=$('fMes'),fc=$('fCat'),rc=$('rC');
+  var v=fm.value||'';fm.innerHTML='';var o=el('option','Todas as faturas');o.value='';fm.appendChild(o);
+  ms.forEach(function(m){var o=el('option','Fatura de '+mesBr(m));o.value=m;fm.appendChild(o)});fm.value=v;
+  var vc=fc.value||'';fc.innerHTML='';o=el('option','Todas as categorias');o.value='';fc.appendChild(o);
+  CATS.forEach(function(c){var o=el('option',c);o.value=c;fc.appendChild(o)});fc.value=vc;
+  if(!rc.options.length)CATS.filter(function(c){return c!=='Sem categoria'}).forEach(function(c){rc.appendChild(el('option',c))});
+}
+function desenhar(){
+  var L=montar(),ms=mesesLista(L),ultimo=ms[ms.length-1],fm=$('fMes').value,fc=$('fCat').value;
+  var F=L.filter(function(x){return(!fm||x.mes===fm)&&(!fc||x.cat===fc)});
+  var tb=$('tBruta'),to=$('tOrg'),tr=$('tResumo');[tb,to,tr].forEach(function(t){t.innerHTML=''});
+  linha(tb,[H('Data'),H('Descrição'),H('Valor',1)]);
+  linha(to,[H('Data'),H('Estabelecimento'),H('Categoria'),H('Parcela'),H('Valor',1)]);
+  F.forEach(function(x){
+    var n=x.i===ULT?'novo':'';
+    linha(tb,[{t:x.data.slice(8,10)+'/'+x.data.slice(5,7)},{t:x.desc},{t:brl(x.valor).replace('R$ ',''),v:1,c:x.valor<0?'neg':''}],n);
+    linha(to,[{t:dbr(x.data)},{t:x.est},{t:x.cat,chip:x.cat==='Sem categoria'?'sem':''},x.parc?{t:x.parc.t,chip:'parc'}:{t:''},{t:brl(x.valor),v:1,c:x.valor<0?'neg':''}],n);
+  });
+  var tot=0,maior=null,fut=0,sem=0;
+  F.forEach(function(x){tot+=x.valor;if(!maior||x.valor>maior.valor)maior=x;if(x.cat==='Sem categoria')sem++});
+  L.forEach(function(x){if(x.mes===ultimo&&x.parc&&(!fc||x.cat===fc))fut+=x.valor*(x.parc.n-x.parc.a)});
+  $('kTotal').textContent=brl(tot);$('kQtd').textContent=F.length;
+  $('kMaior').textContent=maior?brl(maior.valor):'-';$('kMaiorOnde').textContent='Maior gasto'+(maior?': '+maior.est:'');
+  $('kParc').textContent=brl(fut);$('kSem').textContent=sem;$('kSem').className=sem?'neg':'';
+  // barras por categoria (respeita o filtro de mês)
+  var Fm=L.filter(function(x){return!fm||x.mes===fm}),por={},mx=0;
+  Fm.forEach(function(x){por[x.cat]=(por[x.cat]||0)+x.valor});
+  var cats=CATS.filter(function(c){return por[c]}).sort(function(a,b){return por[b]-por[a]});
+  cats.forEach(function(c){mx=Math.max(mx,por[c])});
+  var bx=$('barras');bx.innerHTML='';
+  cats.forEach(function(c){
+    var d=el('div');d.className='b';
+    var n=el('span',c);n.className='nome';d.appendChild(n);
+    var t=el('div');t.className='trilho';var b=el('div');b.className='barra'+(c==='Sem categoria'?' sem':'');b.style.width=(por[c]/mx*100)+'%';t.appendChild(b);d.appendChild(t);
+    var v=el('span',brl(por[c]));v.className='val';d.appendChild(v);bx.appendChild(d);
+  });
+  // tabela resumo categoria x mês (todas as faturas)
+  linha(tr,[H('Categoria')].concat(ms.map(function(m){return H('Fatura '+mesBr(m),1)})).concat([H('Total',1),H('% do total',1)]));
+  var T=0;L.forEach(function(x){T+=x.valor});var somaMes=ms.map(function(){return 0});
+  CATS.forEach(function(c){
+    var cel=[{t:c}],s=0;
+    ms.forEach(function(m,k){var v=0;L.forEach(function(x){if(x.cat===c&&x.mes===m)v+=x.valor});s+=v;somaMes[k]+=v;cel.push({t:brl(v),v:1})});
+    if(s===0&&c==='Sem categoria')return;
+    cel.push({t:brl(s),v:1});cel.push({t:(T?(s/T*100).toFixed(1).replace('.',','):'0,0')+'%',v:1});linha(tr,cel);
+  });
+  linha(tr,[{t:'TOTAL DA FATURA'}].concat(somaMes.map(function(v){return{t:brl(v),v:1}})).concat([{t:brl(T),v:1},{t:'100%',v:1}]),'total');
+  tr.querySelector('tr:last-child').style.fontWeight='700';
+  $('rDesf').disabled=REGRAS.length<=DADOS.regras.length;
+  window.RESULTADO={total:T,compras:L.length,filtradas:F.length,semCategoria:L.filter(function(x){return x.cat==='Sem categoria'}).length,parcelasFuturas:fut,porCategoria:por};
+}
+$('fMes').addEventListener('change',desenhar);$('fCat').addEventListener('change',desenhar);
+$('rAdd').addEventListener('click',function(){
+  var msg=$('msg'),k=$('rK').value.trim(),e=$('rE').value.trim(),c=$('rC').value;msg.className='msg erro';
+  if(k.length<2){msg.textContent='Escreva a palavra que aparece na descrição (pelo menos 2 letras).';return}
+  if(/[*?]/.test(k)){msg.textContent='Não use * nem ? na palavra (o Excel os trata como curinga).';return}
+  var antes=montar().filter(function(x){return x.cat==='Sem categoria'}).length;
+  REGRAS.push({k:k.toUpperCase(),est:e||k,cat:c});
+  var depois=montar().filter(function(x){return x.cat==='Sem categoria'}).length;
+  desenhar();$('rK').value='';$('rE').value='';
+  msg.className='msg feito';msg.textContent='Regra adicionada. '+(antes-depois)+' compra(s) mudaram de categoria; o resumo e o gráfico já foram recalculados.';
+});
+$('rDesf').addEventListener('click',function(){if(REGRAS.length>DADOS.regras.length){REGRAS.pop();desenhar();$('msg').className='msg';$('msg').textContent='Última regra desfeita.'}});
+preencherFiltros();desenhar();
+</script>
+</body>
+</html>
